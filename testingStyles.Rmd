@@ -1,0 +1,752 @@
+---
+title: "SIWA REPORT"
+output:
+  flexdashboard::flex_dashboard:
+    output_dir: docs
+    orientation: rows
+    source_code: embed
+    vertical_layout: scroll
+    css: style.css
+    mathjax: NULL
+    self_contained: FALSE
+    #runtime: shiny
+    navbar:
+      - { title: "About", href: "https://example.com/about" }
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(shiny)
+```
+
+
+```{r libraries, include=FALSE, cache=TRUE}
+###load libraries panels tabs####
+library(phyloseq) #
+library(DESeq2) #
+library(kableExtra) #
+library(genefilter) #
+library(microbiome) #
+library(ggplot2)  #
+library(vegan) #
+library(ggpubr) #
+library(ggplot2) #
+library(plyr)
+library(multcompView)
+
+#####Load libraries correlations####
+library(ggplot2)
+library(phyloseq)
+library(stringr)
+library(dplyr)
+
+#####Load libraries LR####
+library(ggplot2)
+library(plyr)
+library(dplyr)
+library(tidyverse)
+library(ape)
+library(ggpubr)
+
+####Load libraries categorical histo####
+library(kableExtra)
+library(plyr)
+library("fantaxtic")
+
+####load libraries Ratios-histo boxplots####
+library(multcompView)
+library(reshape)
+
+### OTRICAS
+library(plotly)
+library(plyr)
+library(flexdashboard)
+
+
+## FUNCTIONS
+source("/Users/dvarelat/Documents/SIWA/Methods-review/functions.R")
+
+```
+
+
+
+Description and introduction to the project {data-icon="fa-signal"}
+===================================== 
+
+
+Project E335 was an experimental trial done at Iluma's broiler experimental farm located in the town of Fredonia, Antioquia (Colombia) at 1800 m above sea level and an average annual temperature of 20º C. It aimed to evaluate the broilers' microbiome, gene expression, gut histology and performance  response to different Calcium and AlphaD3 levels in the broiler's diet. 
+(note: the complete 335 expriment has 14 treatments, in this report we only include results for treatments 1-8). 
+
+The experiment consisted of 8 treatments differing in Ca concentration across the growth stages (calcium levels for each stage can be found below in the diagram) and also including presence or absence of the AlphaD3 metabolite alpha-D3 in the diet. 
+
+Microbiome, gut histology and gene expression data were collected from animals at 33 days of age, following treatment from day of hatch. For microbiome samples, gut content was collected from three different sampling locations: Cecum, Ileum and Feces. For gene expression and histology samples, tissue samples were collected from two sampling locations: Cecum and Ileum (refer to diagram).
+
+```{r Open Phyloseq Object, include=FALSE, cache=TRUE}
+#Open saved object 
+ODLEPobj <- readRDS("/Users/dvarelat/Documents/SIWA/Reports/Version1.0/phyloseqObject_April11.rds")
+#Explore Phylosec object
+
+
+#Subset phyloseq object to include only wanted treatments 
+ODLEPobj <- subset_samples(ODLEPobj, TreatmentNumber%in%c("1","2","3","4","5","6","7","8"))
+ODLEPobj = subset_samples(ODLEPobj, SampleID != "0074_02C-M") #REMOVE OUTLIAR
+metadata= meta(ODLEPobj)
+
+#Filter phyloseq object by location 
+ODLEPobj_cecum<-subset_samples(ODLEPobj, SampleLocation=="C")
+ODLEPobj_ileum<-subset_samples(ODLEPobj, SampleLocation=="I")
+ODLEPobj_feces<-subset_samples(ODLEPobj, SampleLocation=="F")
+
+```
+
+
+```{r pressure, echo=FALSE, fig.cap="A caption", out.width = '100%', include=FALSE}
+knitr::include_graphics("/Users/dvarelat/Documents/SIWA/Reports/Version1.0/E335_diagram_exp1.png")
+```
+
+
+
+# Exploration {data-navmenu="MICROBIOME"}
+
+Row {data-height=100}
+-----------------------------------------------------------------------
+
+
+Row
+-----------------------------------------------------------------------
+
+### {data-width=200}
+
+As seen below (table 1), 6 microbiome samples per treatment were collected in each gut location, except for 4 samples that are excluded or missing. 
+
+### TABLE 1 {data-width=800}
+
+```{r Table1,  echo=FALSE, cache=TRUE}
+
+
+#ODLEPobjLoc <- metagMisc::phyloseq_sep_variable(ODLEPobj, variable = "SampleLocation")
+
+cec = table(subset(as.data.frame(as.matrix(sample_data(ODLEPobj_cecum))), select = c("Treatment")))
+ile = table(subset(as.data.frame(as.matrix(sample_data(ODLEPobj_ileum))), select = c( "Treatment")))
+fec = table(subset(as.data.frame(as.matrix(sample_data(ODLEPobj_feces))), select = c("Treatment")))
+
+tab=rbind(ile,cec,fec)
+tab <- as.data.frame(t(tab))
+colnames(tab)=c("Ileum","Cecum","Feces")
+kbl(tab, caption = "Table 1: Samples per Group", centering = FALSE) %>% kable_styling(full_width = T, position= "left")
+
+```
+Row {data-height=150}
+-----------------------------------------------------------------------
+
+Sequences identified during the sequencing process are grouped in batches of identical sequences so that the number of times that sequences was found can be recorded.  This the abundance of the sequence.  The groups of identical sequences are called Operational Taxonomic Units 
+<a href="https://en.wikipedia.org/wiki/Operational_taxonomic_unit" target="_blank">(OTUs)</a> or Amplicon Sequence Variants <a href="https://en.wikipedia.org/wiki/Amplicon_sequence_variant" target="_blank">(ASVs)</a>, and they often (but not always) correspond to species or <a href="https://en.wikipedia.org/wiki/Bacterial_taxonomy" target="_blank">genera</a> of bacteria.  In the plot below we can observe the prevalence of OTUs across all samples (the fixed threshold for an OTU to be considered present in a sample is 0.1% relative abundance). The sequencing process identified more than 1300 unique sequences, and as expected, only a few OTUs are shared by the majority of samples.  Most are rare taxa detected in only a small portion of samples. It is common to find a small number of OTUs which are dominant in the community, while most others are much less abundant and they are unlikely to be biologically related to any performance or treatment-based effects.
+
+Row {data-height=350}
+-----------------------------------------------------------------------
+
+### FIGURE 1-A
+
+```{r Prevalence CE, echo=FALSE, cache=FALSE}
+ODLEPobj_rel <- microbiome::transform(ODLEPobj, "compositional")
+
+#Cecum 
+pseq.rel_cecum <- microbiome::transform(ODLEPobj_cecum, "compositional")
+otu_relative_cecum <- as.data.frame(otu_table(pseq.rel_cecum))
+
+otu_relative_cecum = otu_relative_cecum[!apply(otu_relative_cecum, 1, function(x) all(x == 0)), ]
+total_samples= ncol(otu_relative_cecum) 
+total_otus= nrow(otu_relative_cecum) 
+
+absent=apply(otu_relative_cecum ==0, 1, sum)  #podria cambiarlo por un threshold para considerar absent una 
+#add a col with the percentage of samples it is present
+otu_relative_cecum$percentage_samples_present=(1-(absent/total_samples))*100 
+#add a col with OTU names
+otu_relative_cecum$OTU <- row.names(otu_relative_cecum)
+#add otus of interest to highlight in the plot
+
+#plot
+colors <- c("#BA4FC8","#f56342")
+prev_plot_cecum <- ggplot(data = otu_relative_cecum) +
+  theme_classic()+
+  aes(x = reorder(OTU,-percentage_samples_present,sum), y =percentage_samples_present) +
+  geom_point() +
+  scale_colour_manual(values=colors) + 
+  #geom_point(color="#BA4FC8", size=0.05) +
+  ggtitle("Cecum")
+#ggplot(prev_plot_cecum)
+prev_plot_cecum
+```
+
+### FIGURE 1-B
+
+```{r Prevalence IL, echo=FALSE, cache=FALSE}
+#Ileum 
+pseq.rel_ileum <- microbiome::transform(ODLEPobj_ileum, "compositional")
+otu_relative_ileum <- as.data.frame(otu_table(pseq.rel_ileum))
+
+otu_relative_ileum = otu_relative_ileum[!apply(otu_relative_ileum, 1, function(x) all(x == 0)), ]
+total_samples= ncol(otu_relative_ileum) 
+total_otus= nrow(otu_relative_ileum) 
+
+absent=apply(otu_relative_ileum ==0, 1, sum) 
+
+otu_relative_ileum$percentage_samples_present=(1-(absent/total_samples))*100 
+#add a col with OTU names
+otu_relative_ileum$OTU <- row.names(otu_relative_ileum)
+
+
+#plot
+colors <- c("#343aeb","#f56342")
+prev_plot_ileum=ggplot(data = otu_relative_ileum) +
+  theme_classic()+
+  aes(x = reorder(OTU,-percentage_samples_present,sum), y =percentage_samples_present) +
+  geom_point() +
+  scale_colour_manual(values=colors) + 
+  ggtitle("Ileum")
+prev_plot_ileum
+```
+
+### FIGURE 1-C
+
+```{r Prevalence fe,  echo=FALSE, cache=FALSE}
+#Feces
+pseq.rel_feces <- microbiome::transform(ODLEPobj_feces, "compositional")
+otu_relative_feces <- as.data.frame(otu_table(pseq.rel_feces))
+
+#remove OTUs that are zero in all samples
+otu_relative_feces = otu_relative_feces[!apply(otu_relative_feces, 1, function(x) all(x == 0)), ]
+total_samples= ncol(otu_relative_feces) 
+total_otus= nrow(otu_relative_feces) 
+
+absent=apply(otu_relative_feces ==0, 1, sum)  #podria cambiarlo por un threshold para considerar absent una OTU en una muestra <0.001
+otu_relative_feces$percentage_samples_present=(1-(absent/total_samples))*100 
+#add a col with OTU names
+otu_relative_feces$OTU <- row.names(otu_relative_feces)
+#add otus of interest to highlight in the plot
+
+#plot
+colors <- c("#16DCC9","#f56342")
+prev_plot_feces=ggplot(data = otu_relative_feces) +
+  theme_classic()+
+  aes(x = reorder(OTU,-percentage_samples_present,sum), y =percentage_samples_present) +
+  geom_point() +
+  scale_colour_manual(values=colors) + 
+  #geom_point(color="#16DCC9", size= 0.05) +
+  ggtitle("Feces")
+
+prev_plot_feces
+#Aggregted figure (3 locations prevalence graph)
+# figure <- ggarrange(prev_plot_cecum, prev_plot_feces, prev_plot_ileum , 
+#                     ncol = 1, nrow = 3,
+#                     font.label = list(size = 10, color = "black", face = "plain"))
+# annotate_figure(figure,
+#                 top = text_grob("Prevalence of OTUs in samples", hjust = 0),
+#                 bottom = text_grob("OTU"), 
+#                 left = text_grob("Samples in which OTU is present (%)", rot=90)) 
+```
+
+Row {data-height=80}
+-----------------------------------------------------------------------
+
+
+Row {data-height=550}
+-----------------------------------------------------------------------
+###  {data-width=200}
+
+After filtering low-abundance sequences, the remaining data can be explored more easily. We see below the distribution of these taxa at the phylum level.
+
+### FIGURE 2 {data-width=800}
+```{r Prevalence Phylum, echo=FALSE, include=TRUE, cache=TRUE}
+pseq.rel <- microbiome::transform(ODLEPobj, "compositional")
+flist    <- filterfun(kOverA(5, 2e-05))
+ODLEPobjRelFilter =  filter_taxa(pseq.rel, flist, TRUE)
+p <- plot_taxa_prevalence(ODLEPobjRelFilter, "Phylum")+
+  ggtitle("Prevalence of Major Phyla")+
+  xlab("Log2 abundance")+
+  ylab("Prevalence of taxa (%)")
+
+
+ggplotly(p) %>% 
+ layout( 
+ xaxis = list(automargin=TRUE), 
+ yaxis = list(automargin=TRUE)
+ ) %>% partial_bundle()
+
+
+```
+
+Row {data-height=550}
+-----------------------------------------------------------------------
+### {data-width=200}
+
+Next, we observe the distribution of taxa at the family level within each sample location. We can see that while the sample location has a strong impact on distribution, treatment does not affect the distribution of the families at first sight.
+
+### FIGURE 3 {data-width=800}
+```{r fam, echo=FALSE, include=TRUE}
+ggplotly(p) %>% partial_bundle()
+p
+```
+
+# Taxonomic composition {data-navmenu="MICROBIOME"}
+
+Row {data-height=100}
+-----------------------------------------------------------------------
+
+#### In the following graph we can view the main genera present in the treatments at each location. 
+
+```{r  Taxonomic composition , include=FALSE, warning=FALSE}
+
+#####Plot Taxonomic composition feces#####  
+#Aggregate OTUs according to genus 
+ODLEPobj_cecum_glom = tax_glom(ODLEPobj_cecum, taxrank="Genus", NArm=FALSE)
+#create dataframe from phyloseq object
+subset.genus.df <- psmelt(ODLEPobj_cecum_glom) 
+subset.genus.df$genus <- as.character(subset.genus.df$Genus) #convert to character
+#calculate median rel. abundance
+medians <- ddply(subset.genus.df, ~genus, function(x) c(median=median(x$Abundance)))
+#calculate remainder
+remainder <- medians[medians$median <= 0.01,]$genus
+subset.genus.df[subset.genus.df$genus %in% remainder,]$genus <- "Genera < 1% abund."
+
+#Figures abundances
+subset.genus.df <- subset.genus.df %>%
+  mutate( Treatment=factor(Treatment,levels=c("LowCa", "LowCa+MediumAlphaD3", "MediumLowCa", "MediumLowCa+MediumAlphaD3", "MediumHighCa", "MediumHighCa+MediumAlphaD3", "HighCa","HighCa+MediumAlphaD3")) )
+#plot with condensed genera into "< 1% abund" category by Treatment
+plot_abundance_cecum<- ggplot(subset.genus.df, aes(x = Treatment, y = Abundance, fill = genus)) +
+  geom_bar(stat="identity", position="fill") + 
+  labs(title ="Taxonomic composition cecum") +
+  xlab("Treatment") +
+  ylab("Relative abundance")+
+  #stat_compare_means(method = "anova")+ 
+  theme(axis.text.x = element_text(angle = 60, hjust = 1))+
+  theme(text=element_text(size=12)) 
+
+  
+
+#####Plot Taxonomic composition ileum#####  
+#Aggregate OTUs according to genus 
+ODLEPobj_ileum_glom = tax_glom(ODLEPobj_ileum, taxrank="Genus", NArm=FALSE)
+#create dataframe from phyloseq object
+subset.genus.df <- psmelt(ODLEPobj_ileum_glom) 
+subset.genus.df$genus <- as.character(subset.genus.df$Genus) #convert to character
+#calculate median rel. abundance
+medians <- ddply(subset.genus.df, ~genus, function(x) c(median=median(x$Abundance)))
+#calculate remainder
+remainder <- medians[medians$median <= 0.01,]$genus
+subset.genus.df[subset.genus.df$genus %in% remainder,]$genus <- "Genera < 1% abund."
+
+#Figures abundances
+subset.genus.df <- subset.genus.df %>%
+  mutate( Treatment=factor(Treatment,levels=c("LowCa", "LowCa+MediumAlphaD3", "MediumLowCa", "MediumLowCa+MediumAlphaD3", "MediumHighCa", "MediumHighCa+MediumAlphaD3", "HighCa","HighCa+MediumAlphaD3")) )
+#plot with condensed genera into "< 1% abund" category by Treatment
+p <- ggplot(data=subset.genus.df, aes(x=reorder(Treatment, KitID), y=Abundance ,fill=genus))
+plot_abundance_ileum<- p + geom_bar(stat="identity", position="fill") + 
+  labs(title ="Taxonomic composition ileum") +
+  xlab("Treatment") +
+  ylab("Relative abundance")+
+  #stat_compare_means(method = "anova")+ 
+  theme(axis.text.x = element_text(angle = 60, hjust = 1))+
+  theme(text=element_text(size=12)) 
+
+
+#####Plot Taxonomic composition feces#####  
+#Aggregate OTUs according to genus 
+ODLEPobj_feces_glom = tax_glom(ODLEPobj_feces, taxrank="Genus", NArm=FALSE)
+#create dataframe from phyloseq object
+subset.genus.df <- psmelt(ODLEPobj_feces_glom) 
+subset.genus.df$genus <- as.character(subset.genus.df$Genus) #convert to character
+#calculate median rel. abundance
+medians <- ddply(subset.genus.df, ~genus, function(x) c(median=median(x$Abundance)))
+#calculate remainder
+remainder <- medians[medians$median <= 0.01,]$genus
+subset.genus.df[subset.genus.df$genus %in% remainder,]$genus <- "Genera < 1% abund."
+
+#Figures abundances
+subset.genus.df <- subset.genus.df %>%
+  mutate( Treatment=factor(Treatment,levels=c("LowCa", "LowCa+MediumAlphaD3", "MediumLowCa", "MediumLowCa+MediumAlphaD3", "MediumHighCa", "MediumHighCa+MediumAlphaD3", "HighCa","HighCa+MediumAlphaD3")) )
+#plot with condensed genera into "< 1% abund" category by Treatment
+p <- ggplot(data=subset.genus.df, aes(x=Treatment, y=Abundance ,fill=genus))
+plot_abundance_feces<- p + geom_bar(stat="identity", position="fill") + 
+  labs(title ="Taxonomic composition feces") +
+  xlab("Treatment") +
+  ylab("Relative abundance")+
+  #stat_compare_means(method = "anova")+ 
+  theme(axis.text.x = element_text(angle = 60, hjust = 1))+
+  theme(text=element_text(size=12)) 
+```
+
+Row {data-height=500}
+-----------------------------------------------------------------------
+### FIGURE 4-2 {data-width=1000}
+
+```{r, echo=FALSE, include=TRUE}
+ggplotly(plot_abundance_cecum) %>% partial_bundle()
+```
+
+Row {data-height=500}
+-----------------------------------------------------------------------
+### FIGURE 4-3 {data-width=1000}
+
+```{r, echo=FALSE, include=TRUE}
+ggplotly(plot_abundance_ileum) %>% partial_bundle()
+```
+Row {data-height=500}
+-----------------------------------------------------------------------
+### FIGURE 4-3 {data-width=1000}
+
+```{r, echo=FALSE, include=TRUE}
+ggplotly(plot_abundance_feces) %>% partial_bundle()
+```
+
+
+# Diversity {data-navmenu="MICROBIOME"}
+
+#### **Microbiome diversity**
+
+
+
+#### Then, we went on to evaluate diversity in the microbiome samples. Microbiome diversity can be assessed through multiple ecological indices that can be divided into two kinds of measures, alpha and beta diversity. <a href="https://en.wikipedia.org/wiki/Alpha_diversity" target="_blank">Alpha diversity</a> measures the variability of species within a sample while <a href="https://en.wikipedia.org/wiki/Beta_diversity" target="_blank">beta diversity</a> accounts for the differences in composition between samples.
+
+#### Alpha diversity 
+
+
+#### Alpha diversity analyses showed a higher diversity for cecum compared to the other gut locations, larger microbiome alpha diversity being usually associated to better health status. However, it is also normal for each region of the gut to have different ranges of richness/diversity. The cecal microbiome tends to be very rich, while the small intestines and feces usually have a smaller number of bacterial species. 
+
+#### Further alpha diversity analyses showed a few differences between treatment groups within the cecum samples and within the ileum samples. In the fecal samples there were no differences between treatments regardless of the index used. This is not uncommon; many changes in microbial diversity occur at the level of abundance, rather than richness. In other words, the types of bacteria present in a community may not change very much, but abundances of individual groups of bacteria can shift, generating changes in the ecosystem and representing the real differences between treatments. And this can not always be captured using alpha diversity calculations.
+
+Row {data-height=500}
+-----------------------------------------------------------------------
+
+### FIGURE 5 {data-width=1000}
+
+```{r , echo=FALSE}
+#alpha diversity comparing locations
+pdiv <- plot_anova_diversity_edit(ODLEPobj, method = c("richness", "shannon"),
+                                  grouping_column =  "SampleLocation", pValueCutoff=0.05) + 
+                                  xlab(NULL) + ylab(NULL) + theme(legend.position = "none")
+
+#pdiv <- annotate_figure(pdiv, top = text_grob("Alpha diversity by sample location",  color = "black", face = "bold"))
+ggplotly(pdiv) %>% partial_bundle()
+
+
+```
+
+
+Row {data-height=500}
+-----------------------------------------------------------------------
+### FIGURE 6-1
+
+```{r , echo=FALSE}
+#Alpha diversity with ANOVA separated by location 
+
+#Cecum 
+pc <-plot_anova_diversity_edit(ODLEPobj_cecum, method = c("richness", "shannon"), 
+                          grouping_column ="Treatment", 
+                          pValueCutoff=0.05)+ xlab(NULL)+ ylab(NULL)+ 
+                          theme(axis.text.x=element_blank(), axis.ticks.x=element_blank()) +
+                          labs(title ="Cecum") +theme(legend.position = "none",
+                          axis.title.y=element_text(angle = 0, vjust = .5, size = 12)) +
+                          theme(text=element_text(size=10))
+ggplotly(pc) %>% partial_bundle()
+```
+
+### FIGURE 6-2
+```{r , echo=FALSE}
+#feces
+pf <-plot_anova_diversity_edit(ODLEPobj_feces, method = c("richness", "shannon"), 
+                          grouping_column ="Treatment", 
+                          pValueCutoff=0.05)+ xlab(NULL)+ ylab(NULL)+ 
+                          theme(axis.text.x=element_blank(), axis.ticks.x=element_blank()) +
+                          labs(title ="Feces") +theme(legend.position = "none",
+                          axis.title.y=element_text(angle = 0, vjust = .5, size = 12)) +
+                          theme(text=element_text(size=10))
+ggplotly(pf) %>% partial_bundle()
+
+
+```
+
+### FIGURE 6-3
+
+```{r , echo=FALSE}
+
+#ileum
+pi <- plot_anova_diversity_edit(ODLEPobj_ileum, method = c("richness", "shannon"), 
+                          grouping_column ="Treatment", 
+                          pValueCutoff=0.05)+ xlab(NULL)+ ylab(NULL)+ 
+                          theme(axis.text.x=element_blank(), axis.ticks.x=element_blank()) +
+                          labs(title ="Ileum") +theme(legend.position = "none",
+                          axis.title.y=element_text(angle = 0, vjust = .5, size = 12)) +
+                          theme(text=element_text(size=10))
+ggplotly(pi) %>% partial_bundle()
+```
+
+#### **Beta diversity**
+
+#### Hence, we went on to evaluate those differences in bacterial abundances between the samples, this is also known as beta diversity or compositional distance. These distances are often visualized with a method called principal coordinates analysis (PCoA).  Each axis represents a combination of features (OTUs) that account for high amounts of variation between samples.  The percentage of the differences for which this combination of features accounts is shown on the axis.  Samples that are on opposite ends of an axis that accounts for 20% of variability are likely to be more different than samples that are on opposite ends of an axis that only accounts for 5% of the total variability.
+
+#### These analyses evidenced clear differentiation between samples of different gut locations (pval=0.001), which was biologically expected since different locations of the gut have different dynamics, roles and environmental conditions.
+
+```{r , include=FALSE}
+bray.dist <- phyloseq::distance(ODLEPobj, method = "bray")
+metadata <- as(sample_data(ODLEPobj), "data.frame")
+
+out.bray <- ordinate(ODLEPobj, method = "MDS", distance = "bray") 
+beta.bray = plot_ordination(ODLEPobj, out.bray, color="SampleLocation" )  
+group_location <- c("Cecal","Fecal", "Ileum") 
+colores <- c("#BA4FC8","#16DCC9", "#343aeb")
+
+plot.beta.bray <- beta.bray + geom_point(size=4, alpha=0.75, na.rm=T) +  #sobreponer un punto mas grande 
+  scale_colour_manual(values=colores, labels = group_location) + #cambiar colores y poner nombre a cada grupo en leyenda
+  ggtitle("Dissimilarity between all samples (Bray distances)") + 
+  theme(axis.text.x = element_blank(), axis.ticks = element_blank())+
+  theme(text=element_text(size=10))
+
+```
+
+Row {data-height=500}
+-----------------------------------------------------------------------
+
+
+### FIGURE 7 {data-width=1000}
+
+```{r , echo=FALSE}
+ggplotly(plot.beta.bray) %>% partial_bundle()
+
+```
+
+Row {data-height=80}
+-----------------------------------------------------------------------
+
+#### Despite the fact that the differences are not always apparent in the PCoAs, statistical significant differences were also found between the treatments within each location, including significance by calcium level and by AlphaD3 level.
+
+
+```{r, include=FALSE}
+bray.dist <- phyloseq::distance(ODLEPobj_cecum, method = "bray")
+metadata <- as(sample_data(ODLEPobj_cecum), "data.frame")
+
+out.bray <- ordinate(ODLEPobj_cecum, method = "MDS", distance = "bray") 
+beta.bray <- plot_ordination(ODLEPobj_cecum, out.bray, color="Treatment", axes=c(1, 2))  
+
+plot.beta.bray.cecum <- beta.bray + geom_point(size=4, alpha=0.75, na.rm=T) +  #sobreponer un punto mas grande 
+  labs(title = "Cecum", col= "Treatment") +  #titulo de la grafica y de la leyenda
+  theme(axis.text.x = element_blank(), axis.ticks = element_blank(), legend.position="bottom")
+#text_grob("Dissimilarity between samples by location (Bray Distance)
+
+
+#####Betadiverisity Bray Ileum#####
+bray.dist <- phyloseq::distance(ODLEPobj_ileum, method = "bray")
+
+out.bray <- ordinate(ODLEPobj_ileum, method = "MDS", distance = "bray") 
+beta.bray = plot_ordination(ODLEPobj_ileum, out.bray, color="Treatment")  
+
+plot.beta.bray.ileum <- beta.bray + geom_point(size=4, alpha=0.75, na.rm=T) +  #sobreponer un punto mas grande 
+  labs(title = "Ileum", col= "Treatment") +  #titulo de la grafica y de la leyenda
+  theme(axis.text.x = element_blank(), axis.ticks = element_blank(), legend.position="bottom")
+
+#####Betadiverisity Bray Feces#####
+bray.dist <- phyloseq::distance(ODLEPobj_feces, method = "bray")
+
+out.bray <- ordinate(ODLEPobj_feces, method = "MDS", distance = "bray") 
+beta.bray <- plot_ordination(ODLEPobj_feces, out.bray, color="Treatment")  
+
+plot.beta.bray.feces <- beta.bray + geom_point(size=4, alpha=0.75, na.rm=T) +  #sobreponer un punto mas grande 
+  labs(title = "Feces", col= "Treatment") +  #titulo de la grafica y de la leyenda
+  theme(axis.text.x = element_blank(), axis.ticks = element_blank(), legend.position="bottom")
+#plot.beta.bray.feces
+
+```
+
+Row {data-height=600}
+-----------------------------------------------------------------------
+### FIGURE 8-1
+
+```{r , echo=FALSE}
+#ggplotly(plot.beta.bray.cecum)
+figure <- ggarrange(plot.beta.bray.cecum, plot.beta.bray.ileum, plot.beta.bray.feces , 
+                    ncol = 3, nrow = 1,common.legend = TRUE,
+                    font.label = list(size = 10, color = "black", face = "bold"))
+
+annotate_figure(figure, 
+                top = text_grob("Dissimilarity between samples by location (Bray Distance)", size = 14))
+```
+
+Row {data-height=80}
+-----------------------------------------------------------------------
+
+
+Row {data-height=500}
+-----------------------------------------------------------------------
+
+```{r, include=FALSE}
+#####Betadiverisity Bray Cecum#####
+out.bray <- ordinate(ODLEPobj_cecum, method = "MDS", distance = "bray") 
+beta.bray = plot_ordination(ODLEPobj_cecum, out.bray, color="Calcium_level", axes=c(1, 2))  
+
+plot.beta.bray.cecum<-beta.bray + geom_point(size=4, alpha=0.75, na.rm=T) +  #sobreponer un punto mas grande 
+  labs(title = "Cecum", col= "Calcium_level") +  #titulo de la grafica y de la leyenda
+  theme(axis.text.x = element_blank(), axis.ticks = element_blank())
+
+#####Betadiverisity Bray Ileum#####
+out.bray <- ordinate(ODLEPobj_ileum, method = "MDS", distance = "bray") 
+beta.bray<-plot_ordination(ODLEPobj_ileum, out.bray, color="Calcium_level")  
+
+plot.beta.bray.ileum<-beta.bray + geom_point(size=4, alpha=0.75, na.rm=T) +  #sobreponer un punto mas grande 
+  labs(title = "Ileum", col= "Calcium_level") +  #titulo de la grafica y de la leyenda
+  theme(axis.text.x = element_blank(), axis.ticks = element_blank())
+
+#####Betadiverisity Bray Feces#####
+out.bray <- ordinate(ODLEPobj_feces, method = "MDS", distance = "bray") 
+beta.bray<-plot_ordination(ODLEPobj_feces, out.bray, color="Calcium_level")  
+
+plot.beta.bray.feces<-beta.bray + geom_point(size=4, alpha=0.75, na.rm=T) +  #sobreponer un punto mas grande 
+  labs(title = "Feces", col= "Calcium_level") +  #titulo de la grafica y de la leyenda
+  theme(axis.text.x = element_blank(), axis.ticks = element_blank())
+
+```
+
+### FIGURE 9
+
+```{r , echo=FALSE}
+figure <- ggarrange(plot.beta.bray.cecum, plot.beta.bray.ileum, plot.beta.bray.feces , 
+                    ncol = 3, nrow = 1,common.legend = TRUE,
+                    font.label = list(size = 10, color = "black", face = "bold"))#, family = NULL))
+
+annotate_figure(figure, 
+                top = text_grob("Dissimilarity between samples by location (Bray Distance)", size = 14))
+```
+
+Row {data-height=100}
+-----------------------------------------------------------------------
+
+
+Row {data-height=500}
+-----------------------------------------------------------------------
+
+```{r, include=FALSE}
+#####Betadiverisity Bray Cecum#####
+out.bray <- ordinate(ODLEPobj_cecum, method = "MDS", distance = "bray") 
+beta.bray = plot_ordination(ODLEPobj_cecum, out.bray, color="Alphad3level", axes=c(1, 2))  
+
+plot.beta.bray.cecum = beta.bray + geom_point(size=4, alpha=0.75, na.rm=T) +  #sobreponer un punto mas grande 
+  labs(title = "Cecum", col= "Alphad3level") +  #titulo de la grafica y de la leyenda
+  theme(axis.text.x = element_blank(), axis.ticks = element_blank())
+
+
+#####Betadiverisity Bray Ileum#####
+out.bray <- ordinate(ODLEPobj_ileum, method = "MDS", distance = "bray") 
+beta.bray = plot_ordination(ODLEPobj_ileum, out.bray, color="Alphad3level")  
+
+plot.beta.bray.ileum = beta.bray + geom_point(size=4, alpha=0.75, na.rm=T) +  #sobreponer un punto mas grande 
+  labs(title = "Ileum", col= "Alphad3level") +  #titulo de la grafica y de la leyenda
+  theme(axis.text.x = element_blank(), axis.ticks = element_blank())
+
+#####Betadiverisity Bray Feces#####
+out.bray <- ordinate(ODLEPobj_feces, method = "MDS", distance = "bray") 
+beta.bray = plot_ordination(ODLEPobj_feces, out.bray, color="Alphad3level")  
+
+plot.beta.bray.feces = beta.bray + geom_point(size=4, alpha=0.75, na.rm=T) +  #sobreponer un punto mas grande 
+  labs(title = "Feces", col= "Alphad3level") +  #titulo de la grafica y de la leyenda
+  theme(axis.text.x = element_blank(), axis.ticks = element_blank())
+
+```
+
+### FIGURE 10
+
+```{r , echo=FALSE}
+figure <- ggarrange(plot.beta.bray.cecum, plot.beta.bray.ileum, plot.beta.bray.feces , 
+                    ncol = 3, nrow = 1,common.legend = TRUE,
+                    font.label = list(size = 10, color = "black", face = "bold"))#, family = NULL))
+
+annotate_figure(figure, 
+                top = text_grob("Dissimilarity between samples by location (Bray Distance)", size = 14))
+
+```
+
+Row {data-height=100}
+-----------------------------------------------------------------------
+# Differential Abundance {data-navmenu="MICROBIOME"}
+
+#### **Microbiome Differential Abundance Analysis**
+
+#### After comparing the grouping of samples by composition distances evidencing general trends in composition between treatments, we went on to look at methods to identify more specific changes. Microbiome data can be filtered, merged, and subset to make specific comparisons between any two groups, and at any taxonomic level. This with the goal to identify features (i.e., species, OTUs, gene families, etc.) that differ in abundance between two groups of samples according to their treatment. We combine here two methods (<a href="https://genomebiology.biomedcentral.com/articles/10.1186/gb-2010-11-10-r106" target="_blank">DESeq</a> and <a href="https://www.nature.com/articles/s41467-020-17041-7" target="_blank">ANCOMBC</a>)by using both, we can identify the features that are identified as significant by both methods giving us higher confidence in the importance of these features.
+
+#### **Comparisons between presence and absence of AlphaD3**
+
+#### Here we compare two groups: one without alpha-D3 and one with alpha-D3, regardless of calcium level.
+#### In the following graphs we can see the features that are differentially abundant in the presence of AlphaD3 compared to the absence of AlphaD3. Hint: when dots are to the left it means these groups are more abundant in presence of AlphaD3. When points are to the right these groups are more prevalent in absence of AlphaD3
+
+```{r , echo=FALSE}
+library(DESeq2)
+```
+
+# Metabolic information of bacteria {data-navmenu="MICROBIOME"}
+```{r , echo=FALSE}
+species_taxonomy_info <-
+  read.csv(file = "/Users/dvarelat/Documents/SIWA/Reports/Version1.0/species_metabolic_effects.csv",
+           check.names = FALSE,
+           sep = ";")
+genera_taxonomy_info <-
+  read.csv(file = "/Users/dvarelat/Documents/SIWA/Reports/Version1.0/genus_metabolic_effects.csv",
+           check.names = FALSE,
+           sep = ";")
+genera_taxonomy_info$Species <- "All species"
+df=  rbind(species_taxonomy_info,genera_taxonomy_info)
+df=df[c("Genus","Species","Key_Findings", "Probiotic_potential", "Takeaways")]
+
+library(DT)
+DT::datatable(df,
+  rownames = FALSE, options = list(pageLength = 10)
+)
+
+library(rmarkdown)
+library(RCurl)
+
+render("/Users/dvarelat/Documents/SIWA/Reportes/335_MARIA/testingStyles.Rmd",
+       output_format = "html_document",
+       output_options = c("self_contained = TRUE"),
+       quiet = TRUE)
+
+ftpUpload("/Users/dvarelat/Documents/SIWA/Reportes/335_MARIA/testingStyles.html",
+          "ftp://user:password@https://siwareports.s3.amazonaws.com/testingStyles.html")
+
+```
+
+
+
+
+
+# Histopathology {data-icon="fa-table"}
+
+
+
+```{r}
+```
+
+# Gene Expression  {data-icon="fa-table"}
+
+
+
+```{r}
+```
+
+
+# Cross-Panel Analysis   {data-icon="fa-table"}
+
+
+### Chart 1
+    
+```{r}
+```
+    
+### Chart 2
+
+```{r}
+```
+   
+
+```{r}
+```
+
+
+
