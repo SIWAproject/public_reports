@@ -699,16 +699,6 @@ DT::datatable(df,
   rownames = FALSE, options = list(pageLength = 10)
 )
 
-library(rmarkdown)
-library(RCurl)
-
-render("/Users/dvarelat/Documents/SIWA/Reportes/335_MARIA/testingStyles.Rmd",
-       output_format = "html_document",
-       output_options = c("self_contained = TRUE"),
-       quiet = TRUE)
-
-ftpUpload("/Users/dvarelat/Documents/SIWA/Reportes/335_MARIA/testingStyles.html",
-          "ftp://user:password@https://siwareports.s3.amazonaws.com/testingStyles.html")
 
 ```
 
