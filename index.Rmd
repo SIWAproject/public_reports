@@ -1267,7 +1267,7 @@ Row {data-height=500}
 meanscec <- aggregate(RQ_IL1B_log ~  Treatment, cec, mean)
 cec <- cec %>%
   mutate( Treatment=factor(Treatment,levels=c("LowCa", "LowCa+MediumAlphaD3", "MediumLowCa", "MediumLowCa+MediumAlphaD3", "MediumHighCa", "MediumHighCa+MediumAlphaD3", "HighCa","HighCa+MediumAlphaD3")) )
-plot1 <- ggplot(cec, aes(x = Treatment, y = round(RQ_IL1B_log, digits = 0), fill = Treatment)) +
+plot1 <- ggplot(cec, aes(x = Treatment, y = round(RQ_IL1B_log), fill = Treatment)) +
   geom_violin() + #geom_boxplot()+  #or geom_violin() + 
   ylab("Log-fold-change") +  geom_hline(yintercept=0, linetype="dashed") + 
   theme(legend.position = "none") +
@@ -1277,7 +1277,8 @@ plot1 <- ggplot(cec, aes(x = Treatment, y = round(RQ_IL1B_log, digits = 0), fill
   geom_text(data = meanscec, aes(label = round(RQ_IL1B_log, 2), y = RQ_IL1B_log + 0.2), 
             position = position_dodge(width = 1), vjust = -0.5, size = 4)+
   coord_cartesian(ylim =  c(-8, 8))+
-  geom_text(data = IL1B_cec, aes(x = Treatment, y = 6, label = IL1B_cec), size = 1) 
+  geom_text(data = IL1B_cec, aes(x = Treatment, y = 6, label = IL1B_cec), size = 5) 
+  
 plot1
 #ggplotly(plot1)
 ```
@@ -1303,7 +1304,7 @@ plot1
 
 ### FIGURE 14C: Cecum - MUC2
 
-```{r , echo=FALSE}
+```{r 14c, echo=FALSE}
 meanscec <- aggregate(RQ_MUC2_log ~  Treatment, cec, mean)
 plot1 <- ggplot(cec, aes(x = Treatment, y = RQ_MUC2_log, fill = Treatment)) +
   geom_violin() + #geom_boxplot()+  #or geom_violin()
@@ -1316,7 +1317,6 @@ plot1 <- ggplot(cec, aes(x = Treatment, y = RQ_MUC2_log, fill = Treatment)) +
   geom_text(data = meanscec, aes(label = round(RQ_MUC2_log,2), y = RQ_MUC2_log + 0.2), 
             position = position_dodge(width = 1),vjust = -0.5, size = 4)+
   coord_cartesian(ylim =  c(-6, 6))+
-  ggtitle("Cecum MUC2")+
   geom_text(data = MUC2_cec, aes(x = Treatment, y = 5, label = MUC2_cec), size = 5)
 plot1 
 ```
@@ -1325,13 +1325,13 @@ Row {data-height=500}
 -----------------------------------------------------------------------
 ### FIGURE 15A: Ileum - IL1B
 
-```{r Gene expression plots ile il1b ,fig.width = 10, fig.height = 8, echo=FALSE, warning=FALSE}
+```{r Gene expression plots ile il1b, echo=FALSE, warning=FALSE}
 #ileum (plots with letters for statistics)
 meansile <- aggregate(RQ_IL1B_log ~  Treatment, il, mean)
 il <- il %>%
   mutate( Treatment=factor(Treatment,levels=c("LowCa", "LowCa+MediumAlphaD3", "MediumLowCa", "MediumLowCa+MediumAlphaD3", "MediumHighCa", "MediumHighCa+MediumAlphaD3", "HighCa","HighCa+MediumAlphaD3")) )
 
-plot1 <- ggplot(il, aes(x = Treatment, y = RQ_IL1B_log, fill = Treatment)) +
+plot1 <- ggplot(il, aes(x = Treatment, y = RQ_MUC2_log, fill = Treatment)) +
   geom_violin() + #geom_boxplot()+  #or geom_violin()
   xlab("") + 
   ylab("Log-fold-change") +  geom_hline(yintercept=0, linetype="dashed") + 
@@ -1339,17 +1339,16 @@ plot1 <- ggplot(il, aes(x = Treatment, y = RQ_IL1B_log, fill = Treatment)) +
   geom_jitter(color="black", size=0.4, alpha=0.9) +
   theme(axis.text.x = element_text(angle = 60, hjust = 1))+
   stat_summary(fun=mean, geom="point", size=2, color="red", fill="red")+ 
-  geom_text(data = meansile, aes(label = round(RQ_IL1B_log,2), y = RQ_IL1B_log + 0.2), 
+  geom_text(data = meanscec, aes(label = round(RQ_MUC2_log,2), y = RQ_MUC2_log + 0.2), 
             position = position_dodge(width = 1),vjust = -0.5, size = 4)+
-  coord_cartesian(ylim =  c(-6, 8))+
-  ggtitle("Ileum IL1B")+
-  geom_text(data = IL1B_ile, aes(x = Treatment, y = 7, label = IL1B_ile), size = 5)
-plot1 
+  coord_cartesian(ylim =  c(-5, 7)) +
+  geom_text(data = IL10_ile, aes(x = Treatment, y = 5, label = IL10_ile), size = 5)
+plot1
 ```
 
 ### FIGURE 15B: Ileum - IL10
 
-```{r Gene expression plots ile il10 ,fig.width = 10, fig.height = 8, echo=FALSE, warning=FALSE}
+```{r Gene expression plots ile il10, echo=FALSE, warning=FALSE}
 meansile <- aggregate(RQ_IL10_log ~  Treatment, il, mean)
 plot1 <- ggplot(il, aes(x = Treatment, y = RQ_IL10_log, fill = Treatment)) +
   geom_violin() + #geom_boxplot()+  #or geom_violin()
@@ -1362,14 +1361,13 @@ plot1 <- ggplot(il, aes(x = Treatment, y = RQ_IL10_log, fill = Treatment)) +
   geom_text(data = meansile, aes(label = round(RQ_IL10_log,2), y = RQ_IL10_log + 0.2), 
             position = position_dodge(width = 1),vjust = -0.5, size = 4)+
   coord_cartesian(ylim =  c(-1, 1.6))+
-  ggtitle("Ileum IL10")+
   geom_text(data = IL10_ile, aes(x = Treatment, y = 1.5, label = IL10_ile), size = 5)
 plot1 
 ```
 
 ### FIGURE 15C: Ileum - MUC2
 
-```{r Gene expression plots ile muc2 ,fig.width = 10, fig.height = 8, echo=FALSE, warning=FALSE}
+```{r Gene expression plots ile muc2, echo=FALSE, warning=FALSE}
 meansile <- aggregate(RQ_MUC2_log ~  Treatment, il, mean)
 plot1 <- ggplot(il, aes(x =Treatment, y = RQ_MUC2_log, fill = Treatment)) +
   geom_violin() + #geom_boxplot()+  #or geom_violin()
@@ -1382,8 +1380,8 @@ plot1 <- ggplot(il, aes(x =Treatment, y = RQ_MUC2_log, fill = Treatment)) +
   geom_text(data = meansile, aes(label = round(RQ_MUC2_log,2), y = RQ_MUC2_log + 0.2), 
             position = position_dodge(width = 1),vjust = -0.5, size = 4)+
   coord_cartesian(ylim =  c(-4, 2.3))+
-  ggtitle("Ileum MUC2")+
   geom_text(data = MUC2_ile, aes(x = Treatment, y = 2, label = MUC2_ile), size = 5)
+  
 plot1 
 
 ```
