@@ -4,8 +4,8 @@ output:
   flexdashboard::flex_dashboard:
     output_dir: docs
     orientation: rows
-    source_code: embed
     vertical_layout: scroll
+    source_code: embed
     css: style.css
     mathjax: NULL
     self_contained: FALSE
@@ -59,10 +59,10 @@ library(plyr)
 library(flexdashboard)
 library(shiny)
 library(DT)
+library(stringr)
 
 ## FUNCTIONS
 source("/Users/dvarelat/Documents/SIWA/Methods-review/functions.R")
-
 
 ```
 
@@ -112,8 +112,10 @@ knitr::include_graphics("diagram_E335.png")
 ```{r Explore and filter Phyloseq Object, include=FALSE}
 
 #Explore Phylosec object....
-### OJO -->> REEMPLAZAR ALPHAD3 NAME
-sample_data(ODLEPobj)$Treatment <- as.factor(str_replace(sample_data(ODLEPobj)$Treatment, "AlphaD3","VitD"))
+### OJO -->> REEMPLAZAR VitD NAME
+sample_data(ODLEPobj)$Treatment <- as.factor(stringr::str_replace(sample_data(ODLEPobj)$Treatment, "AlphaD3","VitD"))
+sample_data(ODLEPobj)$VitDLevel <- as.factor(sample_data(ODLEPobj)$Alphalevel)
+sample_data(ODLEPobj)$VitDLevel_label <- as.factor(sample_data(ODLEPobj)$Alphad3level)
 
 #Subset phyloseq object to include only wanted treatments 
 ODLEPobj <- subset_samples(ODLEPobj, TreatmentNumber%in%c("1","2","3","4","5","6","7","8"))
@@ -168,8 +170,6 @@ The sequencing process identified more than 1300 unique sequences, and as expect
 
 ### FIGURE 1:Prevalence of OTUs in samples {data-width=700}
 ```{r Prevalence Plot, fig.height = 4, fig.width= 5, echo=FALSE}
-#ODLEPobj_rel <- microbiome::transform(ODLEPobj, "compositional")
-#ntaxa(ODLEPobj_rel)
 
 #OPTIONAL: OTUs of interest to highlight in the plot (add to the list the otu or otus of interest you want to highlight in the plot)
 otus_of_interest= list()
@@ -335,12 +335,13 @@ pseq.rel <- microbiome::transform(ODLEPobj, "compositional")
 flist    <- filterfun(kOverA(5, 2e-05))
 ODLEPobjRelFilter =  filter_taxa(pseq.rel, flist, TRUE)
 p <- plot_taxa_prevalence(ODLEPobjRelFilter, "Phylum")
-
+p <- p + theme(legend.position='none')
 ggplotly(p) %>% 
  layout( 
  xaxis = list(automargin=TRUE), 
  yaxis = list(automargin=TRUE)
- ) %>% partial_bundle()
+ ) %>% 
+  style(hoverinfo = 'none') %>% partial_bundle() 
 
 
 ```
@@ -354,9 +355,6 @@ Next, we observe the distribution of taxa at the family level within each sample
 ### FIGURE 3: Family distribution by sample locations {data-width=800}
 ```{r Family distribution, echo=FALSE}
 #Family ditribution
-
-#ps.com.fam <- ranomaly::aggregate_top_taxa(ODLEPobjRelFilter,top = 8, "Family")
-#ps.com.fam <- microbiome::aggregate_taxa(ODLEPobjRelFilter, "Family", top= 12)
 ps.com.fam <- microbiomeutilities::aggregate_top_taxa2(ODLEPobjRelFilter,top = 8, "Family" )
 
 ps_df <- microbiomeutilities::phy_to_ldf(ps.com.fam, transform.counts = "compositional")
@@ -371,7 +369,8 @@ ggplotly(p) %>%
  layout( 
  xaxis = list(automargin=TRUE), 
  yaxis = list(automargin=TRUE)
- ) %>% partial_bundle()
+ ) %>% 
+  style(hoverinfo = 'none') %>% partial_bundle()
 
 ```
 
@@ -388,7 +387,7 @@ In the following interactive graphs we can view the main genera present in the t
 ```{r  Taxonomic composition , include=FALSE, warning=FALSE}
 #####Plot Taxonomic composition feces#####  
 #Aggregate OTUs according to genus 
-ODLEPobj_cecum_glom = tax_glom(ODLEPobj_cecum, taxrank="Genus", NArm=FALSE)
+ODLEPobj_cecum_glom <- tax_glom(ODLEPobj_cecum, taxrank="Genus", NArm=FALSE)
 #create dataframe from phyloseq object
 subset.genus.df <- psmelt(ODLEPobj_cecum_glom) 
 subset.genus.df$genus <- as.character(subset.genus.df$Genus) #convert to character
@@ -400,7 +399,7 @@ subset.genus.df[subset.genus.df$genus %in% remainder,]$genus <- "Genera < 1% abu
 
 #Figures abundances
 subset.genus.df <- subset.genus.df %>%
-  mutate( Treatment=factor(Treatment,levels=c("LowCa", "LowCa+MediumAlphaD3", "MediumLowCa", "MediumLowCa+MediumAlphaD3", "MediumHighCa", "MediumHighCa+MediumAlphaD3", "HighCa","HighCa+MediumAlphaD3")) )
+  mutate( Treatment=factor(Treatment,levels=c("LowCa", "LowCa+MediumVitD", "MediumLowCa", "MediumLowCa+MediumVitD", "MediumHighCa", "MediumHighCa+MediumVitD", "HighCa","HighCa+MediumVitD")) )
 #plot with condensed genera into "< 1% abund" category by Treatment
 plot_abundance_cecum<- ggplot(subset.genus.df, aes(x = Treatment, y = Abundance, fill = genus)) +
   geom_bar(stat="identity", position="fill") + 
@@ -410,7 +409,6 @@ plot_abundance_cecum<- ggplot(subset.genus.df, aes(x = Treatment, y = Abundance,
   theme(axis.text.x = element_text(angle = 60, hjust = 1))+
   theme(text=element_text(size=12)) 
 
-  
 
 #####Plot Taxonomic composition ileum#####  
 #Aggregate OTUs according to genus 
@@ -426,7 +424,7 @@ subset.genus.df[subset.genus.df$genus %in% remainder,]$genus <- "Genera < 1% abu
 
 #Figures abundances
 subset.genus.df <- subset.genus.df %>%
-  mutate( Treatment=factor(Treatment,levels=c("LowCa", "LowCa+MediumAlphaD3", "MediumLowCa", "MediumLowCa+MediumAlphaD3", "MediumHighCa", "MediumHighCa+MediumAlphaD3", "HighCa","HighCa+MediumAlphaD3")) )
+  mutate( Treatment=factor(Treatment,levels=c("LowCa", "LowCa+MediumVitD", "MediumLowCa", "MediumLowCa+MediumVitD", "MediumHighCa", "MediumHighCa+MediumVitD", "HighCa","HighCa+MediumVitD")) )
 #plot with condensed genera into "< 1% abund" category by Treatment
 p <- ggplot(data=subset.genus.df, aes(x=reorder(Treatment, KitID), y=Abundance ,fill=genus))
 plot_abundance_ileum<- p + geom_bar(stat="identity", position="fill") + 
@@ -451,7 +449,7 @@ subset.genus.df[subset.genus.df$genus %in% remainder,]$genus <- "Genera < 1% abu
 
 #Figures abundances
 subset.genus.df <- subset.genus.df %>%
-  mutate( Treatment=factor(Treatment,levels=c("LowCa", "LowCa+MediumAlphaD3", "MediumLowCa", "MediumLowCa+MediumAlphaD3", "MediumHighCa", "MediumHighCa+MediumAlphaD3", "HighCa","HighCa+MediumAlphaD3")) )
+  mutate( Treatment=factor(Treatment,levels=c("LowCa", "LowCa+MediumVitD", "MediumLowCa", "MediumLowCa+MediumVitD", "MediumHighCa", "MediumHighCa+MediumVitD", "HighCa","HighCa+MediumVitD")) )
 #plot with condensed genera into "< 1% abund" category by Treatment
 p <- ggplot(data=subset.genus.df, aes(x=Treatment, y=Abundance ,fill=genus))
 plot_abundance_feces<- p + geom_bar(stat="identity", position="fill") + 
@@ -460,6 +458,7 @@ plot_abundance_feces<- p + geom_bar(stat="identity", position="fill") +
   #stat_compare_means(method = "anova")+ 
   theme(axis.text.x = element_text(angle = 60, hjust = 1))+
   theme(text=element_text(size=12)) 
+
 ```
 
 Row {data-height=500}
@@ -467,11 +466,10 @@ Row {data-height=500}
 ### FIGURE 4A: Taxonomic composition CECUM {data-width=1000}
 ```{r, echo=FALSE, include=TRUE}
 
-ggplotly(plot_abundance_cecum) %>% 
- layout( 
- xaxis = list(automargin=TRUE), 
- yaxis = list(automargin=TRUE)
- ) %>% partial_bundle()
+ggplotly(plot_abundance_cecum) %>%
+  layout(xaxis = list(automargin = TRUE),
+         yaxis = list(automargin = TRUE)) %>%
+  style(hoverinfo = 'none') %>% partial_bundle()
 
 #ggplotly(plot_abundance_cecum) %>% partial_bundle()
 ```
@@ -480,14 +478,20 @@ Row {data-height=500}
 -----------------------------------------------------------------------
 ### FIGURE 4B: Taxonomic composition ILEUM {data-width=1000}
 ```{r, echo=FALSE, include=TRUE}
-ggplotly(plot_abundance_ileum) %>% partial_bundle()
+ggplotly(plot_abundance_ileum) %>%
+  layout(xaxis = list(automargin = TRUE),
+         yaxis = list(automargin = TRUE)) %>%
+  style(hoverinfo = 'none') %>% partial_bundle()
 ```
 
 Row {data-height=500}
 -----------------------------------------------------------------------
 ### FIGURE 4C: Taxonomic composition FECES {data-width=1000}
 ```{r, echo=FALSE, include=TRUE}
-ggplotly(plot_abundance_feces) %>% partial_bundle()
+ggplotly(plot_abundance_feces) %>%
+  layout(xaxis = list(automargin = TRUE),
+         yaxis = list(automargin = TRUE)) %>%
+  style(hoverinfo = 'none') %>% partial_bundle()
 ```
 
 
@@ -716,18 +720,28 @@ plot.beta.bray.feces<-beta.bray + geom_point(size=4, alpha=0.75, na.rm=T) +  #so
 ### FIGURE 9A: Beta div Cecum (Calcium)
 
 ```{r , echo=FALSE}
-ggplotly(plot.beta.bray.cecum)
+ggplotly(plot.beta.bray.cecum)%>%
+  layout(xaxis = list(automargin = TRUE),
+         yaxis = list(automargin = TRUE)) %>%
+  style(hoverinfo = 'none') %>% partial_bundle()
 ```
 
 ### FIGURE 9B: Beta div Ileum (Calcium)
 ```{r , echo=FALSE}
-ggplotly(plot.beta.bray.ileum)
+ggplotly(plot.beta.bray.ileum) %>%
+  layout(xaxis = list(automargin = TRUE),
+         yaxis = list(automargin = TRUE)) %>%
+  style(hoverinfo = 'none') %>% partial_bundle()
+
 ```
 
 ### FIGURE 9C: Beta div Feces (Calcium)
 
 ```{r , echo=FALSE}
-ggplotly(plot.beta.bray.feces)
+ggplotly(plot.beta.bray.feces) %>%
+  layout(xaxis = list(automargin = TRUE),
+         yaxis = list(automargin = TRUE)) %>%
+  style(hoverinfo = 'none') %>% partial_bundle()
 ```
 
 Row {data-height=40}
@@ -741,30 +755,29 @@ Row {data-height=500}
 #####Betadiverisity Bray Cecum#####
 #Ordination beta
 out.bray <- ordinate(ODLEPobj_cecum, method = "MDS", distance = "bray") 
-beta.bray = plot_ordination(ODLEPobj_cecum, out.bray, color="Alphad3level", axes=c(1, 2))  
+beta.bray <- plot_ordination(ODLEPobj_cecum, out.bray, color="VitDLevel_label", axes=c(1, 2))  
 
 plot.beta.bray.cecum = beta.bray + geom_point(size=4, alpha=0.75, na.rm=T) +  #sobreponer un punto mas grande 
-  labs(col= "Alphad3level") +  #titulo de la grafica y de la leyenda
+  labs(col= "VitDLevel") +  #titulo de la grafica y de la leyenda
   theme(axis.text.x = element_blank(), axis.ticks = element_blank(), legend.position="bottom")
-
 
 #####Betadiverisity Bray Ileum#####
 #Ordination beta
 out.bray <- ordinate(ODLEPobj_ileum, method = "MDS", distance = "bray") 
-beta.bray = plot_ordination(ODLEPobj_ileum, out.bray, color="Alphad3level")  
+beta.bray = plot_ordination(ODLEPobj_ileum, out.bray, color="VitDLevel_label")  
 
 plot.beta.bray.ileum = beta.bray + geom_point(size=4, alpha=0.75, na.rm=T) +  #sobreponer un punto mas grande 
-  labs(col= "Alphad3level") +  #titulo de la grafica y de la leyenda
+  labs(col= "VitDLevel") +  #titulo de la grafica y de la leyenda
   theme(axis.text.x = element_blank(), axis.ticks = element_blank(), legend.position="bottom")
 #plot.beta.bray.ileum
 
 #####Betadiverisity Bray Feces#####
 #Ordination beta
 out.bray <- ordinate(ODLEPobj_feces, method = "MDS", distance = "bray") 
-beta.bray = plot_ordination(ODLEPobj_feces, out.bray, color="Alphad3level")  
+beta.bray = plot_ordination(ODLEPobj_feces, out.bray, color="VitDLevel_label")  
 
 plot.beta.bray.feces = beta.bray + geom_point(size=4, alpha=0.75, na.rm=T) +  #sobreponer un punto mas grande 
-  labs(col= "Alphad3level") +  #titulo de la grafica y de la leyenda
+  labs(col= "VitDlevel") +  #titulo de la grafica y de la leyenda
   theme(axis.text.x = element_blank(), axis.ticks = element_blank(), legend.position="bottom")
 #plot.beta.bray.feces
 ```
@@ -772,18 +785,18 @@ plot.beta.bray.feces = beta.bray + geom_point(size=4, alpha=0.75, na.rm=T) +  #s
 ### FIGURE 10A: Beta div Cecum (VitD)
 
 ```{r , echo=FALSE}
-ggplotly(plot.beta.bray.cecum)
+plot.beta.bray.cecum 
 ```
 
 ### FIGURE 10B: Beta div Ileum (VitD)
 ```{r , echo=FALSE}
-ggplotly(plot.beta.bray.ileum)
+plot.beta.bray.ileum
 ```
 
 ### FIGURE 10C: Beta div Feces (VitD)
 
 ```{r , echo=FALSE}
-ggplotly(plot.beta.bray.feces)
+plot.beta.bray.feces
 ```
 
 Row {data-height=30}
@@ -877,8 +890,15 @@ colnames(df)[3] <- "Key_Findings"
 colnames(df)[4] <- "Probiotic_Potential"
 colnames(df)[5] <- "Proven_Traits"
 
-DT::datatable(df,
+brks <- quantile(df$Probiotic_Potential, probs = seq(.05, .95, .05), na.rm = TRUE)
+#clrs <- round(seq(255, 40, length.out = length(brks) + 1), 0) %>% {paste0("rgb(255,", ., ",", ., ")")}
+ramp <- colorRampPalette(c("#cb766e", "#a3d291"))
+clrs <- ramp(length(brks)+1)
+DT::datatable(df %>% select(-Key_Findings),
   rownames = FALSE, options = list(pageLength = 10)
+) %>% formatStyle(
+  'Probiotic_Potential',
+  backgroundColor = styleInterval(brks, clrs)
 )
 ```
 
@@ -908,7 +928,7 @@ DT::datatable(df_2,   height = 1000,
 <div style="text-align: justify">
 We evaluated the physical structures of the intestinal tract tissue to understand the impact of calcium levels on gastrointestinal inflammation and integrity. We employ a scoring system that allows for semi-quantitative analysis of the integrity and inflammatory status of the gut. A score of 0 indicates a normal, healthy gut with no appearance of damage or aberration. A score of 5 for a given metric indicates extreme damage or aberration in the traits being evaluated.
 
-The treatment with recommended levels of Ca (2) with AlphaD3 showed better gastrointestinal tissue health compared to the rest of the groups, particularly those with higher levels of calcium.
+The treatment with recommended levels of Ca (2) with VitD showed better gastrointestinal tissue health compared to the rest of the groups, particularly those with higher levels of calcium.
 
 **Traits evaluated**
 
@@ -943,13 +963,13 @@ histo <- histo %>%
 
 histo <- histo %>% 
   mutate(Treatment = if_else(KitID == 70, "LowCa", 
-                                ifelse(KitID == 71, "LowCa+MediumAlphaD3",
+                                ifelse(KitID == 71, "LowCa+MediumVitD",
                                        ifelse(KitID == 72, "MediumLowCa",
-                                              ifelse(KitID == 73, "MediumLowCa+MediumAlphaD3",
+                                              ifelse(KitID == 73, "MediumLowCa+MediumVitD",
                                                      ifelse(KitID == 74, "MediumHighCa",
-                                                            ifelse(KitID == 75, "MediumHighCa+MediumAlphaD3",
+                                                            ifelse(KitID == 75, "MediumHighCa+MediumVitD",
                                                                    ifelse(KitID == 76, "HighCa",
-                                                                          ifelse(KitID == 77, "HighCa+MediumAlphaD3","other")))))))))
+                                                                          ifelse(KitID == 77, "HighCa+MediumVitD","other")))))))))
 
 
 
@@ -1039,7 +1059,7 @@ for (i in 1:length(dff)){
 dfff <- do.call(rbind, listDF)
 
 dfff <- dfff %>%
-  mutate( Treatment=factor(Treatment,levels=c("LowCa", "LowCa+MediumAlphaD3", "MediumLowCa", "MediumLowCa+MediumAlphaD3", "MediumHighCa", "MediumHighCa+MediumAlphaD3", "HighCa","HighCa+MediumAlphaD3")) )
+  mutate( Treatment=factor(Treatment,levels=c("LowCa", "LowCa+MediumVitD", "MediumLowCa", "MediumLowCa+MediumVitD", "MediumHighCa", "MediumHighCa+MediumVitD", "HighCa","HighCa+MediumVitD")) )
 
 treatments_cecum <- ggplot(dfff, aes(fill = ScoreCategory, y =mean , x =Treatment)) + 
   ylab("Mean Score") + xlab("") + 
@@ -1078,7 +1098,7 @@ for (i in 1:length(dff)){
 dfff <- do.call(rbind, listDF)
 
 dfff <- dfff %>%
-  mutate( Treatment=factor(Treatment,levels=c("LowCa", "LowCa+MediumAlphaD3", "MediumLowCa", "MediumLowCa+MediumAlphaD3", "MediumHighCa", "MediumHighCa+MediumAlphaD3", "HighCa","HighCa+MediumAlphaD3")) )
+  mutate( Treatment=factor(Treatment,levels=c("LowCa", "LowCa+MediumVitD", "MediumLowCa", "MediumLowCa+MediumVitD", "MediumHighCa", "MediumHighCa+MediumVitD", "HighCa","HighCa+MediumVitD")) )
 
 treatments_ileum <- ggplot(dfff, aes(fill = ScoreCategory, y =mean , x = Treatment)) + 
   ylab("Mean Score") + xlab("") + 
@@ -1121,12 +1141,12 @@ GENE <- complete_sample_table
 #Add treatments and treatment numbers (1-8)
 GENE <- GENE %>% 
   mutate(Treatment = if_else(KitID == 70, "LowCa", 
-                             ifelse(KitID == 71, "LowCa+MediumAlphaD3",
+                             ifelse(KitID == 71, "LowCa+MediumVitD",
                                     ifelse(KitID == 72, "MediumLowCa",
-                                           ifelse(KitID == 73, "MediumLowCa+MediumAlphaD3",
+                                           ifelse(KitID == 73, "MediumLowCa+MediumVitD",
                                                   ifelse(KitID == 74, "MediumHighCa",
-                                                         ifelse(KitID == 75, "MediumHighCa+MediumAlphaD3",
-                                                                ifelse(KitID == 76, "HighCa","HighCa+MediumAlphaD3"))))))))
+                                                         ifelse(KitID == 75, "MediumHighCa+MediumVitD",
+                                                                ifelse(KitID == 76, "HighCa","HighCa+MediumVitD"))))))))
 
 
 
@@ -1266,7 +1286,7 @@ Row {data-height=500}
 ```{r , echo=FALSE}
 meanscec <- aggregate(RQ_IL1B_log ~  Treatment, cec, mean)
 cec <- cec %>%
-  mutate( Treatment=factor(Treatment,levels=c("LowCa", "LowCa+MediumAlphaD3", "MediumLowCa", "MediumLowCa+MediumAlphaD3", "MediumHighCa", "MediumHighCa+MediumAlphaD3", "HighCa","HighCa+MediumAlphaD3")) )
+  mutate( Treatment=factor(Treatment,levels=c("LowCa", "LowCa+MediumVitD", "MediumLowCa", "MediumLowCa+MediumVitD", "MediumHighCa", "MediumHighCa+MediumVitD", "HighCa","HighCa+MediumVitD")) )
 plot1 <- ggplot(cec, aes(x = Treatment, y = round(RQ_IL1B_log), fill = Treatment)) +
   geom_violin() + #geom_boxplot()+  #or geom_violin() + 
   ylab("Log-fold-change") +  geom_hline(yintercept=0, linetype="dashed") + 
@@ -1329,7 +1349,7 @@ Row {data-height=500}
 #ileum (plots with letters for statistics)
 meansile <- aggregate(RQ_IL1B_log ~  Treatment, il, mean)
 il <- il %>%
-  mutate( Treatment=factor(Treatment,levels=c("LowCa", "LowCa+MediumAlphaD3", "MediumLowCa", "MediumLowCa+MediumAlphaD3", "MediumHighCa", "MediumHighCa+MediumAlphaD3", "HighCa","HighCa+MediumAlphaD3")) )
+  mutate( Treatment=factor(Treatment,levels=c("LowCa", "LowCa+MediumVitD", "MediumLowCa", "MediumLowCa+MediumVitD", "MediumHighCa", "MediumHighCa+MediumVitD", "HighCa","HighCa+MediumVitD")) )
 
 plot1 <- ggplot(il, aes(x = Treatment, y = RQ_MUC2_log, fill = Treatment)) +
   geom_violin() + #geom_boxplot()+  #or geom_violin()
@@ -2077,17 +2097,12 @@ Lactobacillus can account for as much as 90% of sequenced bacteria in the ileum 
 
 **Linear regressions between alpha diversity indexes and gene expression**
 
-```{r open and organice data, include=FALSE}
+```{r data and functions, include=FALSE}
 #####Open data#####
-data <- complete_sample_table
-
 #####Separate by sample location#####
-metadata_cecum <- data[data$SampleLocation=="C",]
-metadata_ileum<- data[data$SampleLocation=="I",]
-```
+metadata_cecum <- complete_sample_table[complete_sample_table$SampleLocation=="C",]
+metadata_ileum<- complete_sample_table[complete_sample_table$SampleLocation=="I",]
 
-```{r functions, include=FALSE}
-#####scatter plot function####
 plot_regression <- function(x, y, metadata, x_label, y_label) {
   Model <- lm(y ~ x, data = metadata)
   R2= as.character(signif(summary(Model)$r.squared,digits=3))
@@ -2121,7 +2136,7 @@ get_stats_P <- function (x, y, metadata)  {
 
 Row 
 -----------------------------------------------------------------------
-### FIGURE 21 {data-width=500}
+### FIGURE 21: Alpha diversity vs Gene expression - Cecum {data-width=500}
 ```{r aplhadiv + ge cecum,  include=TRUE, echo=FALSE, warning=FALSE}
 #Grid 1: CECUM 
 metadata= metadata_cecum
@@ -2183,14 +2198,11 @@ gird_cecum=ggarrange(cec_IL10_Alfa_Observed, cec_IL10_Alfa_Shannon,
                      cec_MUC2_Alfa_Observed,cec_MUC2_Alfa_Shannon,
                      ncol = 2, nrow = 3)
 
-gird_cecum_gene_aplhadiv= annotate_figure(gird_cecum, top  = text_grob("Cecum", 
-                                                                    color = "black", face = "bold", size = 14))
-
-gird_cecum_gene_aplhadiv
+gird_cecum
 
 ```
 
-### {data-width=500}
+### TABLE 6: CECUM - Statistics for the previous regressions {data-width=500}
 ```{r aplhadiv + ge cecum tab,  include=TRUE, echo=FALSE, warning=FALSE}
 
 tab <- matrix(c(cec_IL10_Alfa_Observed_R, cec_IL10_Alfa_Observed_P,
@@ -2204,14 +2216,14 @@ rownames(tab) <- c('IL10_Observed','IL10_Shannon',
                    'IL1B_Observed', 'IL1B_Shannon',
                    'MUC2_Observed', 'MUC2_Shannon')
 table_cecum_gene_aplhadiv <- as.table(tab)
-kbl(table_cecum_gene_aplhadiv, caption = "Ileum- Statistics for the previous regressions", row.names = TRUE) %>% kable_styling(position= "left", full_width = T)
+kbl(table_cecum_gene_aplhadiv, row.names = TRUE) %>% kable_styling(position= "left", full_width = T)
 
 ```
 
 
 Row 
 -----------------------------------------------------------------------
-### FIGURE 22 {data-width=500}
+### FIGURE 22: Alpha diversity vs Gene expression - Ileum {data-width=500}
 ```{r alphadiv + ge ileum, include=TRUE, echo=FALSE, warning=FALSE}
 #Grid 2: ILEUM
 metadata= metadata_ileum
@@ -2273,16 +2285,11 @@ gird_ileum=ggarrange(ile_IL10_Alfa_Observed, ile_IL10_Alfa_Shannon,
                      ile_MUC2_Alfa_Observed,ile_MUC2_Alfa_Shannon,
                      ncol = 2, nrow = 3)
 
-gird_ileum_gene_aplhadiv= annotate_figure(gird_ileum, top  = text_grob("Ileum", 
-                                                                    color = "black", face = "bold", size = 14))
-
-gird_ileum_gene_aplhadiv
-
-
+gird_ileum
 
 ```
 
-### {data-width=500}
+### TABLE 7: ILEUM - Statistics for the previous regressions {data-width=500}
 ```{r alphadiv + ge ileum tab, include=TRUE, echo=FALSE, warning=FALSE}
 
 tab <- matrix(c(ile_IL10_Alfa_Observed_R, ile_IL10_Alfa_Observed_P,
@@ -2297,7 +2304,7 @@ rownames(tab) <- c('IL10_Observed','IL10_Shannon',
                    'MUC2_Observed', 'MUC2_Shannon')
 table_ileum_gene_aplhadiv <- as.table(tab)
 
-kbl(table_ileum_gene_aplhadiv, caption = "Ileum- Statistics for the previous regressions", row.names = TRUE) %>% kable_styling(position= "left", full_width = T)
+kbl(table_ileum_gene_aplhadiv, row.names = TRUE) %>% kable_styling(position= "left", full_width = T)
 
 ```
 
@@ -2315,7 +2322,7 @@ Linear regressions between microbiome ratios and gene expression
 
 Row 
 -----------------------------------------------------------------------
-### FIGURE 23 {data-width=500}
+### FIGURE 23: Ratios vs Gene Expression - Cecum  {data-width=500}
 ```{r ratios + ge cecum, include=TRUE, echo=FALSE, warning=FALSE}
 #Grid 1: CECUM 
 metadata= metadata_cecum
@@ -2396,16 +2403,13 @@ gird_cecum=ggarrange(cec_IL10_Ratio1, cec_IL10_Ratio2, cec_IL10_Ratio3,
                      cec_MUC2_Ratio1, cec_MUC2_Ratio2, cec_MUC2_Ratio3,
                      ncol = 3, nrow = 3)
 
-gird_cecum_gene_ratios= annotate_figure(gird_cecum, top  = text_grob("Cecum", 
-                                                                    color = "black", face = "bold"))
-
-gird_cecum_gene_ratios
+gird_cecum
 
 
 
 ```
 
-### {data-width=500}
+### TABLE 8: CECUM - Statistics for the previous regressions {data-width=500}
 ```{r ratios + ge cecum tabb, include=TRUE, echo=FALSE, warning=FALSE}
 tab <- matrix(c(cec_IL10_Ratio1_R, cec_IL10_Ratio1_P, 
                 cec_IL10_Ratio2_R, cec_IL10_Ratio2_P,
@@ -2422,14 +2426,14 @@ rownames(tab) <- c('IL10_Ratio1','IL10_Ratio2', 'IL10_Ratio3',
                      'MUC2_Ratio1', 'MUC2_Ratio2', 'MUC2_Ratio3')
 
 table_cecum_gene_ratios<- as.table(tab)
-kbl(table_cecum_gene_ratios, caption = "Ileum- Statistics for the previous regressions", row.names = TRUE) %>% kable_styling(position= "left", full_width = T)
+kbl(table_cecum_gene_ratios, row.names = TRUE) %>% kable_styling(position= "left", full_width = T)
 
 ```
 
 
 Row
 -----------------------------------------------------------------------
-### FIGURE 24 {data-width=500}
+### FIGURE 24: Ratios vs Gene Expression - Ileum {data-width=500}
 ```{r ratios + ge ileum, include=TRUE, echo=FALSE, warning=FALSE}
 
 #Grid 2: ILEUM
@@ -2519,7 +2523,7 @@ gird_ileum_gene_ratios
 
 ```
 
-### {data-width=500}
+### TABLE 9: ILEUM - Statistics for the previous regressions {data-width=500}
 ```{r ratios + ge ileum tabb, include=TRUE, echo=FALSE, warning=FALSE}
 
 tab <- matrix(c(ile_IL10_Ratio1_R, ile_IL10_Ratio1_P, 
@@ -2537,7 +2541,7 @@ rownames(tab) <- c('IL10_Ratio1','IL10_Ratio2', 'IL10_Ratio3',
                      'MUC2_Ratio1', 'MUC2_Ratio2', 'MUC2_Ratio3')
 
 table_ileum_gene_ratios<- as.table(tab)
-kbl(table_ileum_gene_ratios, caption = "Ileum- Statistics for the previous regressions", row.names = TRUE) %>% kable_styling(position= "left", full_width = T)
+kbl(table_ileum_gene_ratios, row.names = TRUE) %>% kable_styling(position= "left", full_width = T)
 
 ```
 
@@ -2573,7 +2577,7 @@ boxplot_data_ileum <- boxplot_data[boxplot_data$SampleLocation =="I",]
 Row
 -----------------------------------------------------------------------
 
-### FIGURE 25A - Cecum {data-width=500}
+### FIGURE 25A: Histo vs Alpha diversity - Cecum {data-width=500}
 
 ```{r Indexes histo plots cec, include=TRUE, echo=FALSE}
 #cecum plot
@@ -2586,7 +2590,7 @@ bp_cecum
 
 ```
 
-### FIGURE 25B- Ileum{data-width=500}
+### FIGURE 25B: Histo vs Alpha diversity - Ileum s{data-width=500}
 
 ```{r Indexes histo plots ile, include=TRUE, echo=FALSE}
 #Ileum plot
@@ -2629,7 +2633,7 @@ boxplot_data_ileum <- boxplot_data[boxplot_data$SampleLocation =="I",]
 Row
 -----------------------------------------------------------------------
 
-### FIGURE 26A - Cecum {data-width=500}
+### FIGURE 26A: Histo vs Ratios - Cecum {data-width=500}
 
 ```{r ratios histo plots cec, include=TRUE, echo=FALSE}
 #cecum plot
@@ -2643,10 +2647,7 @@ bp_cecum
 
 ```
 
-### FIGURE 26B - Ileum{data-width=500}
-
-
-
+### FIGURE 26B: Histo vs Ratios - Ileum{data-width=500}
 ```{r ratios histo plots ile, include=TRUE, echo=FALSE}
 #Ileum plot
 bp <- ggplot(boxplot_data_ileum, aes(x=Score, y=Value)) + 
@@ -2656,7 +2657,6 @@ bp_ileum <- bp + facet_grid(Ratio~ Category)+
   theme(legend.position = "none") +
   theme(text=element_text(size=15))
 bp_ileum
-
 
 ```
 

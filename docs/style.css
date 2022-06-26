@@ -1,9 +1,29 @@
-
-
 #dashboard-container {
   max-width: 80%;
   margin:auto;
 }
 
+.navbar, [data-toggle=tab], .navbar-brand  {   background-color:#0A283D;  border-color:black;   color:white; }
 
+.navbar.navbar-inverse .navbar-header {
+    text-align: center;
+    width: 80%;
+}
+
+.navbar.navbar-inverse .navbar-header .navbar-brand {
+    display: inline-block;
+    float: none;
+}
+
+.navbar-logo{
+  width: 80px;
+  position: absolute;
+  right: 5px;
+}
+
+.navbar-collapse{
+  padding: 10px;
+  font-size: 20px;
+  border-color: pink;
+}
 
