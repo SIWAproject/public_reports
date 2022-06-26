@@ -1,6 +1,7 @@
 #dashboard-container {
   max-width: 80%;
   margin:auto;
+  margin-top:5%;
 }
 
 .navbar, [data-toggle=tab], .navbar-brand  {   background-color:#0A283D;  border-color:black;   color:white; }
