@@ -99,7 +99,7 @@ dfs_filtered <- readRDS(file="/Volumes/GoogleDrive/Mi unidad/SIWAproject/Reports
 
 ```
 
-Project description {data-icon="fa-signal"}
+Project description {data-icon="fa-bacteria"}
 ===================================== 
 
 Row {data-height=50}
@@ -647,7 +647,7 @@ Row {data-height=50}
 -----------------------------------------------------------------------
 Despite the fact that the differences are not always apparent in the PCoAs, statistical significant differences were also found between the treatments within each location, including significance by calcium level and by VitD level.
 
-Row {data-height=40}
+Row {data-height=30}
 -----------------------------------------------------------------------
 
 **By Treatment:**
@@ -707,7 +707,7 @@ plot.beta.bray.ileum
 plot.beta.bray.feces
 ```
 
-Row {data-height=40}
+Row {data-height=30}
 -----------------------------------------------------------------------
 
 **By Calcium level:**
@@ -769,7 +769,7 @@ ggplotly(plot.beta.bray.feces) %>%
   style(hoverinfo = 'none') %>% partial_bundle()
 ```
 
-Row {data-height=40}
+Row {data-height=30}
 -----------------------------------------------------------------------
 
 **By VitD level:**
@@ -865,7 +865,6 @@ Row {data-height=500}
 comparison= 1
 Title= "Cecum 0 VitD vs 1 VitD"
 p_cecum = plot_deseq_report(dfs_filtered, comparison, Title)  
-p_cecum  = p_cecum + theme(axis.title.x=element_blank())
 p_cecum
 ```
 
@@ -879,16 +878,18 @@ p_feces
 
 
 # Metabolic information of species and genera {data-navmenu="Microbiome"}
+Row {data-height=50}
+-----------------------------------------------------------------------
 
 Row {data-height=50}
 -----------------------------------------------------------------------
 The following is an interactive table to browse available information and traits of bacteria of interest for a better understanding of the possible implications of changes in the microbiome.
 
-Row {data-height=100}
+Row {data-height=70}
 -----------------------------------------------------------------------
 The table includes a probiotic potential score that ranges between -6 and 6. A higher score indicates multiple positive traits (e.g. Use as prebiotic, antibiotic, anti-inflammatory, antioxidant) associated with the bacterial group, while negative scores indicate negative traits (e.g. inflammatory, pathogen, opportunistic_pathogen, causes diarrhea, causes respiratory disease).
 
-Row {data-height=850}
+Row {data-height=830}
 -----------------------------------------------------------------------
 ### TABLE 2: Species and Genus
 
@@ -915,12 +916,14 @@ DT::datatable(df %>% select(-Key_Findings),
 ```
 
 # Metabolic information of broad groups {data-navmenu="Microbiome"}
+Row {data-height=50}
+-----------------------------------------------------------------------
 
-Row {data-height=70}
+Row {data-height=50}
 -----------------------------------------------------------------------
 The following is an interactive table to browse available information and traits of broad groups of bacteria of interest for a better understanding of the possible implications of changes in the microbiome.
 
-Row {data-height=930}
+Row {data-height=900}
 -----------------------------------------------------------------------
 ### TABLE 3: Broad groups
 
@@ -1137,7 +1140,7 @@ Row
 -----------------------------------------------------------------------
 
 
-# Gene Expression  {data-icon="fa-table"}
+# Gene Expression  {data-icon="fa-dna"}
 
 
 #### Gene Expression Analysis
@@ -2382,10 +2385,8 @@ gird_ileum=ggarrange(ile_IL10_Ratio1, ile_IL10_Ratio2, ile_IL10_Ratio3,
                      ile_MUC2_Ratio1, ile_MUC2_Ratio2, ile_MUC2_Ratio3,
                      ncol = 3, nrow = 3)
 
-gird_ileum_gene_ratios= annotate_figure(gird_ileum, top  = text_grob("Ileum", 
-                                                                    color = "black", face = "bold"))
 
-gird_ileum_gene_ratios
+gird_ileum
 
 
 ```
@@ -2452,7 +2453,8 @@ bp <- ggplot(boxplot_data_cecum, aes(x=Score, y=Value)) +
   geom_boxplot(aes(fill=Category))
 bp_cecum <- bp + facet_grid(Index~ Category, scales = "free")+
   xlab("") + ylab("Ratio Value") +
-  theme(legend.position = "none") 
+  theme(legend.position = "none") +
+  theme(text=element_text(size=10))
 bp_cecum
 
 ```
@@ -2465,7 +2467,8 @@ bp <- ggplot(boxplot_data_ileum, aes(x=Score, y=Value)) +
   geom_boxplot(aes(fill=Category))
 bp_ileum <- bp + facet_grid(Index~ Category, scales = "free")+
   xlab("") + ylab("Ratio Value") +
-  theme(legend.position = "none") 
+  theme(legend.position = "none") +
+  theme(text=element_text(size=10))
 bp_ileum
 
 
@@ -2508,7 +2511,8 @@ bp <- ggplot(boxplot_data_cecum, aes(x=Score, y=Value)) +
   geom_boxplot(aes(fill=Category))
 bp_cecum <- bp + facet_grid(Ratio~ Category)+
   xlab("") + ylab("Ratio Value") +
-  theme(legend.position = "none") 
+  theme(legend.position = "none") +
+  theme(text=element_text(size=10))
 bp_cecum
 
 
@@ -2522,7 +2526,7 @@ bp <- ggplot(boxplot_data_ileum, aes(x=Score, y=Value)) +
 bp_ileum <- bp + facet_grid(Ratio~ Category)+
   xlab("") + ylab("Ratio Value") +
   theme(legend.position = "none") +
-  theme(text=element_text(size=15))
+  theme(text=element_text(size=10))
 bp_ileum
 
 ```

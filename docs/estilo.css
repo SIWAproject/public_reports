@@ -16,13 +16,16 @@
 .chart-stage {
   text-align: justify;
   text-justify: inter-word;
-  background-color: green;
 }
 
 .datatables{
-  background-color: pink;
   min-height: 800px;
 }
+
+.dataTables_scrollBody {
+    max-height: 100% !important;
+}
+
 .container-fluid {
   max-width: 80%;
   margin: auto;
