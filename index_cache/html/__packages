@@ -36,5 +36,4 @@ plotly
 flexdashboard
 tidyMicro
 DT
-base
 data.table

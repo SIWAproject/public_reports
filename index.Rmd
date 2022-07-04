@@ -62,24 +62,41 @@ library(DT)
 library(stringr)
 
 ## FUNCTIONS
-source("/Users/dvarelat/Documents/SIWA/Methods-review/functions.R")
+source("/Volumes/GoogleDrive/Mi unidad/SIWAproject/Methods-review/functions.R")
 
 ```
 
 ```{r All inputs, include=FALSE}
 #open phyloseq object
-folder <- "/Users/dvarelat/Documents/SIWA/Reports/Version1.0/Input_data/"
-ODLEPobj <- readRDS(paste0(folder, "phyloseqObject_April11.rds"))
+#folder <- "/Users/mcadavid/Documents/Reports_review/E335_Maria/"
+#ODLEPobj <- readRDS(paste0(folder, "phyloseqObject_April11.rds"))
 
 #open data-table
 ## Data creada con create_full_file_for_correlations_to_analytics - Jupyter Notebook
-complete_sample_table <-read.table(paste0(folder, "performance_histo_ge_ratios_alphadiv_for_correlations.csv"),check.names = FALSE, header=T, sep="\t")
+#complete_sample_table <-read.table(paste0(folder, "performance_histo_ge_ratios_alphadiv_for_correlations.csv"),check.names = FALSE, header=T, sep="\t")
   
 #EAFIT surveillance tables (same for all reports)
-species_taxonomy_info <-read.csv(paste0(folder, "species_metabolic_effects.csv"),check.names = FALSE, sep=";")
+#species_taxonomy_info <-read.csv(paste0(folder, "species_metabolic_effects.csv"),check.names = FALSE, sep=";")
+#genera_taxonomy_info <- read.csv(paste0(folder, "genus_metabolic_effects.csv"), check.names = FALSE, sep=";")
+#broad_taxonomy_info <- read.csv(paste0(folder, "broad_groups_metabolic_effects.csv"), check.names = FALSE, sep=";")
 
-genera_taxonomy_info <- read.csv(paste0(folder, "genus_metabolic_effects.csv"), check.names = FALSE, sep=";")
-broad_taxonomy_info <- read.csv(paste0(folder, "broad_groups_metabolic_effects.csv"), check.names = FALSE, sep=";")
+
+
+#open phyloseq object
+ODLEPobj <- readRDS("/Users/mcadavid/Documents/Reports_review/E335_Maria/phyloseqObject_April11.rds")
+
+#open data-table
+## Data creada con create_full_file_for_correlations_to_analytics - Jupyter Notebook
+complete_sample_table <-read.table("/Users/mcadavid/Documents/Reports_review/E335_Maria/Subset_exp1/Correlations/performance_histo_ge_ratios_alphadiv_for_correlations.csv",check.names = FALSE, header=T, sep="\t")
+  
+#EAFIT surveillance tables (same for all reports)
+species_taxonomy_info <-read.csv(file="/Users/mcadavid/Documents/Reports_review/Metabolic_effects_table_V2/species_metabolic_effects.csv",check.names = FALSE, sep=";")
+genera_taxonomy_info <- read.csv(file="/Users/mcadavid/Documents/Reports_review/Metabolic_effects_table_V2/genus_metabolic_effects.csv", check.names = FALSE, sep=";")
+broad_taxonomy_info <- read.csv(file="/Users/mcadavid/Documents/Reports_review/Metabolic_effects_table_V2/broad_groups_metabolic_effects.csv", check.names = FALSE, sep=";")
+
+#Deseq outputs
+dfs_filtered <- readRDS(file="/Volumes/GoogleDrive/Mi unidad/SIWAproject/Reports/Version1.0/Input_data/dfs_filtered.RData")
+
 ```
 
 Project description {data-icon="fa-signal"}
@@ -815,7 +832,7 @@ Row {data-height=30}
 
 Row {data-height=100}
 -----------------------------------------------------------------------
-After comparing the grouping of samples by composition distances evidencing general trends in composition between treatments, we went on to look at methods to identify more specific changes. Microbiome data can be filtered, merged, and subset to make specific comparisons between any two groups, and at any taxonomic level. This with the goal to identify features (i.e., species, OTUs, gene families, etc.) that differ in abundance between two groups of samples according to their treatment. We combine here two methods (<a href="https://genomebiology.biomedcentral.com/articles/10.1186/gb-2010-11-10-r106" target="_blank">DESeq</a> and <a href="https://www.nature.com/articles/s41467-020-17041-7" target="_blank">ANCOMBC</a>) by using both, we can identify the features that are identified as significant by both methods giving us higher confidence in the importance of these features.
+After comparing the grouping of samples by composition distances evidencing general trends in composition between treatments, we went on to look at methods to identify more specific changes. Microbiome data can be filtered, merged, and subset to make specific comparisons between any two groups, and at any taxonomic level. This with the goal to identify features (i.e., species, OTUs, gene families, etc.) that differ in abundance between two groups of samples according to their treatment. (We here use <a href="https://genomebiology.biomedcentral.com/articles/10.1186/gb-2010-11-10-r106" target="_blank">DESeq</a> method).
 
 Row {data-height=30}
 -----------------------------------------------------------------------
@@ -829,30 +846,6 @@ Row {data-height=50}
 -----------------------------------------------------------------------
 Hint: when dots are to the left it means these groups are more abundant in presence of VitD. When points are to the right these groups are more prevalent in absence of VitD
 
-```{r , echo=FALSE, include=FALSE}
-dfs_filtered <- readRDS(file=paste0(folder, "dfs_filtered.RData"))
-groupnamesST <- readRDS(file=paste0(folder, "groupnamesST.RData"))
-
-plot_deseq_congress <-
-  function(dfs_filtered, comparisonINDEX, Title) {
-    theme_set(theme_bw())
-    df <- dfs_filtered[[comparisonINDEX]]
-    df$taxa <- df$SciName
-    df$taxa <- as.character(df$taxa)
-    x = sort(tapply(df$log2FoldChange, df$taxa, function(x)
-      max(x)), TRUE)
-    df$taxa = factor(as.character(df$taxa), levels = names(x))
-    df$abs <- abs(df$log2FoldChange)
-    df <- df[order(df$abs, decreasing = TRUE), ]
-    if (dim(df)[[1]] > 10) {
-      df <- df[1:10, ]
-    }
-    plot = ggplot(df, aes(x = log2FoldChange, y = taxa, color = taxa)) + geom_point(size =8) + labs(fill = "taxa", color = "taxa")  +
-      theme(legend.position = "none") +
-      ggtitle(Title)
-    return(plot)
-  }
-```
 
 Row {data-height=500}
 -----------------------------------------------------------------------
@@ -860,10 +853,10 @@ Row {data-height=500}
 ### FIGURE 11A: Cecum diff - VitD level  {data-width=500}
 
 ```{r , echo=FALSE}
+#Be sure of the comparisons of interest we want to include in the report to add the corresponding title
 comparison= 1
-#print(groupnamesST[[comparison]])
 Title= "Cecum 0 VitD vs 1 VitD"
-p_cecum = plot_deseq_congress(dfs_filtered, comparison, Title)  
+p_cecum = plot_deseq_report(dfs_filtered, comparison, Title)  
 p_cecum  = p_cecum + theme(axis.title.x=element_blank())
 p_cecum
 ```
@@ -871,9 +864,8 @@ p_cecum
 ### FIGURE 11B: Feces diff - VitD level  {data-width=500}
 ```{r , echo=FALSE}
 comparison= 7
-#print(groupnamesST[[comparison]])
 Title= "Feces 0 VitD vs 1 VitD"
-p_feces = plot_deseq_congress(dfs_filtered, comparison, Title)  
+p_feces = plot_deseq_report(dfs_filtered, comparison, Title)  
 p_feces
 ```
 
@@ -1130,7 +1122,7 @@ Row
 <div style="text-align: justify">
 The goal of gene expression is to evaluate how the animal host is responding to its environment by altering the levels of various proteins and other compounds in the body in a complex and very controlled manner. When studying gene expression with real-time polymerase chain reaction (PCR), scientists usually investigate changes (increases or decreases) in the expression of a particular gene or set of genes by measuring the abundance of the gene-specific transcript. Here we quantify expression for 3 genes related to inflammation and gut health, as a way to understand how the gut is responding to the gut microbiota and other stimuli. These target genes are: IL-10, IL-1B, and MUC2.
 
-To plot this data we use -log foldchange transformations relative to the control condition (in this case Unchallegend-untreated= negative control), which has all been normalized to your housekeeping gene. The higher the values, the higher the expression of the gene in the treatment compared to the negative control. Significant differences between groups were tested by anova or multiple t-test (ie
+To plot this data we use -log foldchange transformations relative to the control condition (in this case the control group is treatment "MediumLowCa" as this is the widly recommended level of calcium for broilers diet), which has all been normalized to your housekeeping gene. The higher the values, the higher the expression of the gene in the treatment compared to the control level. Significant differences between groups were tested by anova or multiple t-test (ie
 <a href="https://en.wikipedia.org/wiki/Tukey%27s_range_test" target="_blank">Tukey’s test</a>), resulting only in some group differences for the expression of IL10 gene in the cecum, and IL1B and IL10 genes in the ileum. 
 </div>
 
@@ -1282,7 +1274,6 @@ Row {data-height=500}
 -----------------------------------------------------------------------
 
 ### FIGURE 14A: Cecum - IL1B
-
 ```{r , echo=FALSE}
 meanscec <- aggregate(RQ_IL1B_log ~  Treatment, cec, mean)
 cec <- cec %>%
@@ -1323,7 +1314,6 @@ plot1
 ```
 
 ### FIGURE 14C: Cecum - MUC2
-
 ```{r 14c, echo=FALSE}
 meanscec <- aggregate(RQ_MUC2_log ~  Treatment, cec, mean)
 plot1 <- ggplot(cec, aes(x = Treatment, y = RQ_MUC2_log, fill = Treatment)) +
@@ -1344,7 +1334,6 @@ plot1
 Row {data-height=500}
 -----------------------------------------------------------------------
 ### FIGURE 15A: Ileum - IL1B
-
 ```{r Gene expression plots ile il1b, echo=FALSE, warning=FALSE}
 #ileum (plots with letters for statistics)
 meansile <- aggregate(RQ_IL1B_log ~  Treatment, il, mean)
@@ -1367,7 +1356,6 @@ plot1
 ```
 
 ### FIGURE 15B: Ileum - IL10
-
 ```{r Gene expression plots ile il10, echo=FALSE, warning=FALSE}
 meansile <- aggregate(RQ_IL10_log ~  Treatment, il, mean)
 plot1 <- ggplot(il, aes(x = Treatment, y = RQ_IL10_log, fill = Treatment)) +
@@ -1386,7 +1374,6 @@ plot1
 ```
 
 ### FIGURE 15C: Ileum - MUC2
-
 ```{r Gene expression plots ile muc2, echo=FALSE, warning=FALSE}
 meansile <- aggregate(RQ_MUC2_log ~  Treatment, il, mean)
 plot1 <- ggplot(il, aes(x =Treatment, y = RQ_MUC2_log, fill = Treatment)) +
@@ -1478,6 +1465,7 @@ rownames(otu_table_filtered_transformed_log)
 colnames(meta_exp)
 
 ```
+
 ```{r choose variables 1, include=FALSE}
 
 #When its ony one variable y just leave the c("") with onw variable.
@@ -1676,8 +1664,7 @@ meta_exp$MicrobialOrganismsLEVEL <- factor(meta_exp$MicrobialOrganismsLEVEL, lev
 
 
 #Mirar otra vez la distribucion de los puntajes de cada score pero ahora en categorias 
-histo <- meta_exp %>% dplyr::select(OverallArchitectureLEVEL, MucosalIntegrityLEVEL, LymphoidImmuneLEVEL,
-                                    InflammationSeverityLEVEL,  MicrobialOrganismsLEVEL, SampleLocation, SampleID)
+histo <- meta_exp %>% dplyr::select(InflammationSeverityLEVEL, LymphoidImmuneLEVEL, MicrobialOrganismsLEVEL, MucosalIntegrityLEVEL, OverallArchitectureLEVEL, SampleLocation, SampleID)
 
 #colnames(histo)
 freq_c<- sapply(subset(histo[histo$SampleLocation == 'C', ], select = -c(SampleLocation,SampleID)), table)
@@ -1711,17 +1698,10 @@ phyloseq_ob_agg_ileum<-subset_samples(phyloseq_ob_agg, SampleLocation=="I")
 ```
 
 ```{r Create tables for plotings, include=FALSE}
-phyloseq_ob_agg_cecum <- get_top_taxa(
-  phyloseq_ob_agg_cecum,
-  15,
-  relative = TRUE,
-  discard_other = FALSE,
-  other_label = "Other"
-)
+phyloseq_ob_agg_cecum <- get_top_taxa(phyloseq_ob_agg_cecum, 15, relative = TRUE, discard_other = FALSE, other_label = "Other")
 subset.genus.df_cecum <- psmelt(phyloseq_ob_agg_cecum) 
 
-phyloseq_ob_agg_ileum <- get_top_taxa(phyloseq_ob_agg_ileum, 15, relative=TRUE, discard_other=FALSE,
-                                      other_label = "Other")
+phyloseq_ob_agg_ileum <- get_top_taxa(phyloseq_ob_agg_ileum, 15, relative=TRUE, discard_other=FALSE, other_label = "Other")
 subset.genus.df_ileum <- psmelt(phyloseq_ob_agg_ileum) 
 
 categories <-  list("OverallArchitectureLEVEL","MucosalIntegrityLEVEL", "LymphoidImmuneLEVEL","InflammationSeverityLEVEL","MicrobialOrganismsLEVEL")
@@ -1735,20 +1715,24 @@ categories_labels <- c(
 )
 ```
 
-```{r TIGNORE TEST, include=FALSE}
+Row {data-height=200}
+-----------------------------------------------------------------------
+### TABLE 4: Cecum- Sample count per category in each score 
+```{r imprimir cecum tablas con conteo de muestras, include=TRUE, echo=FALSE, warning=FALSE}
+options(knitr.kable.NA = 0)
+kbl(table_sample_count_cecum, row.names = TRUE) %>% kable_styling(position= "center", full_width = T)
+```
 
-#subset.genus.df_cecum[is.na(subset.genus.df_cecum$OverallArchitectureLEVEL),]
-#histo[histo$SampleID == "0071_05C-M	"]
-#subset.genus.df_cecum[!is.na(subset.genus.df_cecum[i]),]
-#hacer grid de graficas CECUM
+Row {data-height=500}
+-----------------------------------------------------------------------
+```{r prepare to plot 17, include=FALSE}
 
-x <- subset.genus.df_cecum  %>% dplyr::select(OTU,Abundance,
+x <- subset.genus.df_cecum %>% dplyr::select(OTU,Abundance,
                                   OverallArchitectureLEVEL,
                                   MucosalIntegrityLEVEL,
                                   LymphoidImmuneLEVEL,
                                   InflammationSeverityLEVEL,
                                   MicrobialOrganismsLEVEL)
-
 
 Melted <- gather(
   x,
@@ -1763,6 +1747,10 @@ Melted <- gather(
 Melted$variable <- str_replace(Melted$variable, "LEVEL", "")
 
 
+```
+
+### FIGURE 17: Cecum taxonomic composoition by histopathology score {data-width=400}
+```{r 17, include=TRUE, echo=FALSE, warning=FALSE}
 
 par(mar = c(6.5, 6.5, 0.5, 0.5), mgp = c(5, 1, 0))
 p <- ggplot(data=Melted[!is.na(Melted["level"]),], 
@@ -1774,19 +1762,69 @@ ggplotly(p) %>%
  layout( 
  xaxis = list(automargin=TRUE), yaxis = list(automargin=TRUE), 
  legend = list(orientation="h", y=-0.2, title = list(text = "Genus"))) %>% partial_bundle()
+
+```
+
+Row {data-height=200}
+-----------------------------------------------------------------------
+### TABLE 5: Ileum- Sample count per category in each score
+```{r imprimir ileum tablas con conteo de muestras, include=TRUE, echo=FALSE, warning=FALSE}
+options(knitr.kable.NA = 0)
+
+kbl(table_sample_count_ileum, row.names = TRUE) %>% kable_styling(position= "left", full_width = T)
+
 ```
 
 Row {data-height=500}
 -----------------------------------------------------------------------
-### TABLE 4: Cecum- Sample count per category in each score {data-width=200}
+```{r prepare to plot 18, include=FALSE}
 
-```{r imprimir cecum tablas con conteo de muestras, include=TRUE, echo=FALSE, warning=FALSE, fig.width = 10}
-options(knitr.kable.NA = 0)
-kbl(t(table_sample_count_cecum), row.names = TRUE) %>% kable_styling(position= "center", full_width = F)
+y <- subset.genus.df_ileum %>% dplyr::select(OTU,Abundance,
+                                  OverallArchitectureLEVEL,
+                                  MucosalIntegrityLEVEL,
+                                  LymphoidImmuneLEVEL,
+                                  InflammationSeverityLEVEL,
+                                  MicrobialOrganismsLEVEL)
+
+Melted <- gather(
+  y,
+  key = "variable",
+  value = "level",
+  OverallArchitectureLEVEL,
+  MucosalIntegrityLEVEL,
+  LymphoidImmuneLEVEL,
+  InflammationSeverityLEVEL,
+  MicrobialOrganismsLEVEL
+)
+Melted$variable <- str_replace(Melted$variable, "LEVEL", "")
+
+subset.genus.df_cecum %>%
+  gather(Ratio, Value, -SampleID)
+
+
 ```
 
-### FIGURE 17A {data-width=400}
-```{r 17a, include=TRUE, echo=FALSE, warning=FALSE}
+### FIGURE 18: Ileum taxonomic composoition by histopathology score {data-width=400}
+```{r 18, include=TRUE, echo=FALSE, warning=FALSE}
+
+par(mar = c(6.5, 6.5, 0.5, 0.5), mgp = c(5, 1, 0))
+p <- ggplot(data=Melted[!is.na(Melted["level"]),], 
+              aes_string(x="level", y="Abundance",fill="OTU")) + 
+    geom_bar(stat="identity", position="fill") + 
+    theme(legend.position = "bottom") + facet_grid(. ~ variable) + 
+  theme(axis.text.x = element_text(hjust = 1))
+ggplotly(p) %>% 
+ layout( 
+ xaxis = list(automargin=TRUE), yaxis = list(automargin=TRUE), 
+ legend = list(orientation = "h",   # show entries horizontally
+                     xanchor = "center",  # use center of legend as anchor
+                     x = 0.5)) %>% partial_bundle()
+
+```
+
+
+```{IGNORE r 17B, include=FALSE, echo=FALSE, warning=FALSE}
+
 c <- "OverallArchitectureLEVEL"
 p <- ggplot(data=subset.genus.df_cecum[!is.na(subset.genus.df_cecum[c]),], 
               aes_string(x=c, y="Abundance",fill="OTU")) + 
@@ -1801,8 +1839,7 @@ ggplotly(p) %>%
  ) %>% partial_bundle()
 ```
 
-### FIGURE 17B {data-width=400}
-```{r 17B, include=TRUE, echo=FALSE, warning=FALSE}
+```{r 17B, include=FALSE, echo=FALSE, warning=FALSE}
 
 c <- "MucosalIntegrityLEVEL"
 p <- ggplot(data=subset.genus.df_cecum[!is.na(subset.genus.df_cecum[c]),], 
@@ -1818,11 +1855,7 @@ ggplotly(p) %>%
  ) %>% partial_bundle()
 ```
 
-Row {data-height=500}
------------------------------------------------------------------------
-
-### FIGURE 17C
-```{r 17C, include=TRUE, echo=FALSE, warning=FALSE}
+```{r 17C, include=FALSE, echo=FALSE, warning=FALSE}
 c = "LymphoidImmuneLEVEL"
 p <- ggplot(data=subset.genus.df_cecum[!is.na(subset.genus.df_cecum[c]),], 
               aes_string(x=c, y="Abundance",fill="OTU")) + 
@@ -1837,8 +1870,8 @@ ggplotly(p) %>%
  yaxis = list(automargin=TRUE)
  ) %>% partial_bundle()
 ```
-### FIGURE 17D
-```{r 17D, include=TRUE, echo=FALSE, warning=FALSE}
+
+```{r 17D, include=FALSE, echo=FALSE, warning=FALSE}
 c = "InflammationSeverityLEVEL"
 p <- ggplot(data=subset.genus.df_cecum[!is.na(subset.genus.df_cecum[c]),], 
               aes_string(x=c, y="Abundance",fill="OTU")) + 
@@ -1853,8 +1886,8 @@ ggplotly(p) %>%
  yaxis = list(automargin=TRUE)
  ) %>% partial_bundle()
 ```
-### FIGURE 17E
-```{r 17E, include=TRUE, echo=FALSE, warning=FALSE}
+
+```{r 17E, include=FALSE, echo=FALSE, warning=FALSE}
 c = "MicrobialOrganismsLEVEL"
 p <- ggplot(data=subset.genus.df_cecum[!is.na(subset.genus.df_cecum[c]),], 
               aes_string(x=c, y="Abundance",fill="OTU")) + 
@@ -1870,23 +1903,7 @@ ggplotly(p) %>%
  ) %>% partial_bundle()
 ```
 
-Row {data-height=100}
------------------------------------------------------------------------
-
-
-Row {data-height=500}
------------------------------------------------------------------------
-### TABLE 5: Ileum- Sample count per category in each score
-```{r imprimir ileum tablas con conteo de muestras, include=TRUE, echo=FALSE, warning=FALSE}
-options(knitr.kable.NA = 0)
-
-kbl(t(table_sample_count_ileum), row.names = TRUE) %>% kable_styling(position= "left", full_width = T)
-
-```
-
-
-### FIGURE 18A
-```{r 18a, include=TRUE, echo=FALSE, warning=FALSE}
+```{r 18a, include=FALSE, echo=FALSE, warning=FALSE}
 
 c = "OverallArchitectureLEVEL"
 p <- ggplot(data=subset.genus.df_ileum[!is.na(subset.genus.df_ileum[c]),], 
@@ -1904,8 +1921,7 @@ ggplotly(p) %>%
 
 ```
 
-### FIGURE 18B
-```{r 18B, include=TRUE, echo=FALSE, warning=FALSE}
+```{r 18B, include=FALSE, echo=FALSE, warning=FALSE}
 
 c = "MucosalIntegrityLEVEL"
 p <- ggplot(data=subset.genus.df_ileum[!is.na(subset.genus.df_ileum[c]),], 
@@ -1922,11 +1938,8 @@ ggplotly(p) %>%
  ) %>% partial_bundle()
 
 ```
-Row {data-height=500}
------------------------------------------------------------------------
 
-### FIGURE 18C
-```{r 18C, include=TRUE, echo=FALSE, warning=FALSE}
+```{r 18C, include=FALSE, echo=FALSE, warning=FALSE}
 
 c = "LymphoidImmuneLEVEL"
 p <- ggplot(data=subset.genus.df_ileum[!is.na(subset.genus.df_ileum[c]),], 
@@ -1943,8 +1956,8 @@ ggplotly(p) %>%
  ) %>% partial_bundle()
 
 ```
-### FIGURE 18D
-```{r 18D, include=TRUE, echo=FALSE, warning=FALSE}
+
+```{r 18D, include=FALSE, echo=FALSE, warning=FALSE}
 
 c = "InflammationSeverityLEVEL"
 p <- ggplot(data=subset.genus.df_ileum[!is.na(subset.genus.df_ileum[c]),], 
@@ -1961,8 +1974,8 @@ ggplotly(p) %>%
  ) %>% partial_bundle()
 
 ```
-### FIGURE 18E
-```{r 18E, include=TRUE, echo=FALSE, warning=FALSE}
+
+```{r 18E, include=FALSE, echo=FALSE, warning=FALSE}
 
 c = "MicrobialOrganismsLEVEL"
 p <- ggplot(data=subset.genus.df_ileum[!is.na(subset.genus.df_ileum[c]),], 
