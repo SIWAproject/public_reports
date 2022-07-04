@@ -832,6 +832,7 @@ Hint: when dots are to the left it means these groups are more abundant in prese
 ```{r , echo=FALSE, include=FALSE}
 dfs_filtered <- readRDS(file=paste0(folder, "dfs_filtered.RData"))
 groupnamesST <- readRDS(file=paste0(folder, "groupnamesST.RData"))
+
 plot_deseq_congress <-
   function(dfs_filtered, comparisonINDEX, Title) {
     theme_set(theme_bw())
@@ -1172,7 +1173,6 @@ GENE <- GENE %>%
 GENE$TreatmentNumber = as.factor(GENE$TreatmentNumber)
 GENE$SampleLocation = as.factor(GENE$SampleLocation)
 
-
 #Table:Samples by treatments  
 treatments = data.frame(table(GENE$TreatmentNumber))
 colnames(treatments)=c("Treatment","Number of samples")
@@ -1456,7 +1456,6 @@ rownames(otu_table) <-
 
 ```{r transformation 1, include=FALSE}
 #####transformation and filter for compositional data
-
 rowz<-apply(otu_table == 0, 2, sum)/dim(otu_table)[1] #sum over columns (OTUS)
 # dejar otus frecuentes, quitando los que están llenos de CEROS
 p <- which(rowz>0.9)
@@ -1529,6 +1528,7 @@ Y$DeltaCq_MUC2 <- as.numeric(Y$DeltaCq_MUC2 )
 
 
 ```
+
 ```{r correlation method 1, include=FALSE}
 #Choose correlation method
 method<-"kendall"
@@ -1667,29 +1667,22 @@ meta_exp[meta_exp[,"MucosalIntegrity"] %in%  c("0"), paste0("MucosalIntegrity", 
 meta_exp[meta_exp[,"MucosalIntegrity"] %in%  c("1","2"), paste0("MucosalIntegrity", "LEVEL")] <- "Mod" 
 meta_exp[meta_exp[,"MucosalIntegrity"] %in%  c("3", "4", "5"), paste0("MucosalIntegrity", "LEVEL")] <- "Sev" 
 
-##add histo categories as a new metadata to the phyloseq object 
 levels = c("Mod", "Mild", "Sev")
 meta_exp$OverallArchitectureLEVEL <- factor(meta_exp$OverallArchitectureLEVEL, levels=levels)
 meta_exp$MucosalIntegrityLEVEL <- factor(meta_exp$MucosalIntegrityLEVEL, levels=levels)
 meta_exp$LymphoidImmuneLEVEL <- factor(meta_exp$LymphoidImmuneLEVEL, levels=levels)
 meta_exp$InflammationSeverityLEVEL <- factor(meta_exp$InflammationSeverityLEVEL, levels=levels)
 meta_exp$MicrobialOrganismsLEVEL <- factor(meta_exp$MicrobialOrganismsLEVEL, levels=levels)
-str(meta_exp)
 
 
 #Mirar otra vez la distribucion de los puntajes de cada score pero ahora en categorias 
 histo <- meta_exp %>% dplyr::select(OverallArchitectureLEVEL, MucosalIntegrityLEVEL, LymphoidImmuneLEVEL,
                                     InflammationSeverityLEVEL,  MicrobialOrganismsLEVEL, SampleLocation, SampleID)
-str(histo)
 
 #colnames(histo)
 freq_c<- sapply(subset(histo[histo$SampleLocation == 'C', ], select = -c(SampleLocation,SampleID)), table)
 table_sample_count_cecum <- as.data.frame(freq_c)
 colnames(table_sample_count_cecum) <- str_replace(colnames(freq_c), "LEVEL", "")
-
-#table_sample_count_cecum <- rbindlist(lapply(freq_c, function(x) as.data.frame.list(x)), fill=TRUE)
-#table_sample_count_cecum <- as.data.frame(table_sample_count_cecum)
-#rownames(table_sample_count_cecum) <- str_replace(names(freq_c), "LEVEL", "")
 
 freq_i<- sapply(subset(histo[histo$SampleLocation == 'I', ], select = -c(SampleLocation,SampleID)), table)
 table_sample_count_ileum <- as.data.frame(freq_i)
@@ -1698,7 +1691,6 @@ colnames(table_sample_count_ileum) <- str_replace(colnames(freq_i), "LEVEL", "")
 ```
 
 ```{r Taxonomic composotion data open (phyloseq) + aggregate and add histo to phyloseq, include=FALSE}
-str(histo)
 rownames(histo) <- histo$SampleID
 #colnames(histo)
 ps <- merge_phyloseq(ODLEPobj, sample_data(histo))
@@ -1749,23 +1741,44 @@ categories_labels <- c(
 #histo[histo$SampleID == "0071_05C-M	"]
 #subset.genus.df_cecum[!is.na(subset.genus.df_cecum[i]),]
 #hacer grid de graficas CECUM
-# subset.genus.df_cecum <- subset.genus.df_cecum  %>% dplyr::select(OTU,Abundance,
-#                                   OverallArchitectureLEVEL, 
-#                                   MucosalIntegrityLEVEL,
-#                                   LymphoidImmuneLEVEL,
-#                                   InflammationSeverityLEVEL,
-#                                   MicrobialOrganismsLEVEL)
-# Melted <- gather(
-#   subset.genus.df_cecum,
-#   key = "variable",
-#   value = "level",
-#   OverallArchitectureLEVEL,
-#   MucosalIntegrityLEVEL,
-#   LymphoidImmuneLEVEL,
-#   InflammationSeverityLEVEL,
-#   MicrobialOrganismsLEVEL
-# )
-#Melted[Melted$OTU == "Subdoligranulum",]
+
+x <- subset.genus.df_cecum[!is.na(subset.genus.df_cecum[c]),]  %>% dplyr::select(OTU,Abundance,
+                                  OverallArchitectureLEVEL,
+                                  MucosalIntegrityLEVEL,
+                                  LymphoidImmuneLEVEL,
+                                  InflammationSeverityLEVEL,
+                                  MicrobialOrganismsLEVEL)
+
+
+Melted <- gather(
+  x,
+  key = "variable",
+  value = "level",
+  OverallArchitectureLEVEL,
+  MucosalIntegrityLEVEL,
+  LymphoidImmuneLEVEL,
+  InflammationSeverityLEVEL,
+  MicrobialOrganismsLEVEL
+)
+Melted$variable <- str_replace(Melted$variable, "LEVEL", "")
+
+subset.genus.df_cecum %>%
+  gather(Ratio, Value, -SampleID)
+
+
+
+par(mar = c(6.5, 6.5, 0.5, 0.5), mgp = c(5, 1, 0))
+p <- ggplot(data=Melted[!is.na(Melted["level"]),], 
+              aes_string(x="level", y="Abundance",fill="OTU")) + 
+    geom_bar(stat="identity", position="fill") + 
+    theme(legend.position = "bottom") + facet_grid(. ~ variable) + 
+  theme(axis.text.x = element_text(hjust = 1))
+p
+ggplotly(p) %>% 
+ layout( 
+ xaxis = list(automargin=TRUE), yaxis = list(automargin=TRUE), legend = list(orientation="h", 
+                                                                             y=-0.2, 
+                                                                             title = list(text = "Genus"))) %>% partial_bundle()
 ```
 
 Row {data-height=500}
