@@ -1760,8 +1760,10 @@ p <- ggplot(data=Melted[!is.na(Melted["level"]),],
   theme(axis.text.x = element_text(hjust = 1))
 ggplotly(p) %>% 
  layout( 
- xaxis = list(automargin=TRUE), yaxis = list(automargin=TRUE), 
- legend = list(orientation="h", y=-0.2, title = list(text = "Genus"))) %>% partial_bundle()
+ xaxis = list(automargin=TRUE), yaxis = list(automargin=TRUE) , 
+ legend = list(orientation = "h",   # show entries horizontally
+                     xanchor = "center",  # use center of legend as anchor
+                     x = 0.5)) %>% partial_bundle()
 
 ```
 
