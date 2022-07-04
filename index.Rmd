@@ -62,24 +62,40 @@ library(DT)
 library(stringr)
 
 ## FUNCTIONS
-source("/Users/dvarelat/Documents/SIWA/Methods-review/functions.R")
+source("/Volumes/GoogleDrive/Mi unidad/SIWAproject/Methods-review/functions.R")
 
 ```
 
 ```{r All inputs, include=FALSE}
 #open phyloseq object
-folder <- "/Users/dvarelat/Documents/SIWA/Reports/Version1.0/Input_data/"
-ODLEPobj <- readRDS(paste0(folder, "phyloseqObject_April11.rds"))
+#folder <- "/Users/mcadavid/Documents/Reports_review/E335_Maria/"
+#ODLEPobj <- readRDS(paste0(folder, "phyloseqObject_April11.rds"))
 
 #open data-table
 ## Data creada con create_full_file_for_correlations_to_analytics - Jupyter Notebook
-complete_sample_table <-read.table(paste0(folder, "performance_histo_ge_ratios_alphadiv_for_correlations.csv"),check.names = FALSE, header=T, sep="\t")
+#complete_sample_table <-read.table(paste0(folder, "performance_histo_ge_ratios_alphadiv_for_correlations.csv"),check.names = FALSE, header=T, sep="\t")
   
 #EAFIT surveillance tables (same for all reports)
-species_taxonomy_info <-read.csv(paste0(folder, "species_metabolic_effects.csv"),check.names = FALSE, sep=";")
+#species_taxonomy_info <-read.csv(paste0(folder, "species_metabolic_effects.csv"),check.names = FALSE, sep=";")
+#genera_taxonomy_info <- read.csv(paste0(folder, "genus_metabolic_effects.csv"), check.names = FALSE, sep=";")
+#broad_taxonomy_info <- read.csv(paste0(folder, "broad_groups_metabolic_effects.csv"), check.names = FALSE, sep=";")
 
-genera_taxonomy_info <- read.csv(paste0(folder, "genus_metabolic_effects.csv"), check.names = FALSE, sep=";")
-broad_taxonomy_info <- read.csv(paste0(folder, "broad_groups_metabolic_effects.csv"), check.names = FALSE, sep=";")
+
+
+#open phyloseq object
+ODLEPobj <- readRDS("/Users/mcadavid/Documents/Reports_review/E335_Maria/phyloseqObject_April11.rds")
+
+#open data-table
+## Data creada con create_full_file_for_correlations_to_analytics - Jupyter Notebook
+complete_sample_table <-read.table("/Users/mcadavid/Documents/Reports_review/E335_Maria/Subset_exp1/Correlations/performance_histo_ge_ratios_alphadiv_for_correlations.csv",check.names = FALSE, header=T, sep="\t")
+  
+#EAFIT surveillance tables (same for all reports)
+species_taxonomy_info <-read.csv(file="/Users/mcadavid/Documents/Reports_review/Metabolic_effects_table_V2/species_metabolic_effects.csv",check.names = FALSE, sep=";")
+genera_taxonomy_info <- read.csv(file="/Users/mcadavid/Documents/Reports_review/Metabolic_effects_table_V2/genus_metabolic_effects.csv", check.names = FALSE, sep=";")
+broad_taxonomy_info <- read.csv(file="/Users/mcadavid/Documents/Reports_review/Metabolic_effects_table_V2/broad_groups_metabolic_effects.csv", check.names = FALSE, sep=";")
+
+
+
 ```
 
 Project description {data-icon="fa-signal"}
@@ -815,7 +831,7 @@ Row {data-height=30}
 
 Row {data-height=100}
 -----------------------------------------------------------------------
-After comparing the grouping of samples by composition distances evidencing general trends in composition between treatments, we went on to look at methods to identify more specific changes. Microbiome data can be filtered, merged, and subset to make specific comparisons between any two groups, and at any taxonomic level. This with the goal to identify features (i.e., species, OTUs, gene families, etc.) that differ in abundance between two groups of samples according to their treatment. We combine here two methods (<a href="https://genomebiology.biomedcentral.com/articles/10.1186/gb-2010-11-10-r106" target="_blank">DESeq</a> and <a href="https://www.nature.com/articles/s41467-020-17041-7" target="_blank">ANCOMBC</a>) by using both, we can identify the features that are identified as significant by both methods giving us higher confidence in the importance of these features.
+After comparing the grouping of samples by composition distances evidencing general trends in composition between treatments, we went on to look at methods to identify more specific changes. Microbiome data can be filtered, merged, and subset to make specific comparisons between any two groups, and at any taxonomic level. This with the goal to identify features (i.e., species, OTUs, gene families, etc.) that differ in abundance between two groups of samples according to their treatment. (We here use <a href="https://genomebiology.biomedcentral.com/articles/10.1186/gb-2010-11-10-r106" target="_blank">DESeq</a> method).
 
 Row {data-height=30}
 -----------------------------------------------------------------------
@@ -1130,7 +1146,7 @@ Row
 <div style="text-align: justify">
 The goal of gene expression is to evaluate how the animal host is responding to its environment by altering the levels of various proteins and other compounds in the body in a complex and very controlled manner. When studying gene expression with real-time polymerase chain reaction (PCR), scientists usually investigate changes (increases or decreases) in the expression of a particular gene or set of genes by measuring the abundance of the gene-specific transcript. Here we quantify expression for 3 genes related to inflammation and gut health, as a way to understand how the gut is responding to the gut microbiota and other stimuli. These target genes are: IL-10, IL-1B, and MUC2.
 
-To plot this data we use -log foldchange transformations relative to the control condition (in this case Unchallegend-untreated= negative control), which has all been normalized to your housekeeping gene. The higher the values, the higher the expression of the gene in the treatment compared to the negative control. Significant differences between groups were tested by anova or multiple t-test (ie
+To plot this data we use -log foldchange transformations relative to the control condition (in this case the control group is treatment "MediumLowCa" as this is the widly recommended level of calcium for broilers diet), which has all been normalized to your housekeeping gene. The higher the values, the higher the expression of the gene in the treatment compared to the control level. Significant differences between groups were tested by anova or multiple t-test (ie
 <a href="https://en.wikipedia.org/wiki/Tukey%27s_range_test" target="_blank">Tukey’s test</a>), resulting only in some group differences for the expression of IL10 gene in the cecum, and IL1B and IL10 genes in the ileum. 
 </div>
 
