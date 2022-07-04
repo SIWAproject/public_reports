@@ -1715,9 +1715,9 @@ categories_labels <- c(
 )
 ```
 
-Row {data-height=300}
+Row {data-height=200}
 -----------------------------------------------------------------------
-### TABLE 4: Cecum- Sample count per category in each score {data-width=200}
+### TABLE 4: Cecum- Sample count per category in each score 
 ```{r imprimir cecum tablas con conteo de muestras, include=TRUE, echo=FALSE, warning=FALSE}
 options(knitr.kable.NA = 0)
 kbl(table_sample_count_cecum, row.names = TRUE) %>% kable_styling(position= "center", full_width = T)
@@ -1768,7 +1768,7 @@ ggplotly(p) %>%
 
 ```
 
-Row {data-height=300}
+Row {data-height=200}
 -----------------------------------------------------------------------
 ### TABLE 5: Ileum- Sample count per category in each score
 ```{r imprimir ileum tablas con conteo de muestras, include=TRUE, echo=FALSE, warning=FALSE}
