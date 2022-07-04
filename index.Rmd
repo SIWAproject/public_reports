@@ -1773,12 +1773,10 @@ p <- ggplot(data=Melted[!is.na(Melted["level"]),],
     geom_bar(stat="identity", position="fill") + 
     theme(legend.position = "bottom") + facet_grid(. ~ variable) + 
   theme(axis.text.x = element_text(hjust = 1))
-p
 ggplotly(p) %>% 
  layout( 
- xaxis = list(automargin=TRUE), yaxis = list(automargin=TRUE), legend = list(orientation="h", 
-                                                                             y=-0.2, 
-                                                                             title = list(text = "Genus"))) %>% partial_bundle()
+ xaxis = list(automargin=TRUE), yaxis = list(automargin=TRUE), 
+ legend = list(orientation="h", y=-0.2, title = list(text = "Genus"))) %>% partial_bundle()
 ```
 
 Row {data-height=500}
