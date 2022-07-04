@@ -6,7 +6,7 @@ output:
     orientation: rows
     vertical_layout: scroll
     source_code: embed
-    css: style.css
+    css: estilo.css
     mathjax: NULL
     self_contained: FALSE
     #runtime: shiny
@@ -130,7 +130,7 @@ knitr::include_graphics("diagram_E335.png")
 
 #Explore Phylosec object....
 ### OJO -->> REEMPLAZAR VitD NAME
-sample_data(ODLEPobj)$Treatment <- as.factor(stringr::str_replace(sample_data(ODLEPobj)$Treatment, "AlphaD3","VitD"))
+sample_data(ODLEPobj)$Treatment <- as.factor(stringr::str_replace(sample_data(ODLEPobj)$Treatment, "MediumAlphaD3","VitD"))
 sample_data(ODLEPobj)$VitDLevel <- as.factor(sample_data(ODLEPobj)$Alphalevel)
 sample_data(ODLEPobj)$VitDLevel_label <- as.factor(sample_data(ODLEPobj)$Alphad3level)
 
@@ -166,6 +166,17 @@ fec = table(subset(as.data.frame(as.matrix(sample_data(ODLEPobj_feces))), select
 tab=rbind(ile,cec,fec)
 tab <- as.data.frame(t(tab))
 colnames(tab)=c("Ileum","Cecum","Feces")
+
+l <- list("LowCa",
+"LowCa+VitD",
+"MediumLowCa",
+"MediumLowCa+VitD",
+"MediumHighCa",
+"MediumHighCa+VitD",
+"HighCa",
+"HighCa+VitD")
+
+tab <- tab[order(match(rownames(tab), l)),]
 kbl(tab, centering = FALSE) %>% 
   kable_styling(full_width = F, position = "center")  %>%
    column_spec(2, color = spec_color(tab$Ileum, end=0.5)) %>%
@@ -416,7 +427,7 @@ subset.genus.df[subset.genus.df$genus %in% remainder,]$genus <- "Genera < 1% abu
 
 #Figures abundances
 subset.genus.df <- subset.genus.df %>%
-  mutate( Treatment=factor(Treatment,levels=c("LowCa", "LowCa+MediumVitD", "MediumLowCa", "MediumLowCa+MediumVitD", "MediumHighCa", "MediumHighCa+MediumVitD", "HighCa","HighCa+MediumVitD")) )
+  mutate( Treatment=factor(Treatment,levels=c("LowCa", "LowCa+VitD", "MediumLowCa", "MediumLowCa+VitD", "MediumHighCa", "MediumHighCa+VitD", "HighCa","HighCa+VitD")) )
 #plot with condensed genera into "< 1% abund" category by Treatment
 plot_abundance_cecum<- ggplot(subset.genus.df, aes(x = Treatment, y = Abundance, fill = genus)) +
   geom_bar(stat="identity", position="fill") + 
@@ -441,7 +452,7 @@ subset.genus.df[subset.genus.df$genus %in% remainder,]$genus <- "Genera < 1% abu
 
 #Figures abundances
 subset.genus.df <- subset.genus.df %>%
-  mutate( Treatment=factor(Treatment,levels=c("LowCa", "LowCa+MediumVitD", "MediumLowCa", "MediumLowCa+MediumVitD", "MediumHighCa", "MediumHighCa+MediumVitD", "HighCa","HighCa+MediumVitD")) )
+  mutate( Treatment=factor(Treatment,levels=c("LowCa", "LowCa+VitD", "MediumLowCa", "MediumLowCa+VitD", "MediumHighCa", "MediumHighCa+VitD", "HighCa","HighCa+VitD")) )
 #plot with condensed genera into "< 1% abund" category by Treatment
 p <- ggplot(data=subset.genus.df, aes(x=reorder(Treatment, KitID), y=Abundance ,fill=genus))
 plot_abundance_ileum<- p + geom_bar(stat="identity", position="fill") + 
@@ -466,7 +477,7 @@ subset.genus.df[subset.genus.df$genus %in% remainder,]$genus <- "Genera < 1% abu
 
 #Figures abundances
 subset.genus.df <- subset.genus.df %>%
-  mutate( Treatment=factor(Treatment,levels=c("LowCa", "LowCa+MediumVitD", "MediumLowCa", "MediumLowCa+MediumVitD", "MediumHighCa", "MediumHighCa+MediumVitD", "HighCa","HighCa+MediumVitD")) )
+  mutate( Treatment=factor(Treatment,levels=c("LowCa", "LowCa+VitD", "MediumLowCa", "MediumLowCa+VitD", "MediumHighCa", "MediumHighCa+VitD", "HighCa","HighCa+VitD")) )
 #plot with condensed genera into "< 1% abund" category by Treatment
 p <- ggplot(data=subset.genus.df, aes(x=Treatment, y=Abundance ,fill=genus))
 plot_abundance_feces<- p + geom_bar(stat="identity", position="fill") + 
@@ -605,12 +616,11 @@ Row {data-height=30}
 -----------------------------------------------------------------------
 **Beta diversity**
 
-Row  {data-height=100}
+Row {data-height=500}
 -----------------------------------------------------------------------
+### {data-width=350}
 Hence, we went on to evaluate those differences in bacterial abundances between the samples, this is also known as beta diversity or "compositional" distance. These distances (In our case Bray Curtis dissimilarities) are often visualized with a method called principal coordinates analysis (PCoA).  Each axis represents a combination of features (OTUs) that account for high amounts of variation between samples.  The percentage of the differences for which this combination of features accounts is shown on the axis.  Samples that are on opposite ends of an axis that accounts for 20% of variability are likely to be more different than samples that are on opposite ends of an axis that only accounts for 5% of the total variability.
 
-Row  {data-height=80}
------------------------------------------------------------------------
 These analyses evidenced clear differentiation between samples of different gut locations (pval=0.001), which was biologically expected since different locations of the gut have different dynamics, roles and environmental conditions.
 
 ```{r , include=FALSE}
@@ -628,9 +638,7 @@ plot.beta.bray <- beta.bray + geom_point(size=4, alpha=0.75, na.rm=T) +  #sobrep
 
 ```
 
-Row {data-height=500}
------------------------------------------------------------------------
-### FIGURE 7:Dissimilarity between all samples (Bray distances) {data-width=1000}
+### FIGURE 7:Dissimilarity between all samples (Bray distances) {data-width=650}
 ```{r , echo=FALSE}
 plot.beta.bray
 ```
@@ -872,6 +880,16 @@ p_feces
 
 # Metabolic information of species and genera {data-navmenu="Microbiome"}
 
+Row {data-height=50}
+-----------------------------------------------------------------------
+The following is an interactive table to browse available information and traits of bacteria of interest for a better understanding of the possible implications of changes in the microbiome.
+
+Row {data-height=100}
+-----------------------------------------------------------------------
+The table includes a probiotic potential score that ranges between -6 and 6. A higher score indicates multiple positive traits (e.g. Use as prebiotic, antibiotic, anti-inflammatory, antioxidant) associated with the bacterial group, while negative scores indicate negative traits (e.g. inflammatory, pathogen, opportunistic_pathogen, causes diarrhea, causes respiratory disease).
+
+Row {data-height=850}
+-----------------------------------------------------------------------
 ### TABLE 2: Species and Genus
 
 ```{r sp groups table , echo=FALSE}
@@ -888,16 +906,22 @@ brks <- quantile(df$Probiotic_Potential, probs = seq(.05, .95, .05), na.rm = TRU
 ramp <- colorRampPalette(c("#cb766e", "#a3d291"))
 clrs <- ramp(length(brks)+1)
 DT::datatable(df %>% select(-Key_Findings),
-  rownames = FALSE, options = list(pageLength = 10)
+  rownames = FALSE
 ) %>% formatStyle(
   'Probiotic_Potential',
   backgroundColor = styleInterval(brks, clrs)
 )
+
 ```
 
+# Metabolic information of broad groups {data-navmenu="Microbiome"}
 
-# Metabolic information of brad groups {data-navmenu="Microbiome"}
+Row {data-height=70}
+-----------------------------------------------------------------------
+The following is an interactive table to browse available information and traits of broad groups of bacteria of interest for a better understanding of the possible implications of changes in the microbiome.
 
+Row {data-height=930}
+-----------------------------------------------------------------------
 ### TABLE 3: Broad groups
 
 ```{r broad groups table , echo=FALSE}
@@ -905,14 +929,11 @@ df_2=broad_taxonomy_info[c("Group_Name","Finner_Classification", "Key_Findings")
 colnames(df_2)[2] <- "Taxonomic_level"
 colnames(df_2)[3] <- "Key_Findings"
 
-DT::datatable(df_2,   height = 1000,
+DT::datatable(df_2,   height = 10000,
   rownames = FALSE, options = list(pageLength = 10)
 )
 
 ```
-
-
-
 
 
 # Histopathology {data-icon="fa-table"}
@@ -956,13 +977,13 @@ histo <- histo %>%
 
 histo <- histo %>% 
   mutate(Treatment = if_else(KitID == 70, "LowCa", 
-                                ifelse(KitID == 71, "LowCa+MediumVitD",
+                                ifelse(KitID == 71, "LowCa+VitD",
                                        ifelse(KitID == 72, "MediumLowCa",
-                                              ifelse(KitID == 73, "MediumLowCa+MediumVitD",
+                                              ifelse(KitID == 73, "MediumLowCa+VitD",
                                                      ifelse(KitID == 74, "MediumHighCa",
-                                                            ifelse(KitID == 75, "MediumHighCa+MediumVitD",
+                                                            ifelse(KitID == 75, "MediumHighCa+VitD",
                                                                    ifelse(KitID == 76, "HighCa",
-                                                                          ifelse(KitID == 77, "HighCa+MediumVitD","other")))))))))
+                                                                          ifelse(KitID == 77, "HighCa+VitD","other")))))))))
 
 
 
@@ -1032,6 +1053,7 @@ histo_by_samples_ileum <- ggplot(histo_ileum2, aes(fill = ScoreCategory, y =Valu
                             theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) 
 histo_by_samples_ileum
 ```
+
 Row
 -----------------------------------------------------------------------
 
@@ -1052,7 +1074,7 @@ for (i in 1:length(dff)){
 dfff <- do.call(rbind, listDF)
 
 dfff <- dfff %>%
-  mutate( Treatment=factor(Treatment,levels=c("LowCa", "LowCa+MediumVitD", "MediumLowCa", "MediumLowCa+MediumVitD", "MediumHighCa", "MediumHighCa+MediumVitD", "HighCa","HighCa+MediumVitD")) )
+  mutate( Treatment=factor(Treatment,levels=c("LowCa", "LowCa+VitD", "MediumLowCa", "MediumLowCa+VitD", "MediumHighCa", "MediumHighCa+VitD", "HighCa","HighCa+VitD")) )
 
 treatments_cecum <- ggplot(dfff, aes(fill = ScoreCategory, y =mean , x =Treatment)) + 
   ylab("Mean Score") + xlab("") + 
@@ -1075,7 +1097,7 @@ ggplotly(histo_cec_plot)
 Row
 -----------------------------------------------------------------------
 
-### FIGURE 13: FIGURE 12: Histopathology scores agreggated by Treatment - Ileum
+### FIGURE 13: Histopathology scores agreggated by Treatment - Ileum
 
 ```{r Histo plots by treatment-ile,fig.width = 10, fig.height = 8, echo=FALSE}
 #ileum
@@ -1091,7 +1113,7 @@ for (i in 1:length(dff)){
 dfff <- do.call(rbind, listDF)
 
 dfff <- dfff %>%
-  mutate( Treatment=factor(Treatment,levels=c("LowCa", "LowCa+MediumVitD", "MediumLowCa", "MediumLowCa+MediumVitD", "MediumHighCa", "MediumHighCa+MediumVitD", "HighCa","HighCa+MediumVitD")) )
+  mutate( Treatment=factor(Treatment,levels=c("LowCa", "LowCa+VitD", "MediumLowCa", "MediumLowCa+VitD", "MediumHighCa", "MediumHighCa+VitD", "HighCa","HighCa+VitD")) )
 
 treatments_ileum <- ggplot(dfff, aes(fill = ScoreCategory, y =mean , x = Treatment)) + 
   ylab("Mean Score") + xlab("") + 
@@ -1134,12 +1156,12 @@ GENE <- complete_sample_table
 #Add treatments and treatment numbers (1-8)
 GENE <- GENE %>% 
   mutate(Treatment = if_else(KitID == 70, "LowCa", 
-                             ifelse(KitID == 71, "LowCa+MediumVitD",
+                             ifelse(KitID == 71, "LowCa+VitD",
                                     ifelse(KitID == 72, "MediumLowCa",
-                                           ifelse(KitID == 73, "MediumLowCa+MediumVitD",
+                                           ifelse(KitID == 73, "MediumLowCa+VitD",
                                                   ifelse(KitID == 74, "MediumHighCa",
-                                                         ifelse(KitID == 75, "MediumHighCa+MediumVitD",
-                                                                ifelse(KitID == 76, "HighCa","HighCa+MediumVitD"))))))))
+                                                         ifelse(KitID == 75, "MediumHighCa+VitD",
+                                                                ifelse(KitID == 76, "HighCa","HighCa+VitD"))))))))
 
 
 
@@ -1277,12 +1299,11 @@ Row {data-height=500}
 ```{r , echo=FALSE}
 meanscec <- aggregate(RQ_IL1B_log ~  Treatment, cec, mean)
 cec <- cec %>%
-  mutate( Treatment=factor(Treatment,levels=c("LowCa", "LowCa+MediumVitD", "MediumLowCa", "MediumLowCa+MediumVitD", "MediumHighCa", "MediumHighCa+MediumVitD", "HighCa","HighCa+MediumVitD")) )
+  mutate( Treatment=factor(Treatment,levels=c("LowCa", "LowCa+VitD", "MediumLowCa", "MediumLowCa+VitD", "MediumHighCa", "MediumHighCa+VitD", "HighCa","HighCa+VitD")) )
 plot1 <- ggplot(cec, aes(x = Treatment, y = round(RQ_IL1B_log), fill = Treatment)) +
   geom_violin() + #geom_boxplot()+  #or geom_violin() + 
   ylab("Log-fold-change") +  geom_hline(yintercept=0, linetype="dashed") + 
   theme(legend.position = "none") +
-  geom_jitter(color="black", size=0.4, alpha=0.9) +
   theme(axis.text.x = element_text(angle = 60, hjust = 1))+
   stat_summary(fun=mean, geom="point", size=2, color="red", fill="red")+ 
   geom_text(data = meanscec, aes(label = round(RQ_IL1B_log, 2), y = RQ_IL1B_log + 0.2), 
@@ -1291,7 +1312,6 @@ plot1 <- ggplot(cec, aes(x = Treatment, y = round(RQ_IL1B_log), fill = Treatment
   geom_text(data = IL1B_cec, aes(x = Treatment, y = 6, label = IL1B_cec), size = 5) 
   
 plot1
-#ggplotly(plot1)
 ```
 
 ### FIGURE 14B: Cecum - IL10
@@ -1302,7 +1322,6 @@ plot1 <- ggplot(cec, aes(x =Treatment, y = RQ_IL10_log, fill = Treatment)) +
   xlab("") + 
   ylab("Log-fold-change") +  geom_hline(yintercept=0, linetype="dashed") + 
   theme(legend.position = "none") +
-  geom_jitter(color="black", size=0.4, alpha=0.9) +
   theme(axis.text.x = element_text(angle = 60, hjust = 1))+
   stat_summary(fun=mean, geom="point", size=2, color="red", fill="red")+ 
   geom_text(data = meanscec, aes(label = round(RQ_IL10_log, 2), y = RQ_IL10_log + 0.2), 
@@ -1321,7 +1340,6 @@ plot1 <- ggplot(cec, aes(x = Treatment, y = RQ_MUC2_log, fill = Treatment)) +
   xlab("") + 
   ylab("Log-fold-change") +  geom_hline(yintercept=0, linetype="dashed") + 
   theme(legend.position = "none") +
-  geom_jitter(color="black", size=0.4, alpha=0.9) +
   theme(axis.text.x = element_text(angle = 60, hjust = 1))+
   stat_summary(fun=mean, geom="point", size=2, color="red", fill="red")+ 
   geom_text(data = meanscec, aes(label = round(RQ_MUC2_log,2), y = RQ_MUC2_log + 0.2), 
@@ -1338,20 +1356,19 @@ Row {data-height=500}
 #ileum (plots with letters for statistics)
 meansile <- aggregate(RQ_IL1B_log ~  Treatment, il, mean)
 il <- il %>%
-  mutate( Treatment=factor(Treatment,levels=c("LowCa", "LowCa+MediumVitD", "MediumLowCa", "MediumLowCa+MediumVitD", "MediumHighCa", "MediumHighCa+MediumVitD", "HighCa","HighCa+MediumVitD")) )
+  mutate( Treatment=factor(Treatment,levels=c("LowCa", "LowCa+VitD", "MediumLowCa", "MediumLowCa+VitD", "MediumHighCa", "MediumHighCa+VitD", "HighCa","HighCa+VitD")) )
 
-plot1 <- ggplot(il, aes(x = Treatment, y = RQ_MUC2_log, fill = Treatment)) +
+plot1 <- ggplot(il, aes(x = Treatment, y = RQ_IL1B_log, fill = Treatment)) +
   geom_violin() + #geom_boxplot()+  #or geom_violin()
   xlab("") + 
   ylab("Log-fold-change") +  geom_hline(yintercept=0, linetype="dashed") + 
   theme(legend.position = "none") +
-  geom_jitter(color="black", size=0.4, alpha=0.9) +
   theme(axis.text.x = element_text(angle = 60, hjust = 1))+
   stat_summary(fun=mean, geom="point", size=2, color="red", fill="red")+ 
-  geom_text(data = meanscec, aes(label = round(RQ_MUC2_log,2), y = RQ_MUC2_log + 0.2), 
+  geom_text(data = meansile, aes(label = round(RQ_IL1B_log,2), y = RQ_IL1B_log + 0.2), 
             position = position_dodge(width = 1),vjust = -0.5, size = 4)+
   coord_cartesian(ylim =  c(-5, 7)) +
-  geom_text(data = IL10_ile, aes(x = Treatment, y = 5, label = IL10_ile), size = 5)
+  geom_text(data = IL1B_ile, aes(x = Treatment, y = 7, label = IL1B_ile), size = 5)
 plot1
 ```
 
@@ -1363,7 +1380,6 @@ plot1 <- ggplot(il, aes(x = Treatment, y = RQ_IL10_log, fill = Treatment)) +
   xlab("") + 
   ylab("Log-fold-change") +  geom_hline(yintercept=0, linetype="dashed") + 
   theme(legend.position = "none") +
-  geom_jitter(color="black", size=0.4, alpha=0.9) +
   theme(axis.text.x = element_text(angle = 60, hjust = 1))+
   stat_summary(fun=mean, geom="point", size=2, color="red", fill="red")+ 
   geom_text(data = meansile, aes(label = round(RQ_IL10_log,2), y = RQ_IL10_log + 0.2), 
@@ -1381,7 +1397,6 @@ plot1 <- ggplot(il, aes(x =Treatment, y = RQ_MUC2_log, fill = Treatment)) +
   xlab("") + 
   ylab("Log-fold-change") +  geom_hline(yintercept=0, linetype="dashed") + 
   theme(legend.position = "none") +
-  geom_jitter(color="black", size=0.4, alpha=0.9) +
   theme(axis.text.x = element_text(angle = 60, hjust = 1))+
   stat_summary(fun=mean, geom="point", size=2, color="red", fill="red")+ 
   geom_text(data = meansile, aes(label = round(RQ_MUC2_log,2), y = RQ_MUC2_log + 0.2), 
@@ -1655,7 +1670,7 @@ meta_exp[meta_exp[,"MucosalIntegrity"] %in%  c("0"), paste0("MucosalIntegrity", 
 meta_exp[meta_exp[,"MucosalIntegrity"] %in%  c("1","2"), paste0("MucosalIntegrity", "LEVEL")] <- "Mod" 
 meta_exp[meta_exp[,"MucosalIntegrity"] %in%  c("3", "4", "5"), paste0("MucosalIntegrity", "LEVEL")] <- "Sev" 
 
-levels = c("Mod", "Mild", "Sev")
+levels = c("Mild", "Mod", "Sev")
 meta_exp$OverallArchitectureLEVEL <- factor(meta_exp$OverallArchitectureLEVEL, levels=levels)
 meta_exp$MucosalIntegrityLEVEL <- factor(meta_exp$MucosalIntegrityLEVEL, levels=levels)
 meta_exp$LymphoidImmuneLEVEL <- factor(meta_exp$LymphoidImmuneLEVEL, levels=levels)
@@ -1763,12 +1778,12 @@ p <- ggplot(data=Melted[!is.na(Melted["level"]),],
   theme(axis.text.x = element_text(hjust = 1))
 ggplotly(p) %>% 
  layout( 
- xaxis = list(automargin=TRUE), yaxis = list(automargin=TRUE) , 
- legend = list(orientation = "h",   # show entries horizontally
-                     xanchor = "center",  # use center of legend as anchor
-                     x = 0.5)) %>% partial_bundle()
+ xaxis = list(automargin=TRUE), yaxis = list(automargin=TRUE)) %>% partial_bundle()
 
 ```
+
+Row {data-height=100}
+-----------------------------------------------------------------------
 
 Row {data-height=200}
 -----------------------------------------------------------------------
@@ -1820,181 +1835,7 @@ p <- ggplot(data=Melted[!is.na(Melted["level"]),],
   theme(axis.text.x = element_text(hjust = 1))
 ggplotly(p) %>% 
  layout( 
- xaxis = list(automargin=TRUE), yaxis = list(automargin=TRUE), 
- legend = list(orientation = "h",   # show entries horizontally
-                     xanchor = "center",  # use center of legend as anchor
-                     x = 0.5)) %>% partial_bundle()
-
-```
-
-
-```{IGNORE r 17B, include=FALSE, echo=FALSE, warning=FALSE}
-
-c <- "OverallArchitectureLEVEL"
-p <- ggplot(data=subset.genus.df_cecum[!is.na(subset.genus.df_cecum[c]),], 
-              aes_string(x=c, y="Abundance",fill="OTU")) + 
-    geom_bar(stat="identity", position="fill") + 
-    xlab(categories_labels[c]) +
-    theme(legend.position = "bottom") +
-    theme(axis.text.x = element_text(angle = 60, hjust = 1))
-ggplotly(p) %>% 
- layout( 
- xaxis = list(automargin=TRUE), 
- yaxis = list(automargin=TRUE)
- ) %>% partial_bundle()
-```
-
-```{r 17B, include=FALSE, echo=FALSE, warning=FALSE}
-
-c <- "MucosalIntegrityLEVEL"
-p <- ggplot(data=subset.genus.df_cecum[!is.na(subset.genus.df_cecum[c]),], 
-              aes_string(x=c, y="Abundance",fill="OTU")) + 
-    geom_bar(stat="identity", position="fill") + 
-    xlab(categories_labels[c]) +
-    theme(text=element_text(size=10)) +
-    theme(axis.text.x = element_text(angle = 60, hjust = 1))
-ggplotly(p) %>% 
- layout( 
- xaxis = list(automargin=TRUE), 
- yaxis = list(automargin=TRUE)
- ) %>% partial_bundle()
-```
-
-```{r 17C, include=FALSE, echo=FALSE, warning=FALSE}
-c = "LymphoidImmuneLEVEL"
-p <- ggplot(data=subset.genus.df_cecum[!is.na(subset.genus.df_cecum[c]),], 
-              aes_string(x=c, y="Abundance",fill="OTU")) + 
-    geom_bar(stat="identity", position="fill") + 
-    xlab(categories_labels[c]) +
-    ylab(NULL)+
-    theme(text=element_text(size=10)) +
-    theme(axis.text.x = element_text(angle = 60, hjust = 1))
-ggplotly(p) %>% 
- layout( 
- xaxis = list(automargin=TRUE), 
- yaxis = list(automargin=TRUE)
- ) %>% partial_bundle()
-```
-
-```{r 17D, include=FALSE, echo=FALSE, warning=FALSE}
-c = "InflammationSeverityLEVEL"
-p <- ggplot(data=subset.genus.df_cecum[!is.na(subset.genus.df_cecum[c]),], 
-              aes_string(x=c, y="Abundance",fill="OTU")) + 
-    geom_bar(stat="identity", position="fill") + 
-    xlab(categories_labels[c]) +
-    ylab(NULL)+
-    theme(text=element_text(size=10)) +
-    theme(axis.text.x = element_text(angle = 60, hjust = 1))
-ggplotly(p) %>% 
- layout( 
- xaxis = list(automargin=TRUE), 
- yaxis = list(automargin=TRUE)
- ) %>% partial_bundle()
-```
-
-```{r 17E, include=FALSE, echo=FALSE, warning=FALSE}
-c = "MicrobialOrganismsLEVEL"
-p <- ggplot(data=subset.genus.df_cecum[!is.na(subset.genus.df_cecum[c]),], 
-              aes_string(x=c, y="Abundance",fill="OTU")) + 
-    geom_bar(stat="identity", position="fill") + 
-    xlab(categories_labels[c]) +
-    ylab(NULL)+
-    theme(text=element_text(size=10)) +
-    theme(axis.text.x = element_text(angle = 60, hjust = 1))
-ggplotly(p) %>% 
- layout( 
- xaxis = list(automargin=TRUE), 
- yaxis = list(automargin=TRUE)
- ) %>% partial_bundle()
-```
-
-```{r 18a, include=FALSE, echo=FALSE, warning=FALSE}
-
-c = "OverallArchitectureLEVEL"
-p <- ggplot(data=subset.genus.df_ileum[!is.na(subset.genus.df_ileum[c]),], 
-              aes_string(x=c, y="Abundance",fill="OTU")) + 
-    geom_bar(stat="identity", position="fill") + 
-    xlab(categories_labels[c]) +
-    ylab(NULL)+
-    theme(text=element_text(size=10)) +
-    theme(axis.text.x = element_text(angle = 60, hjust = 1))
-ggplotly(p) %>% 
- layout( 
- xaxis = list(automargin=TRUE), 
- yaxis = list(automargin=TRUE)
- ) %>% partial_bundle()
-
-```
-
-```{r 18B, include=FALSE, echo=FALSE, warning=FALSE}
-
-c = "MucosalIntegrityLEVEL"
-p <- ggplot(data=subset.genus.df_ileum[!is.na(subset.genus.df_ileum[c]),], 
-              aes_string(x=c, y="Abundance",fill="OTU")) + 
-    geom_bar(stat="identity", position="fill") + 
-    xlab(categories_labels[c]) +
-    ylab(NULL)+
-    theme(text=element_text(size=10)) +
-    theme(axis.text.x = element_text(angle = 60, hjust = 1))
-ggplotly(p) %>% 
- layout( 
- xaxis = list(automargin=TRUE), 
- yaxis = list(automargin=TRUE)
- ) %>% partial_bundle()
-
-```
-
-```{r 18C, include=FALSE, echo=FALSE, warning=FALSE}
-
-c = "LymphoidImmuneLEVEL"
-p <- ggplot(data=subset.genus.df_ileum[!is.na(subset.genus.df_ileum[c]),], 
-              aes_string(x=c, y="Abundance",fill="OTU")) + 
-    geom_bar(stat="identity", position="fill") + 
-    xlab(categories_labels[c]) +
-    ylab(NULL)+
-    theme(text=element_text(size=10)) +
-    theme(axis.text.x = element_text(angle = 60, hjust = 1))
-ggplotly(p) %>% 
- layout( 
- xaxis = list(automargin=TRUE), 
- yaxis = list(automargin=TRUE)
- ) %>% partial_bundle()
-
-```
-
-```{r 18D, include=FALSE, echo=FALSE, warning=FALSE}
-
-c = "InflammationSeverityLEVEL"
-p <- ggplot(data=subset.genus.df_ileum[!is.na(subset.genus.df_ileum[c]),], 
-              aes_string(x=c, y="Abundance",fill="OTU")) + 
-    geom_bar(stat="identity", position="fill") + 
-    xlab(categories_labels[c]) +
-    ylab(NULL)+
-    theme(text=element_text(size=10)) +
-    theme(axis.text.x = element_text(angle = 60, hjust = 1))
-ggplotly(p) %>% 
- layout( 
- xaxis = list(automargin=TRUE), 
- yaxis = list(automargin=TRUE)
- ) %>% partial_bundle()
-
-```
-
-```{r 18E, include=FALSE, echo=FALSE, warning=FALSE}
-
-c = "MicrobialOrganismsLEVEL"
-p <- ggplot(data=subset.genus.df_ileum[!is.na(subset.genus.df_ileum[c]),], 
-              aes_string(x=c, y="Abundance",fill="OTU")) + 
-    geom_bar(stat="identity", position="fill") + 
-    xlab(categories_labels[c]) +
-    ylab(NULL)+
-    theme(text=element_text(size=10)) +
-    theme(axis.text.x = element_text(angle = 60, hjust = 1))
-ggplotly(p) %>% 
- layout( 
- xaxis = list(automargin=TRUE), 
- yaxis = list(automargin=TRUE)
- ) %>% partial_bundle()
+ xaxis = list(automargin=TRUE), yaxis = list(automargin=TRUE)) %>% partial_bundle()
 
 ```
 

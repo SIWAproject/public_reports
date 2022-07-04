@@ -1,0 +1,58 @@
+#dashboard-container {
+  max-width: 80%;
+  margin: auto;
+  padding-top: 50px;
+}
+
+.dropdown-menu>li>a {
+  color: white;
+}
+
+.section {
+  text-align: justify;
+  text-justify: inter-word;
+}
+
+.chart-stage {
+  text-align: justify;
+  text-justify: inter-word;
+  background-color: green;
+}
+
+.datatables{
+  background-color: pink;
+  min-height: 800px;
+}
+.container-fluid {
+  max-width: 80%;
+  margin: auto;
+}
+
+.navbar,
+[data-toggle=tab],
+.navbar-brand {
+  background-color: #0A283D;
+  border-color: black;
+  color: white;
+}
+
+.navbar.navbar-inverse .navbar-header {
+  text-align: center;
+  width: 90%;
+}
+
+.navbar.navbar-inverse .navbar-header .navbar-brand {
+  display: inline-block;
+  float: none;
+}
+
+.navbar-logo {
+  width: 80px;
+  position: absolute;
+  right: 5px;
+}
+
+.navbar-collapse {
+  padding: 10px;
+  font-size: 15px;
+}
