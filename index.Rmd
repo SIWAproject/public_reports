@@ -1742,7 +1742,7 @@ categories_labels <- c(
 #subset.genus.df_cecum[!is.na(subset.genus.df_cecum[i]),]
 #hacer grid de graficas CECUM
 
-x <- subset.genus.df_cecum[!is.na(subset.genus.df_cecum[c]),]  %>% dplyr::select(OTU,Abundance,
+x <- subset.genus.df_cecum  %>% dplyr::select(OTU,Abundance,
                                   OverallArchitectureLEVEL,
                                   MucosalIntegrityLEVEL,
                                   LymphoidImmuneLEVEL,
@@ -1761,9 +1761,6 @@ Melted <- gather(
   MicrobialOrganismsLEVEL
 )
 Melted$variable <- str_replace(Melted$variable, "LEVEL", "")
-
-subset.genus.df_cecum %>%
-  gather(Ratio, Value, -SampleID)
 
 
 
