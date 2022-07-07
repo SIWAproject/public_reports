@@ -99,7 +99,7 @@ dfs_filtered <- readRDS(file="/Volumes/GoogleDrive/Mi unidad/SIWAproject/Reports
 
 ```
 
-Project description {data-icon="fa-bacteria"}
+Project description {data-icon="fa-table"}
 ===================================== 
 
 Row {data-height=50}
@@ -129,7 +129,7 @@ knitr::include_graphics("diagram_E335.png")
 ```{r Explore and filter Phyloseq Object, include=FALSE}
 
 #Explore Phylosec object....
-### OJO -->> REEMPLAZAR VitD NAME
+### OJO -->> REEMPLAZAR VitD NAME to send reports to externos
 sample_data(ODLEPobj)$Treatment <- as.factor(stringr::str_replace(sample_data(ODLEPobj)$Treatment, "MediumAlphaD3","VitD"))
 sample_data(ODLEPobj)$VitDLevel <- as.factor(sample_data(ODLEPobj)$Alphalevel)
 sample_data(ODLEPobj)$VitDLevel_label <- as.factor(sample_data(ODLEPobj)$Alphad3level)
@@ -152,11 +152,11 @@ Row {data-height=50}
 Row
 -----------------------------------------------------------------------
 
-### {data-width=200}
+### {data-width=150}
 
 As seen in Table 1, six microbiome samples per treatment were collected in each gut location. Four samples are excluded or missing. 
 
-### TABLE 1: Samples per group {data-width=800}
+### TABLE 1: Samples per group {data-width=850}
 
 ```{r Table for number of samples per treatment, echo=FALSE, fig.width = 10}
 cec = table(subset(as.data.frame(as.matrix(sample_data(ODLEPobj_cecum))), select = c("Treatment")))
@@ -177,11 +177,17 @@ l <- list("LowCa",
 "HighCa+VitD")
 
 tab <- tab[order(match(rownames(tab), l)),]
-kbl(tab, centering = FALSE) %>% 
+ttab <-as.data.frame(t(tab))
+kbl(ttab, centering = FALSE) %>% 
   kable_styling(full_width = F, position = "center")  %>%
-   column_spec(2, color = spec_color(tab$Ileum, end=0.5)) %>%
-   column_spec(3, color = spec_color(tab$Cecum, end=0.5)) %>%
-   column_spec(4, color = spec_color(tab$Feces, end=0.5)) 
+   column_spec(2, color = spec_color(ttab$"LowCa", end = 0.5, direction= -1, option= "magma")) %>%
+   column_spec(3, color = spec_color(ttab$"LowCa+VitD",end = 0.5, direction= -1, option= "magma")) %>%
+   column_spec(4, color = spec_color(ttab$"MediumLowCa", end = 0.5, direction= -1, option= "magma")) %>%
+   column_spec(5, color = spec_color(ttab$"MediumLowCa+VitD", end = 0.5, direction= -1, option= "magma")) %>%
+   column_spec(6, color = spec_color(ttab$"MediumHighCa", end = 0.5, direction= -1, option= "magma")) %>%
+   column_spec(7, color = spec_color(ttab$"MediumHighCa+VitD", end = 0.5, direction= -1, option= "magma")) %>%
+   column_spec(8, color = spec_color(ttab$"HighCa", end = 0.5, direction= -1, option= "magma")) %>%
+   column_spec(9, color = spec_color(ttab$"HighCa+VitD", end = 0.5, direction= -1, option= "magma")) 
 
 ```
 
@@ -824,8 +830,6 @@ plot.beta.bray.ileum
 plot.beta.bray.feces
 ```
 
-Row {data-height=30}
------------------------------------------------------------------------
 
 
 # Differential Abundance {data-navmenu="Microbiome"}
@@ -846,7 +850,7 @@ Row {data-height=30}
 -----------------------------------------------------------------------
 **Comparisons between presence and absence of VitD:**
 
-Row {data-height=70}
+Row {data-height=50}
 -----------------------------------------------------------------------
 Here we compare two groups: one supplemented with vitD and the other one without VitD supplementation, regardless of calcium level. In the following graphs we can see the features that are differentially abundant in the presence of VitD compared to the absence of VitD.
 
@@ -940,27 +944,54 @@ DT::datatable(df_2,   height = 10000,
 
 
 # Histopathology {data-icon="fa-table"}
+Row {data-height=50}
+-----------------------------------------------------------------------
 
-#### Histopathology Analysis
-<div style="text-align: justify">
+Row {data-height=30}
+-----------------------------------------------------------------------
+**Histopathology Analysis**
+
+Row {data-height=70}
+-----------------------------------------------------------------------
 We evaluated the physical structures of the intestinal tract tissue to understand the impact of calcium levels on gastrointestinal inflammation and integrity. We employ a scoring system that allows for semi-quantitative analysis of the integrity and inflammatory status of the gut. A score of 0 indicates a normal, healthy gut with no appearance of damage or aberration. A score of 5 for a given metric indicates extreme damage or aberration in the traits being evaluated.
 
+Row {data-height=50}
+-----------------------------------------------------------------------
 The treatment with recommended levels of Ca (2) with VitD showed better gastrointestinal tissue health compared to the rest of the groups, particularly those with higher levels of calcium.
 
+
+Row {data-height=30}
+-----------------------------------------------------------------------
 **Traits evaluated**
 
+Row {data-height=50}
+-----------------------------------------------------------------------
 *InflammationSeverity*: An overview of changes in the architecture or integrity of the intestines due to inflammation.  These changes can be chronic, subacute, and acute.  Changes may include ballooning of the crypt, edema, and loss of crypt cell walls.  One aspect of the score accounts for the extent of the damage across the various layers of tissue in the intestine.
 
+
+Row {data-height=70}
+-----------------------------------------------------------------------
 *LymphoidImmune*: Infiltration of immune cells into the mucosa or serosa.  The presence of immune cells in the mucosa is normal, but most are in or near aggregations of lymphoid tissue called Gut associated Lymphoid Tissue (GALT).  High levels of lymphoid cells throughout the mucosa or serosa indicate a subacute adaptive immune response to a recent or current immune challenge.  Similarly, growth in the GALT regions can indicate a pronounced antigenic challenge.
 
+
+Row {data-height=50}
+-----------------------------------------------------------------------
 *MicrobialOrganisms*:  Normal and abnormal infiltration or attachment of microorganisms into the mucosa.  May include assessment of organism type (i.e. parasite, yeast, or bacteria).  Some association of microbes to the apical surface is normal.  Higher scores indicate infiltration of abnormal microbe types and/or excessive levels.
 
+
+Row {data-height=50}
+-----------------------------------------------------------------------
 *MucosalIntegrity*: Uniformity and consistency of the mucosa at the apical membrane, where absorption occurs.  Aberrations in this category include micro-erosion of the microvilli on the apical surface, ulcers, necrosis, and loss of gut-associated lymphoid tissue (GALT).  When severe, these changes can include the submucosa level, too.  
 
+
+Row {data-height=70}
+-----------------------------------------------------------------------
 *OverallArchitecture*: Morphology and structure of the mucosa.  Aberrations would include blunting of villi, loss of mucus-producing goblet cells, and hyperplasia, in which excessive growth of absorptive enterocytes occurs at the expense of other important cell types such as goblet cells and endocrine cells.  These aberrations are reparative mechanisms used by the animal, and typically indicate a repeated stress or injury to the GI at this location.
 
+
+Row {data-height=50}
+-----------------------------------------------------------------------
 *AdditiveScore*: Addition of all scores from all animals by treatment group.  This is a summary of the overall condition of the intestine.  However, it should be viewed with caution, as two groups or animals may have similar additive scores, but very different scores in individual traits.  This would mean that the two groups have different underlying pathologies.
-</div>
 
 
 ```{r Histo,fig.width = 10, fig.height = 5, include=FALSE}
@@ -1136,20 +1167,24 @@ histo_cec_plot <- treatments_ileum+ annotate("text", x = 1:2, y = 7, label = cld
 ggplotly(histo_cec_plot)
 
 ```
-Row
------------------------------------------------------------------------
 
 
 # Gene Expression  {data-icon="fa-dna"}
+Row {data-height=50}
+-----------------------------------------------------------------------
 
+Row {data-height=30}
+-----------------------------------------------------------------------
+**Gene Expression Analysis**
 
-#### Gene Expression Analysis
-<div style="text-align: justify">
+Row {data-height=100}
+-----------------------------------------------------------------------
 The goal of gene expression is to evaluate how the animal host is responding to its environment by altering the levels of various proteins and other compounds in the body in a complex and very controlled manner. When studying gene expression with real-time polymerase chain reaction (PCR), scientists usually investigate changes (increases or decreases) in the expression of a particular gene or set of genes by measuring the abundance of the gene-specific transcript. Here we quantify expression for 3 genes related to inflammation and gut health, as a way to understand how the gut is responding to the gut microbiota and other stimuli. These target genes are: IL-10, IL-1B, and MUC2.
 
+Row {data-height=100}
+-----------------------------------------------------------------------
 To plot this data we use -log foldchange transformations relative to the control condition (in this case the control group is treatment "MediumLowCa" as this is the widly recommended level of calcium for broilers diet), which has all been normalized to your housekeeping gene. The higher the values, the higher the expression of the gene in the treatment compared to the control level. Significant differences between groups were tested by anova or multiple t-test (ie
 <a href="https://en.wikipedia.org/wiki/Tukey%27s_range_test" target="_blank">Tukey’s test</a>), resulting only in some group differences for the expression of IL10 gene in the cecum, and IL1B and IL10 genes in the ileum. 
-</div>
 
 
 ```{r Gene expression, include=FALSE}
@@ -1414,15 +1449,21 @@ plot1
 
 
 # Microbiome + Gene expression{data-navmenu="Cross-panel Analyses"}
+Row {data-height=50}
+-----------------------------------------------------------------------
 
-#### Microbiome + Gene expression
-##### Correlation microbiome + gene expression
+Row {data-height=30}
+-----------------------------------------------------------------------
+**Correlation microbiome + gene expression**
 
-<div style="text-align: justify">
+Row {data-height=50}
+-----------------------------------------------------------------------
 In addition to studying the role of treatments and challenges on SIWA metrics, we are also interested in understanding if there are associations/correlations between traits that might help us better understand the complex interactions in this system.  
 
+Row {data-height=100}
+-----------------------------------------------------------------------
 We begin with <a href="https://en.wikipedia.org/wiki/Kendall_rank_correlation_coefficient" target="_blank">Kendall</a> correlations between the top 20 most abundant microbial taxa and the expression of IL-10, IL-1B, and MUC-2.  A positive or red correlation indicates that when a taxon is increased, the expression of the correlated gene is also increased.  The opposite it true when the correlation is negative (blue).  It is important to understand that this correlation does not mean that changes in the microbiome *cause* changes in gene expression, or vice versa, only that they are moving in the same direction.  The asterisk (*) indicates that the correlation is significant.
-</div>
+
 
 ```{r open data 1, include=FALSE}
 ## Data creada con create_full_file_for_correlations_to_analytics - Jupyter Notebook
@@ -1632,11 +1673,17 @@ p
 
 
 # Microbiome + Histopathology {data-navmenu="Cross-panel Analyses"}
+Row {data-height=50}
+-----------------------------------------------------------------------
 
-#### Taxonomic composition by histopathology score 
-<div style="text-align: justify">
+Row {data-height=30}
+-----------------------------------------------------------------------
+**Taxonomic composition by histopathology score **
+
+Row {data-height=80}
+-----------------------------------------------------------------------
 Histopathology scores are condensed from a 6-point scale (0-5) to a 3-point scale (mild, moderate, severe) in order to facilitate correlations between these scores and other traits of interest. However, due to the unbalanced nature of these scores (see tables below), it can be difficult to accurately assess correlations between these scores and other traits, and any significant correlations should be viewed very carefully.
-</div>
+
 
 ```{r classify histo scores in categories, include=FALSE}
 meta_exp  <-complete_sample_table
@@ -1843,12 +1890,17 @@ ggplotly(p) %>%
 ```
 
 # Gene expression + Histopathology {data-navmenu="Cross-panel Analyses"}
+Row {data-height=50}
+-----------------------------------------------------------------------
 
-##### Gene expression by histopathology score
+Row {data-height=30}
+-----------------------------------------------------------------------
+**Gene expression by histopathology score**
 
-<div style="text-align: justify">
+Row {data-height=50}
+-----------------------------------------------------------------------
 Similar to the previous tab, these graphs explore the relationship between histopathology scores and another trait of interest, gene expression.  Again, due to imbalances in the dataset, view any changes seen here with caution.
-</div>
+
 
 ```{r ge histo organize, include=FALSE}
 #####Open ge data#####
@@ -1904,7 +1956,6 @@ bp
 
 ```
 
-\
 
 Row 
 -----------------------------------------------------------------------
@@ -1926,45 +1977,71 @@ bp
 
 # SIWA Ratios  {data-icon="fa-table"}
 
-**SIWA Ratios and Indexes in relation to Histopathology and Gene Expression panels.**
-<div style="text-align: justify">
+Row {data-height=50}
+-----------------------------------------------------------------------
 
+Row {data-height=30}
+-----------------------------------------------------------------------
+**SIWA Ratios and Indexes in relation to Histopathology and Gene Expression panels.**
+
+Row {data-height=110}
+-----------------------------------------------------------------------
 Below, you will find linear regressions between single traits (alpha diversity or log ratios of bacteria) and gene expression and histopathology. A regression score is calculated (R-squared), and a line is plotted to show the relationship between the traits.  A slope from high to low indicates a negative relationship between the traits, while low-high indicates a positive relationship. The R-squared value suggests the size of the effect, and the tables below show the calculated p-values for each regression analysis.
 
 
+Row {data-height=30}
+-----------------------------------------------------------------------
 **Diversity indexes:**
 
+Row {data-height=30}
+-----------------------------------------------------------------------
 *Observed features* = represents richness in the sample, defined as the number of different species present in it.
 
+Row {data-height=50}
+-----------------------------------------------------------------------
 *Shannon diversity* = This index measures the homogeneity in abundance of the different species in a sample. In other words, shannon index is an estimate of how complex the community is, both the number of different bacteria, and also how different these bacteria are in their function or genetics.
 
-\
+
+Row {data-height=30}
+-----------------------------------------------------------------------
 **SIWA Ratios:** 
 
+Row {data-height=80}
+-----------------------------------------------------------------------
 These ratios each use two major categories of bacteria in an attempt to simplify the complex microbial community into a single value that can tell us something about the state of the community.  These values should be interpreted carefully, as they ignore a lot of information and do not tell a complete story.  However, they may be correlated with other variables of interest in a useful way.
 
-\
+Row {data-height=30}
+-----------------------------------------------------------------------
 *SIWA Ratio 1*= Lactobacillus/ Escherichia-Shigella
 
+Row {data-height=70}
+-----------------------------------------------------------------------
 Lactobacillus species are overwhelmingly beneficial to the host, while E coli species include commensal strains as well as opportunistic and pathogenic strains.  A comparison of the two summarizes the load of both beneficial and potentially pathogenic microbes in the small intestine.  A higher ratio of Lactobacillus to Escherichia-Shigella would be expected in healthier animals.
 
-\
+Row {data-height=30}
+-----------------------------------------------------------------------
 *SIWA Ratio 2*= Firmicutes/ Proteobacteria
 
+Row {data-height=70}
+-----------------------------------------------------------------------
 Firmicutes include both beneficial (Lactobacillus, Bacillus, Ruminococcus, Lachnospiraceae, and Pediococcus) and pathogenic (Clostridium, Streptococcus, Staphylococcus, and Listeria) groups.  Proteobacteria include pathogenic groups such as E coli, Salmonella, Shigella, Legionella, Vibrio and Pseudomonas.  While Firmicutes may contain pathogenic bacteria as well as beneficial ones, a higher ratio of Firmicutes:Proteobacteria would be expected to be associated with better health.
 
-\
+Row {data-height=30}
+-----------------------------------------------------------------------
 *SIWA Ratio 3*= Lactobacillus/rest of the genera
 
+Row {data-height=50}
+-----------------------------------------------------------------------
 Lactobacillus can account for as much as 90% of sequenced bacteria in the ileum of chickens.  By tracking this ratio, we can understand if higher or lower levels of Lactobacillus are correlated with health and performance outcomes.
 
 
 
-\
 
-</div>
+Row {data-height=50}
+-----------------------------------------------------------------------
 
-
+Row {data-height=30}
+-----------------------------------------------------------------------
 **Linear regressions between alpha diversity indexes and gene expression**
 
 ```{r data and functions, include=FALSE}
@@ -2184,11 +2261,8 @@ Row {data-height=50}
 
 Row {data-height=30}
 -----------------------------------------------------------------------
-**Ratios and gene expression**
+**Linear regressions between microbiome ratios and gene expression**
 
-Row {data-height=30}
------------------------------------------------------------------------
-Linear regressions between microbiome ratios and gene expression
 
 Row 
 -----------------------------------------------------------------------
@@ -2475,7 +2549,7 @@ bp_ileum
 ```
 
 
-Row {data-height=80}
+Row {data-height=50}
 -----------------------------------------------------------------------
 
 Row {data-height=30}

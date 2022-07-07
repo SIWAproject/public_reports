@@ -1,4 +1,3 @@
-shiny
 phyloseq
 BiocGenerics
 S4Vectors
@@ -31,9 +30,10 @@ forcats
 ape
 reshape2
 fantaxtic
+data.table
 reshape
 plotly
 flexdashboard
-tidyMicro
+shiny
 DT
-data.table
+tidyMicro
