@@ -416,7 +416,7 @@ Row {data-height=50}
 
 Row {data-height=50}
 -----------------------------------------------------------------------
-In the following interactive graphs we can view the main genera present in the treatments at each location. 
+In the following interactive graphs we can view the main **genera** present in the treatments at each location. 
 
 ```{r  Taxonomic composition , include=FALSE, warning=FALSE}
 #####Plot Taxonomic composition feces#####  
@@ -497,7 +497,7 @@ plot_abundance_feces<- p + geom_bar(stat="identity", position="fill") +
 
 Row {data-height=500}
 -----------------------------------------------------------------------
-### FIGURE 4A: Taxonomic composition CECUM {data-width=1000}
+### FIGURE 4A: Taxonomic composition Cecum {data-width=1000}
 ```{r, echo=FALSE, include=TRUE}
 
 ggplotly(plot_abundance_cecum) %>%
@@ -510,7 +510,7 @@ ggplotly(plot_abundance_cecum) %>%
 
 Row {data-height=500}
 -----------------------------------------------------------------------
-### FIGURE 4B: Taxonomic composition ILEUM {data-width=1000}
+### FIGURE 4B: Taxonomic composition Ileum {data-width=1000}
 ```{r, echo=FALSE, include=TRUE}
 ggplotly(plot_abundance_ileum) %>%
   layout(xaxis = list(automargin = TRUE),
@@ -520,7 +520,7 @@ ggplotly(plot_abundance_ileum) %>%
 
 Row {data-height=500}
 -----------------------------------------------------------------------
-### FIGURE 4C: Taxonomic composition FECES {data-width=1000}
+### FIGURE 4C: Taxonomic composition Feces {data-width=1000}
 ```{r, echo=FALSE, include=TRUE}
 ggplotly(plot_abundance_feces) %>%
   layout(xaxis = list(automargin = TRUE),
@@ -552,7 +552,7 @@ Row {data-height=30}
 Row {data-height=500}
 -----------------------------------------------------------------------
 ### {data-width=350}
-Alpha diversity analyses showed a higher diversity for cecum compared to the other gut locations, larger microbiome alpha diversity being usually associated to better health status. However, it is also normal for each region of the gut to have different ranges of richness/diversity. The cecal microbiome tends to be very rich, while the small intestines and feces usually have a smaller number of bacterial species. 
+Alpha diversity analyses showed a higher diversity for cecum compared to the other gut locations, larger microbiome alpha diversity being usually associated to better health status. However, it is also normal for each region of the gut to have different ranges of richness/diversity. The **cecal microbiome** tends to be very rich, while the small intestines and feces usually have a smaller number of bacterial species. 
 
 Further alpha diversity analyses showed a few differences between treatment groups within the cecum samples and within the ileum samples. In the fecal samples there were no differences between treatments regardless of the index used. This is not uncommon; many changes in microbial diversity occur at the level of abundance, rather than richness. In other words, the types of bacteria present in a community may not change very much, but abundances of individual groups of bacteria can shift, generating changes in the ecosystem and representing the real differences between treatments. And this can not always be captured using alpha diversity calculations.
 
@@ -625,7 +625,7 @@ Row {data-height=30}
 Row {data-height=500}
 -----------------------------------------------------------------------
 ### {data-width=350}
-Hence, we went on to evaluate those differences in bacterial abundances between the samples, this is also known as beta diversity or "compositional" distance. These distances (In our case Bray Curtis dissimilarities) are often visualized with a method called principal coordinates analysis (PCoA).  Each axis represents a combination of features (OTUs) that account for high amounts of variation between samples.  The percentage of the differences for which this combination of features accounts is shown on the axis.  Samples that are on opposite ends of an axis that accounts for 20% of variability are likely to be more different than samples that are on opposite ends of an axis that only accounts for 5% of the total variability.
+Hence, we went on to evaluate those differences in bacterial abundances between the samples, this is also known as beta diversity or **"compositional"** distance. These distances (In our case Bray Curtis dissimilarities) are often visualized with a method called **principal coordinates analysis (PCoA)**. Each axis represents a combination of features (OTUs) that account for high amounts of variation between samples.  The percentage of the differences for which this combination of features accounts is shown on the axis. Samples that are on opposite ends of an axis that accounts for a high percentage of variability are likely to be more different than samples that are on opposite ends of an axis that only accounts for low percentage of the total variability.
 
 These analyses evidenced clear differentiation between samples of different gut locations (pval=0.001), which was biologically expected since different locations of the gut have different dynamics, roles and environmental conditions.
 
@@ -651,7 +651,7 @@ plot.beta.bray
 
 Row {data-height=50}
 -----------------------------------------------------------------------
-Despite the fact that the differences are not always apparent in the PCoAs, statistical significant differences were also found between the treatments within each location, including significance by calcium level and by VitD level.
+Despite the fact that the differences are not always apparent in the PCoAs, statistical significant differences were also found between the treatments within each location, including significance by Calcium level and by VitD level.
 
 Row {data-height=30}
 -----------------------------------------------------------------------
@@ -844,7 +844,7 @@ Row {data-height=30}
 
 Row {data-height=100}
 -----------------------------------------------------------------------
-After comparing the grouping of samples by composition distances evidencing general trends in composition between treatments, we went on to look at methods to identify more specific changes. Microbiome data can be filtered, merged, and subset to make specific comparisons between any two groups, and at any taxonomic level. This with the goal to identify features (i.e., species, OTUs, gene families, etc.) that differ in abundance between two groups of samples according to their treatment. (We here use <a href="https://genomebiology.biomedcentral.com/articles/10.1186/gb-2010-11-10-r106" target="_blank">DESeq</a> method).
+After comparing the grouping of samples by distances evidencing general trends in composition between treatments, we went on to look at methods to identify more specific changes. Microbiome data can be filtered, merged, and subset to make specific comparisons between any two groups, and at any taxonomic level. This with the goal to identify features (i.e., species, OTUs, gene families, etc.) that **differ in abundance** between two groups of samples according to their treatment. (We here use <a href="https://genomebiology.biomedcentral.com/articles/10.1186/gb-2010-11-10-r106" target="_blank">DESeq</a> method).
 
 Row {data-height=30}
 -----------------------------------------------------------------------
@@ -852,7 +852,7 @@ Row {data-height=30}
 
 Row {data-height=50}
 -----------------------------------------------------------------------
-Here we compare two groups: one supplemented with vitD and the other one without VitD supplementation, regardless of calcium level. In the following graphs we can see the features that are differentially abundant in the presence of VitD compared to the absence of VitD.
+Here we compare two groups: one supplemented with VitD and the other one without VitD supplementation, regardless of Calcium level. In the following graphs we can see the features that are differentially abundant in the presence of VitD compared to the absence of VitD.
 
 Row {data-height=50}
 -----------------------------------------------------------------------
@@ -891,7 +891,7 @@ The following is an interactive table to browse available information and traits
 
 Row {data-height=70}
 -----------------------------------------------------------------------
-The table includes a probiotic potential score that ranges between -6 and 6. A higher score indicates multiple positive traits (e.g. Use as prebiotic, antibiotic, anti-inflammatory, antioxidant) associated with the bacterial group, while negative scores indicate negative traits (e.g. inflammatory, pathogen, opportunistic_pathogen, causes diarrhea, causes respiratory disease).
+The table includes a **probiotic potential score** that ranges between -6 and 6. A **higher** score indicates multiple positive traits (e.g. Use as prebiotic, antibiotic, anti-inflammatory, antioxidant) associated with the bacterial group, while **negative** scores indicate negative traits (e.g. inflammatory, pathogen, opportunistic_pathogen, causes diarrhea, causes respiratory disease).
 
 Row {data-height=830}
 -----------------------------------------------------------------------
@@ -929,7 +929,7 @@ The following is an interactive table to browse available information and traits
 
 Row {data-height=900}
 -----------------------------------------------------------------------
-### TABLE 3: Broad groups
+### TABLE 3: Metabolic information of groups corresponding broad taxonomic ranges 
 
 ```{r broad groups table , echo=FALSE}
 df_2=broad_taxonomy_info[c("Group_Name","Finner_Classification", "Key_Findings")]
@@ -953,11 +953,11 @@ Row {data-height=30}
 
 Row {data-height=70}
 -----------------------------------------------------------------------
-We evaluated the physical structures of the intestinal tract tissue to understand the impact of calcium levels on gastrointestinal inflammation and integrity. We employ a scoring system that allows for semi-quantitative analysis of the integrity and inflammatory status of the gut. A score of 0 indicates a normal, healthy gut with no appearance of damage or aberration. A score of 5 for a given metric indicates extreme damage or aberration in the traits being evaluated.
+We evaluated the **physical structures** of the intestinal tract tissue to understand the impact of Calcium levels on gastrointestinal **inflammation and integrity**. We employ a scoring system that allows for semi-quantitative analysis of the integrity and inflammatory status of the gut. A score of 0 indicates a normal, healthy gut with no appearance of damage or aberration. A score of 5 for a given metric indicates extreme damage or aberration in the traits being evaluated.
 
 Row {data-height=50}
 -----------------------------------------------------------------------
-The treatment with recommended levels of Ca (2) with VitD showed better gastrointestinal tissue health compared to the rest of the groups, particularly those with higher levels of calcium.
+The treatment with recommended levels of Ca (MediumLow) with VitD showed better gastrointestinal tissue health compared to the rest of the groups, particularly those with higher levels of Calcium.
 
 
 Row {data-height=30}
@@ -966,27 +966,27 @@ Row {data-height=30}
 
 Row {data-height=50}
 -----------------------------------------------------------------------
-*InflammationSeverity*: An overview of changes in the architecture or integrity of the intestines due to inflammation.  These changes can be chronic, subacute, and acute.  Changes may include ballooning of the crypt, edema, and loss of crypt cell walls.  One aspect of the score accounts for the extent of the damage across the various layers of tissue in the intestine.
+*InflammationSeverity*: An overview of changes in the architecture or integrity of the intestines due to **inflammation**.  These changes can be chronic, subacute, and acute.  Changes may include ballooning of the crypt, edema, and loss of crypt cell walls.  One aspect of the score accounts for the extent of the damage across the various layers of tissue in the intestine.
 
 
 Row {data-height=70}
 -----------------------------------------------------------------------
-*LymphoidImmune*: Infiltration of immune cells into the mucosa or serosa.  The presence of immune cells in the mucosa is normal, but most are in or near aggregations of lymphoid tissue called Gut associated Lymphoid Tissue (GALT).  High levels of lymphoid cells throughout the mucosa or serosa indicate a subacute adaptive immune response to a recent or current immune challenge.  Similarly, growth in the GALT regions can indicate a pronounced antigenic challenge.
+*LymphoidImmune*: Infiltration of immune cells into the mucosa or serosa.  The **presence of immune cells** in the mucosa is normal, but most are in or near aggregations of lymphoid tissue called Gut Associated Lymphoid Tissue (GALT).  High levels of lymphoid cells throughout the mucosa or serosa indicate a subacute **adaptive immune response** to a recent or current immune challenge.  Similarly, growth in the GALT regions can indicate a pronounced antigenic challenge.
 
 
 Row {data-height=50}
 -----------------------------------------------------------------------
-*MicrobialOrganisms*:  Normal and abnormal infiltration or attachment of microorganisms into the mucosa.  May include assessment of organism type (i.e. parasite, yeast, or bacteria).  Some association of microbes to the apical surface is normal.  Higher scores indicate infiltration of abnormal microbe types and/or excessive levels.
+*MicrobialOrganisms*:  Normal and abnormal **infiltration** or attachment of microorganisms into the mucosa.  May include assessment of organism type (i.e. parasite, yeast, or bacteria).  Some association of microbes to the apical surface is normal.  Higher scores indicate infiltration of abnormal microbe types and/or excessive levels.
 
 
 Row {data-height=50}
 -----------------------------------------------------------------------
-*MucosalIntegrity*: Uniformity and consistency of the mucosa at the apical membrane, where absorption occurs.  Aberrations in this category include micro-erosion of the microvilli on the apical surface, ulcers, necrosis, and loss of gut-associated lymphoid tissue (GALT).  When severe, these changes can include the submucosa level, too.  
+*MucosalIntegrity*: Uniformity and consistency of the mucosa at the apical membrane, where absorption occurs.  Aberrations in this category include **micro-erosion** of the microvilli on the apical surface, **ulcers**, **necrosis**, and loss of gut-associated lymphoid tissue (GALT).  When severe, these changes can include the submucosa level, too.  
 
 
 Row {data-height=70}
 -----------------------------------------------------------------------
-*OverallArchitecture*: Morphology and structure of the mucosa.  Aberrations would include blunting of villi, loss of mucus-producing goblet cells, and hyperplasia, in which excessive growth of absorptive enterocytes occurs at the expense of other important cell types such as goblet cells and endocrine cells.  These aberrations are reparative mechanisms used by the animal, and typically indicate a repeated stress or injury to the GI at this location.
+*OverallArchitecture*: Morphology and structure of the mucosa.  Aberrations would include **blunting** of villi, loss of mucus-producing goblet cells, and **hyperplasia**, in which excessive growth of absorptive enterocytes occurs at the expense of other important cell types such as goblet cells and endocrine cells.  These aberrations are reparative mechanisms used by the animal, and typically indicate a **repeated stress** or injury to the GI at this location.
 
 
 Row {data-height=50}
@@ -1111,13 +1111,13 @@ dfff <- dfff %>%
   mutate( Treatment=factor(Treatment,levels=c("LowCa", "LowCa+VitD", "MediumLowCa", "MediumLowCa+VitD", "MediumHighCa", "MediumHighCa+VitD", "HighCa","HighCa+VitD")) )
 
 treatments_cecum <- ggplot(dfff, aes(fill = ScoreCategory, y =mean , x =Treatment)) + 
-  ylab("Mean Score") + xlab("") + 
+  ylab("Mean additive Score") + xlab("") + 
   geom_bar(stat = "identity")  +
   theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) +
   theme(text=element_text(size=15))
 
 #Add significancy letters manually 
-histo_cec_plot <- treatments_cecum+ annotate("text", x = 7, y = 13, label = cld2$histosig[2]) + 
+histo_cec_plot <- treatments_cecum+ annotate("text", x = 7, y = 14, label = cld2$histosig[2]) + 
     annotate("text", x = 6, y = 14, label = cld2$histosig[5]) +
     annotate("text", x = 3, y = 14, label = cld2$histosig[3]) +
     annotate("text", x = 8, y = 14, label = cld2$histosig[1]) +
@@ -1150,13 +1150,13 @@ dfff <- dfff %>%
   mutate( Treatment=factor(Treatment,levels=c("LowCa", "LowCa+VitD", "MediumLowCa", "MediumLowCa+VitD", "MediumHighCa", "MediumHighCa+VitD", "HighCa","HighCa+VitD")) )
 
 treatments_ileum <- ggplot(dfff, aes(fill = ScoreCategory, y =mean , x = Treatment)) + 
-  ylab("Mean Score") + xlab("") + 
+  ylab("Mean additive Score") + xlab("") + 
   geom_bar(stat = "identity")  +
   theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) +
   theme(text=element_text(size=15))
 
 #Add significancy letters manually 
-histo_cec_plot <- treatments_ileum+ annotate("text", x = 1:2, y = 7, label = cld3$histosig[1]) + 
+histo_cec_plot <- treatments_ileum+ annotate("text", x = 1:2, y = 8, label = cld3$histosig[1]) + 
     annotate("text", x = 5, y = 8, label = cld3$histosig[1]) +
     annotate("text", x = 7, y = 8, label = cld3$histosig[1]) +
     annotate("text", x = 3, y = 8, label = cld3$histosig[1]) +
@@ -1179,12 +1179,12 @@ Row {data-height=30}
 
 Row {data-height=100}
 -----------------------------------------------------------------------
-The goal of gene expression is to evaluate how the animal host is responding to its environment by altering the levels of various proteins and other compounds in the body in a complex and very controlled manner. When studying gene expression with real-time polymerase chain reaction (PCR), scientists usually investigate changes (increases or decreases) in the expression of a particular gene or set of genes by measuring the abundance of the gene-specific transcript. Here we quantify expression for 3 genes related to inflammation and gut health, as a way to understand how the gut is responding to the gut microbiota and other stimuli. These target genes are: IL-10, IL-1B, and MUC2.
+The goal of gene expression is to evaluate how the **animal host is responding to its environment** by altering the levels of various proteins and other compounds in the body in a complex and very controlled manner. When studying gene expression with real-time polymerase chain reaction (PCR), scientists usually investigate changes (increases or decreases) in the expression of a particular gene or set of genes by measuring the abundance of the gene-specific transcript. Here we quantify expression for 3 genes related to inflammation and gut health, as a way to understand how the gut is responding to the gut microbiota and other stimuli. These target genes are: IL-10, IL-1B, and MUC2.
 
 Row {data-height=100}
 -----------------------------------------------------------------------
-To plot this data we use -log foldchange transformations relative to the control condition (in this case the control group is treatment "MediumLowCa" as this is the widly recommended level of calcium for broilers diet), which has all been normalized to your housekeeping gene. The higher the values, the higher the expression of the gene in the treatment compared to the control level. Significant differences between groups were tested by anova or multiple t-test (ie
-<a href="https://en.wikipedia.org/wiki/Tukey%27s_range_test" target="_blank">Tukey’s test</a>), resulting only in some group differences for the expression of IL10 gene in the cecum, and IL1B and IL10 genes in the ileum. 
+To plot this data we use -log foldchange transformations relative to the control condition (in this case the control group is treatment "MediumLowCa" as this is the widely recommended level of Calcium for broilers diet). The **higher** the values, the higher the expression of the gene in the treatment compared to the **control** level. Significant differences between groups were tested by ANOVA or multiple t-test (ie
+<a href="https://en.wikipedia.org/wiki/Tukey%27s_range_test" target="_blank">Tukey’s test</a>), resulting only in some group differences for the expression of IL10 gene in the Cecum, and IL1B and IL10 genes in the Ileum. 
 
 
 ```{r Gene expression, include=FALSE}
@@ -1458,11 +1458,11 @@ Row {data-height=30}
 
 Row {data-height=50}
 -----------------------------------------------------------------------
-In addition to studying the role of treatments and challenges on SIWA metrics, we are also interested in understanding if there are associations/correlations between traits that might help us better understand the complex interactions in this system.  
+In addition to studying the role of treatments and challenges on individual SIWA panels, we are also interested in understanding if there are associations/correlations between traits that might help us better understand the **complex interactions** in this system.  
 
 Row {data-height=100}
 -----------------------------------------------------------------------
-We begin with <a href="https://en.wikipedia.org/wiki/Kendall_rank_correlation_coefficient" target="_blank">Kendall</a> correlations between the top 20 most abundant microbial taxa and the expression of IL-10, IL-1B, and MUC-2.  A positive or red correlation indicates that when a taxon is increased, the expression of the correlated gene is also increased.  The opposite it true when the correlation is negative (blue).  It is important to understand that this correlation does not mean that changes in the microbiome *cause* changes in gene expression, or vice versa, only that they are moving in the same direction.  The asterisk (*) indicates that the correlation is significant.
+We begin with <a href="https://en.wikipedia.org/wiki/Kendall_rank_correlation_coefficient" target="_blank">Kendall</a> correlations between the top 20 most abundant microbial taxa and the expression of IL-10, IL-1B, and MUC-2.  A positive or red correlation indicates that when a taxon is increased, the expression of the correlated gene is also increased.  The opposite is true when the correlation is negative (blue).  It is important to understand that this correlation does not mean that changes in the microbiome *cause* changes in gene expression, or vice versa, only that they are moving in the same direction.  The asterisk (*) indicates that the correlation is significant.
 
 
 ```{r open data 1, include=FALSE}
