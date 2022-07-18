@@ -9,6 +9,7 @@ output:
     css: estilo.css
     mathjax: NULL
     self_contained: FALSE
+    logo: "Siwa-blanco-01.png"
     #runtime: shiny
     #navbar:
      # - { title: "About SIWA", href: "https://siwa.bio/" }
@@ -114,7 +115,7 @@ Project E335 was an experimental trial done at Iluma's broiler experimental farm
 
 The experiment consisted of 8 treatments differing in Ca concentration across the growth stages and also including presence or absence of VitD in the diet. 
 
-Microbiome, gut histology and gene expression data were collected from animals at 33 days of age, following treatment from day of hatch. For microbiome samples, gut content was collected from three different sampling locations: Cecum, Ileum and Feces. For gene expression and histology samples, tissue samples were collected from two sampling locations: Cecum and Ileum (refer to diagram).
+Microbiome, gut histology and gene expression data were collected from animals at 33 days of age, following treatment from day of hatch. For microbiome samples, gut content was collected from three different sampling locations: Cecum(C), Ileum(I) and Feces(F). For gene expression and histology samples, tissue samples were collected from two sampling locations: Cecum and Ileum (refer to diagram).
 
 
 ### {data-with=800}
@@ -149,6 +150,10 @@ ODLEPobj_feces<-subset_samples(ODLEPobj, SampleLocation=="F")
 Row {data-height=50}
 -----------------------------------------------------------------------
 
+Row {data-height=30}
+-----------------------------------------------------------------------
+**Microbiome exploration**
+
 Row
 -----------------------------------------------------------------------
 
@@ -179,22 +184,22 @@ l <- list("LowCa",
 tab <- tab[order(match(rownames(tab), l)),]
 ttab <-as.data.frame(t(tab))
 kbl(ttab, centering = FALSE) %>% 
-  kable_styling(full_width = F, position = "center")  %>%
-   column_spec(2, color = spec_color(ttab$"LowCa", end = 0.5, direction= -1, option= "magma")) %>%
-   column_spec(3, color = spec_color(ttab$"LowCa+VitD",end = 0.5, direction= -1, option= "magma")) %>%
-   column_spec(4, color = spec_color(ttab$"MediumLowCa", end = 0.5, direction= -1, option= "magma")) %>%
-   column_spec(5, color = spec_color(ttab$"MediumLowCa+VitD", end = 0.5, direction= -1, option= "magma")) %>%
-   column_spec(6, color = spec_color(ttab$"MediumHighCa", end = 0.5, direction= -1, option= "magma")) %>%
-   column_spec(7, color = spec_color(ttab$"MediumHighCa+VitD", end = 0.5, direction= -1, option= "magma")) %>%
-   column_spec(8, color = spec_color(ttab$"HighCa", end = 0.5, direction= -1, option= "magma")) %>%
-   column_spec(9, color = spec_color(ttab$"HighCa+VitD", end = 0.5, direction= -1, option= "magma")) 
+  kable_styling(full_width = F, position = "center") # %>%
+   #column_spec(2, color = spec_color(ttab$"LowCa", end = 0.5, direction= -1, option= "magma")) %>%
+   #column_spec(3, color = spec_color(ttab$"LowCa+VitD",end = 0.5, direction= -1, option= "magma")) %>%
+   #column_spec(4, color = spec_color(ttab$"MediumLowCa", end = 0.5, direction= -1, option= "magma")) %>%
+   #column_spec(5, color = spec_color(ttab$"MediumLowCa+VitD", end = 0.5, direction= -1, option= "magma")) %>%
+   #column_spec(6, color = spec_color(ttab$"MediumHighCa", end = 0.5, direction= -1, option= "magma")) %>%
+   #column_spec(7, color = spec_color(ttab$"MediumHighCa+VitD", end = 0.5, direction= -1, option= "magma")) %>%
+   #column_spec(8, color = spec_color(ttab$"HighCa", end = 0.5, direction= -1, option= "magma")) %>%
+   #column_spec(9, color = spec_color(ttab$"HighCa+VitD", end = 0.5, direction= -1, option= "magma")) 
 
 ```
 
 Row {data-height=120}
 -----------------------------------------------------------------------
 Sequences identified during the sequencing process are grouped in batches of identical sequences so that the number of times that sequences was found can be recorded. This is the abundance of the sequence. The groups of identical sequences are called Operational Taxonomic Units 
-<a href="https://en.wikipedia.org/wiki/Operational_taxonomic_unit" target="_blank">(OTUs)</a> or Amplicon Sequence Variants <a href="https://en.wikipedia.org/wiki/Amplicon_sequence_variant" target="_blank">(ASVs)</a>, and they often (but not always) correspond to species or genera of bacteria. In the plot below we can observe the prevalence of OTUs across all samples (the fixed threshold for an OTU to be considered present in a sample is 0.1% relative abundance). 
+<a href="https://en.wikipedia.org/wiki/Operational_taxonomic_unit" target="_blank">(OTUs)</a> or Amplicon Sequence Variants <a href="https://en.wikipedia.org/wiki/Amplicon_sequence_variant" target="_blank">(ASVs)</a>, and they often (but not always) correspond to species or genera of bacteria. In the figure 1 we can observe the prevalence of OTUs across all samples (the fixed threshold for an OTU to be considered present in a sample is 0.1% relative abundance). 
 
 Row {data-height=500}
 -----------------------------------------------------------------------
@@ -359,11 +364,53 @@ annotate_figure(figure,
 
 Row {data-height=550}
 -----------------------------------------------------------------------
-###  {data-width=200}
+###  {data-width=300}
 
-After filtering low-abundance sequences, the remaining data can be explored more easily. We see below the distribution of these taxa at the phylum level.
+After filtering low-abundance sequences, the remaining data can be explored more easily. Exploring the distribution of sequences at different taxonomic levels can help us understand the general microbiome composition of the samples in the experiment as a whole.   
 
-### FIGURE 2: Prevalence of Major Phyla {data-width=800}
+
+
+.
+
+
+.
+
+
+
+1
+
+
+
+
+```{r picture ranges, include= TRUE, echo=FALSE, out.width = '100%'}
+knitr::include_graphics("taxa_ranges.png")
+```
+
+
+.
+
+
+
+3
+
+
+
+
+4
+
+
+
+5
+
+
+
+
+6
+
+
+In figure 2 we can observe the prevalence and abundance of the OTUs at phylum level. Each point is a different OTU, prevalence in Y axis is the times an OTU is observed at least once, that is, the percentage of samples in which each OTU is present. The x axis is the abundance in which each OTU is found. 
+
+### FIGURE 2: Prevalence of Major Phyla {data-width=700}
 ```{r Prevalence Phylum, echo=FALSE, include=TRUE, cache=TRUE}
 pseq.rel <- microbiome::transform(ODLEPobj, "compositional")
 flist    <- filterfun(kOverA(5, 2e-05))
@@ -379,6 +426,7 @@ ggplotly(p) %>%
 
 
 ```
+
 
 Row {data-height=550}
 -----------------------------------------------------------------------
@@ -413,6 +461,10 @@ ggplotly(p) %>%
 # Taxonomic composition {data-navmenu="Microbiome"}
 Row {data-height=50}
 -----------------------------------------------------------------------
+
+Row {data-height=30}
+-----------------------------------------------------------------------
+**Microbiome taxonomic composition**
 
 Row {data-height=50}
 -----------------------------------------------------------------------
@@ -644,7 +696,7 @@ plot.beta.bray <- beta.bray + geom_point(size=4, alpha=0.75, na.rm=T) +  #sobrep
 
 ```
 
-### FIGURE 7:Dissimilarity between all samples (Bray distances) {data-width=650}
+### FIGURE 7: Dissimilarity between all samples (Bray distances) {data-width=650}
 ```{r , echo=FALSE}
 plot.beta.bray
 ```
@@ -696,18 +748,18 @@ plot.beta.bray.feces <- beta.bray + geom_point(size=4, alpha=0.75, na.rm=T) +  #
 
 ```
 
-### FIGURE 8A: Beta div Cecum (Treatment)
+### FIGURE 8A: Beta diversity Cecum (Treatment)
 
 ```{r , echo=FALSE}
 plot.beta.bray.cecum
 ```
 
-### FIGURE 8B: Beta div Ileum (Treatment)
+### FIGURE 8B: Beta diversity Ileum (Treatment)
 ```{r , echo=FALSE}
 plot.beta.bray.ileum
 ```
 
-### FIGURE 8C:Beta div Feces (Treatment)
+### FIGURE 8C:Beta diversity Feces (Treatment)
 
 ```{r , echo=FALSE}
 plot.beta.bray.feces
@@ -748,7 +800,7 @@ plot.beta.bray.feces<-beta.bray + geom_point(size=4, alpha=0.75, na.rm=T) +  #so
 
 ```
 
-### FIGURE 9A: Beta div Cecum (Calcium)
+### FIGURE 9A: Beta diversity Cecum (Calcium)
 
 ```{r , echo=FALSE}
 ggplotly(plot.beta.bray.cecum)%>%
@@ -757,7 +809,7 @@ ggplotly(plot.beta.bray.cecum)%>%
   style(hoverinfo = 'none') %>% partial_bundle()
 ```
 
-### FIGURE 9B: Beta div Ileum (Calcium)
+### FIGURE 9B: Beta diversity Ileum (Calcium)
 ```{r , echo=FALSE}
 ggplotly(plot.beta.bray.ileum) %>%
   layout(xaxis = list(automargin = TRUE),
@@ -766,7 +818,7 @@ ggplotly(plot.beta.bray.ileum) %>%
 
 ```
 
-### FIGURE 9C: Beta div Feces (Calcium)
+### FIGURE 9C: Beta diversity Feces (Calcium)
 
 ```{r , echo=FALSE}
 ggplotly(plot.beta.bray.feces) %>%
@@ -813,18 +865,18 @@ plot.beta.bray.feces = beta.bray + geom_point(size=4, alpha=0.75, na.rm=T) +  #s
 #plot.beta.bray.feces
 ```
 
-### FIGURE 10A: Beta div Cecum (VitD)
+### FIGURE 10A: Beta diversity Cecum (VitD)
 
 ```{r , echo=FALSE}
 plot.beta.bray.cecum 
 ```
 
-### FIGURE 10B: Beta div Ileum (VitD)
+### FIGURE 10B: Beta diversity Ileum (VitD)
 ```{r , echo=FALSE}
 plot.beta.bray.ileum
 ```
 
-### FIGURE 10C: Beta div Feces (VitD)
+### FIGURE 10C: Beta diversity Feces (VitD)
 
 ```{r , echo=FALSE}
 plot.beta.bray.feces
@@ -840,7 +892,7 @@ Row {data-height=50}
 
 Row {data-height=30}
 -----------------------------------------------------------------------
-**Microbiome Differential Abundance Analysis**
+**Microbiome differential abundance analysis**
 
 Row {data-height=100}
 -----------------------------------------------------------------------
@@ -885,6 +937,10 @@ p_feces
 Row {data-height=50}
 -----------------------------------------------------------------------
 
+Row {data-height=30}
+-----------------------------------------------------------------------
+**Metabolic information of species and genera**
+
 Row {data-height=50}
 -----------------------------------------------------------------------
 The following is an interactive table to browse available information and traits of bacteria of interest for a better understanding of the possible implications of changes in the microbiome.
@@ -895,7 +951,7 @@ The table includes a **probiotic potential score** that ranges between -6 and 6.
 
 Row {data-height=830}
 -----------------------------------------------------------------------
-### TABLE 2: Species and Genus
+### TABLE 2: Metabolic information of selected Species and Genera
 
 ```{r sp groups table , echo=FALSE}
 genera_taxonomy_info$Species <- "All species"
@@ -923,13 +979,17 @@ DT::datatable(df %>% select(-Key_Findings),
 Row {data-height=50}
 -----------------------------------------------------------------------
 
+Row {data-height=30}
+-----------------------------------------------------------------------
+**Metabolic information of broad groups**
+
 Row {data-height=50}
 -----------------------------------------------------------------------
 The following is an interactive table to browse available information and traits of broad groups of bacteria of interest for a better understanding of the possible implications of changes in the microbiome.
 
 Row {data-height=900}
 -----------------------------------------------------------------------
-### TABLE 3: Metabolic information of groups corresponding broad taxonomic ranges 
+### TABLE 3: Metabolic information of groups corresponding to broad taxonomic ranges (Phylum, Class, Order, Family)
 
 ```{r broad groups table , echo=FALSE}
 df_2=broad_taxonomy_info[c("Group_Name","Finner_Classification", "Key_Findings")]
@@ -943,7 +1003,7 @@ DT::datatable(df_2,   height = 10000,
 ```
 
 
-# Histopathology {data-icon="fa-table"}
+# Histopathology {data-icon="fa fa-bar-chart"}
 Row {data-height=50}
 -----------------------------------------------------------------------
 
@@ -1179,7 +1239,8 @@ Row {data-height=30}
 
 Row {data-height=100}
 -----------------------------------------------------------------------
-The goal of gene expression is to evaluate how the **animal host is responding to its environment** by altering the levels of various proteins and other compounds in the body in a complex and very controlled manner. When studying gene expression with real-time polymerase chain reaction (PCR), scientists usually investigate changes (increases or decreases) in the expression of a particular gene or set of genes by measuring the abundance of the gene-specific transcript. Here we quantify expression for 3 genes related to inflammation and gut health, as a way to understand how the gut is responding to the gut microbiota and other stimuli. These target genes are: IL-10, IL-1B, and MUC2.
+The goal of gene expression is to evaluate how the **animal host is responding to its environment** by altering the levels of various proteins and other compounds in the body in a complex and very controlled manner. When studying gene expression with real-time polymerase chain reaction (PCR), scientists usually investigate changes (increases or decreases) in the expression of a particular gene or set of genes by measuring the abundance of the gene-specific transcript. Here we quantify expression for 3 genes related to inflammation and gut health, as a way to understand how the gut is responding to the gut microbiota and other stimuli. These target genes are: <a href="https://en.wikipedia.org/wiki/Interleukin_10">IL-10</a>, <a href="https://en.wikipedia.org/wiki/Interleukin_1_beta">IL-1B</a>, <a href="https://en.wikipedia.org/wiki/Mucin_2">MUC2</a>.
+
 
 Row {data-height=100}
 -----------------------------------------------------------------------
@@ -1644,7 +1705,7 @@ df$label <- df$Taxa
 Row
 -----------------------------------------------------------------------
 
-### FIGURE 16: Heatmap
+### FIGURE 16: Kendall correlation heatmap between microbial families and host genes
 
 ```{r crear plot 1, include=TRUE,echo=FALSE, warning=FALSE, fig.dim = c(10, 6)}
  
@@ -1682,7 +1743,7 @@ Row {data-height=30}
 
 Row {data-height=80}
 -----------------------------------------------------------------------
-Histopathology scores are condensed from a 6-point scale (0-5) to a 3-point scale (mild, moderate, severe) in order to facilitate correlations between these scores and other traits of interest. However, due to the unbalanced nature of these scores (see tables below), it can be difficult to accurately assess correlations between these scores and other traits, and any significant correlations should be viewed very carefully.
+Histopathology scores are condensed from a 6-point scale (0-5) to a 3-point scale (mild, moderate, severe) in order to facilitate correlations between these scores and other traits of interest. However, due to the unbalanced nature of these scores (see tables 4 and 5), it can be difficult to accurately assess correlations between these scores and other traits, and any significant correlations should be viewed very carefully.
 
 
 ```{r classify histo scores in categories, include=FALSE}
@@ -1817,7 +1878,7 @@ subset.genus.df_cecum %>%
 
 ```
 
-### FIGURE 17: Cecum taxonomic composoition by histopathology score {data-width=400}
+### FIGURE 17: Cecum taxonomic composition by histopathology score {data-width=400}
 ```{r 17, include=TRUE, echo=FALSE, warning=FALSE}
 
 par(mar = c(6.5, 6.5, 0.5, 0.5), mgp = c(5, 1, 0))
@@ -1874,7 +1935,7 @@ subset.genus.df_cecum %>%
 
 ```
 
-### FIGURE 18: Ileum taxonomic composoition by histopathology score {data-width=400}
+### FIGURE 18: Ileum taxonomic composition by histopathology score {data-width=400}
 ```{r 18, include=TRUE, echo=FALSE, warning=FALSE}
 
 par(mar = c(6.5, 6.5, 0.5, 0.5), mgp = c(5, 1, 0))
@@ -1899,7 +1960,7 @@ Row {data-height=30}
 
 Row {data-height=50}
 -----------------------------------------------------------------------
-Similar to the previous tab, these graphs explore the relationship between histopathology scores and another trait of interest, gene expression.  Again, due to imbalances in the dataset, view any changes seen here with caution.
+Similarly, these graphs explore the relationship between histopathology scores and another trait of interest, gene expression.  Again, due to imbalances in the dataset, view any changes seen here with caution.
 
 
 ```{r ge histo organize, include=FALSE}
@@ -1944,7 +2005,7 @@ boxplot_data_ileum <- boxplot_data[boxplot_data$SampleLocation =="I",]
 Row 
 -----------------------------------------------------------------------
 
-### FIGURE 19: Gene expression vs Histo - CECUM
+### FIGURE 19: Gene expression vs. Histopathology in the Cecum
 
 ```{r ge histo plots cec, include=TRUE, echo=FALSE, fig.dim = c(10, 6)}
 #cecum plot
@@ -1959,7 +2020,7 @@ bp
 
 Row 
 -----------------------------------------------------------------------
-### FIGURE 20: Gene expression vs Histo - CECUM
+### FIGURE 20: Gene expression vs. Histopathology in the Ileum
 
 ```{r ge histo plots ile, include=TRUE, echo=FALSE, fig.dim = c(10, 6)}
 
@@ -1975,7 +2036,7 @@ bp
 ```
 
 
-# SIWA Ratios  {data-icon="fa-table"}
+# SIWA Ratios  {data-icon="fa fa-bookmark-o"}
 
 Row {data-height=50}
 -----------------------------------------------------------------------
@@ -1986,7 +2047,7 @@ Row {data-height=30}
 
 Row {data-height=110}
 -----------------------------------------------------------------------
-Below, you will find linear regressions between single traits (alpha diversity or log ratios of bacteria) and gene expression and histopathology. A regression score is calculated (R-squared), and a line is plotted to show the relationship between the traits.  A slope from high to low indicates a negative relationship between the traits, while low-high indicates a positive relationship. The R-squared value suggests the size of the effect, and the tables below show the calculated p-values for each regression analysis.
+Here you will find **linear regressions** between single traits (alpha diversity or log ratios of bacteria) and gene expression and histopathology. A regression score is calculated **(R-squared)**, and a line is plotted to show the relationship between the traits.  A slope from high to low indicates a negative relationship between the traits, while low-high indicates a positive relationship. The R-squared value suggests the size of the effect, and the following tables show the calculated p-values for each regression analysis.
 
 
 Row {data-height=30}
@@ -2004,31 +2065,34 @@ Row {data-height=50}
 
 Row {data-height=30}
 -----------------------------------------------------------------------
+
+Row {data-height=30}
+-----------------------------------------------------------------------
 **SIWA Ratios:** 
 
-Row {data-height=80}
+Row {data-height=75}
 -----------------------------------------------------------------------
-These ratios each use two major categories of bacteria in an attempt to simplify the complex microbial community into a single value that can tell us something about the state of the community.  These values should be interpreted carefully, as they ignore a lot of information and do not tell a complete story.  However, they may be correlated with other variables of interest in a useful way.
+These ratios each use two major categories of bacteria in an attempt to **simplify the complex microbial community** into a single value that can tell us something about the state of the community.  These values should be interpreted carefully, as they ignore a lot of information and do not tell a complete story.  However, they may be correlated with other variables of interest in a useful way.
 
 Row {data-height=30}
 -----------------------------------------------------------------------
-*SIWA Ratio 1*= Lactobacillus/ Escherichia-Shigella
+*SIWA Ratio 1* = Lactobacillus/ Escherichia-Shigella
 
 Row {data-height=70}
 -----------------------------------------------------------------------
-Lactobacillus species are overwhelmingly beneficial to the host, while E coli species include commensal strains as well as opportunistic and pathogenic strains.  A comparison of the two summarizes the load of both beneficial and potentially pathogenic microbes in the small intestine.  A higher ratio of Lactobacillus to Escherichia-Shigella would be expected in healthier animals.
+Lactobacillus species are overwhelmingly **beneficial** to the host, while E coli species include commensal strains as well as opportunistic and **pathogenic** strains.  A comparison of the two summarizes the load of both beneficial and potentially pathogenic microbes in the small intestine.  A higher ratio of Lactobacillus to Escherichia-Shigella would be expected in healthier animals.
 
 Row {data-height=30}
 -----------------------------------------------------------------------
-*SIWA Ratio 2*= Firmicutes/ Proteobacteria
+*SIWA Ratio 2* = Firmicutes/ Proteobacteria
 
-Row {data-height=70}
+Row {data-height=73}
 -----------------------------------------------------------------------
-Firmicutes include both beneficial (Lactobacillus, Bacillus, Ruminococcus, Lachnospiraceae, and Pediococcus) and pathogenic (Clostridium, Streptococcus, Staphylococcus, and Listeria) groups.  Proteobacteria include pathogenic groups such as E coli, Salmonella, Shigella, Legionella, Vibrio and Pseudomonas.  While Firmicutes may contain pathogenic bacteria as well as beneficial ones, a higher ratio of Firmicutes:Proteobacteria would be expected to be associated with better health.
+Firmicutes include both **beneficial** (Lactobacillus, Bacillus, Ruminococcus, Lachnospiraceae, and Pediococcus) and **pathogenic** (Clostridium, Streptococcus, Staphylococcus, and Listeria) groups.  Proteobacteria include pathogenic groups such as E coli, Salmonella, Shigella, Legionella, Vibrio and Pseudomonas.  While Firmicutes may contain pathogenic bacteria as well as beneficial ones, a higher ratio of Firmicutes:Proteobacteria would be expected to be associated with better health.
 
 Row {data-height=30}
 -----------------------------------------------------------------------
-*SIWA Ratio 3*= Lactobacillus/rest of the genera
+*SIWA Ratio 3* = Lactobacillus/rest of the genera
 
 Row {data-height=50}
 -----------------------------------------------------------------------
@@ -2533,7 +2597,7 @@ bp_cecum
 
 ```
 
-### FIGURE 25B: Histo vs Alpha diversity - Ileum s{data-width=500}
+### FIGURE 25B: Histo vs Alpha diversity - Ileum {data-width=500}
 
 ```{r Indexes histo plots ile, include=TRUE, echo=FALSE}
 #Ileum plot
