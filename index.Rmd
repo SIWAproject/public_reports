@@ -159,7 +159,7 @@ Row
 
 ### {data-width=150}
 
-As seen in Table 1, six microbiome samples per treatment were collected in each gut location. Four samples are excluded or missing. 
+As seen in Table 1, six microbiome samples per treatment were collected in each gut location (n=6). Four samples are excluded or missing. 
 
 ### TABLE 1: Samples per group {data-width=850}
 
@@ -199,7 +199,7 @@ kbl(ttab, centering = FALSE) %>%
 Row {data-height=120}
 -----------------------------------------------------------------------
 Sequences identified during the sequencing process are grouped in batches of identical sequences so that the number of times that sequences was found can be recorded. This is the abundance of the sequence. The groups of identical sequences are called Operational Taxonomic Units 
-<a href="https://en.wikipedia.org/wiki/Operational_taxonomic_unit" target="_blank">(OTUs)</a> or Amplicon Sequence Variants <a href="https://en.wikipedia.org/wiki/Amplicon_sequence_variant" target="_blank">(ASVs)</a>, and they often (but not always) correspond to species or genera of bacteria. In the figure 1 we can observe the prevalence of OTUs across all samples (the fixed threshold for an OTU to be considered present in a sample is 0.1% relative abundance). 
+<a href="https://en.wikipedia.org/wiki/Operational_taxonomic_unit" target="_blank">(OTUs)</a> or Amplicon Sequence Variants <a href="https://en.wikipedia.org/wiki/Amplicon_sequence_variant" target="_blank">(ASVs)</a>, and they often (but not always) correspond to species or genera of bacteria. In the Figure 1 we can observe the prevalence of OTUs across all samples (the fixed threshold for an OTU to be considered present in a sample is 0.1% relative abundance). 
 
 Row {data-height=500}
 -----------------------------------------------------------------------
@@ -408,7 +408,7 @@ knitr::include_graphics("taxa_ranges.png")
 6
 
 
-In figure 2 we can observe the prevalence and abundance of the OTUs at phylum level. Each point is a different OTU, prevalence in Y axis is the times an OTU is observed at least once, that is, the percentage of samples in which each OTU is present. The x axis is the abundance in which each OTU is found. 
+In Figure 2 we can observe the prevalence and abundance of the OTUs at phylum level. Each point is a different OTU, prevalence in Y axis is the times an OTU is observed at least once, that is, the percentage of samples in which each OTU is present. The x axis is the abundance in which each OTU is found. 
 
 ### FIGURE 2: Prevalence of Major Phyla {data-width=700}
 ```{r Prevalence Phylum, echo=FALSE, include=TRUE, cache=TRUE}
@@ -432,9 +432,12 @@ Row {data-height=550}
 -----------------------------------------------------------------------
 ### {data-width=200}
 
-Next, we observe the distribution of taxa at the family level within each sample location. We can see that while the sample location has a strong impact on distribution, treatment does not affect the distribution of the families at first sight.
+Next, we observe the distribution of taxa at the family level within each sample location. 
+Distribution can be understood using relative abundance, which is the proportion of a taxon relative to all other taxons in the same sample. It is presented as a proportion of 1 or a percentage.
 
-### FIGURE 3: Family distribution by sample locations {data-width=800}
+It can be seen in Figure 3 that while the sample location has a strong impact on distribution, treatment does not affect the distribution of the families at first sight.
+
+### FIGURE 3: Family distribution by sample locations: Cecum(C), Ileum(I), Feces(F) {data-width=800}
 ```{r Family distribution, echo=FALSE}
 #Family ditribution
 ps.com.fam <- microbiomeutilities::aggregate_top_taxa2(ODLEPobjRelFilter,top = 8, "Family" )
@@ -491,6 +494,7 @@ plot_abundance_cecum<- ggplot(subset.genus.df, aes(x = Treatment, y = Abundance,
   geom_bar(stat="identity", position="fill") + 
   xlab("Treatment") +
   ylab("Relative abundance")+
+  labs(fill="Genera") +
   #stat_compare_means(method = "anova")+ 
   theme(axis.text.x = element_text(angle = 60, hjust = 1))+
   theme(text=element_text(size=12)) 
@@ -516,6 +520,7 @@ p <- ggplot(data=subset.genus.df, aes(x=reorder(Treatment, KitID), y=Abundance ,
 plot_abundance_ileum<- p + geom_bar(stat="identity", position="fill") + 
   xlab("Treatment") +
   ylab("Relative abundance")+
+  labs(fill="Genera") +
   #stat_compare_means(method = "anova")+ 
   theme(axis.text.x = element_text(angle = 60, hjust = 1))+
   theme(text=element_text(size=12)) 
@@ -541,6 +546,7 @@ p <- ggplot(data=subset.genus.df, aes(x=Treatment, y=Abundance ,fill=genus))
 plot_abundance_feces<- p + geom_bar(stat="identity", position="fill") + 
   xlab("Treatment") +
   ylab("Relative abundance")+
+  labs(fill="Genera") +
   #stat_compare_means(method = "anova")+ 
   theme(axis.text.x = element_text(angle = 60, hjust = 1))+
   theme(text=element_text(size=12)) 
@@ -601,14 +607,23 @@ Row {data-height=30}
 -----------------------------------------------------------------------
 **Alpha diversity**
 
+Row {data-height=30}
+-----------------------------------------------------------------------
+*Richness* = This index represents the observed OTUs or features in the sample.
+
+Row {data-height=50}
+-----------------------------------------------------------------------
+*Shannon diversity* = This index measures the homogeneity in abundance of the different OTUs in a sample. In other words, shannon index is an estimate of how complex the community is.
+
+
 Row {data-height=500}
 -----------------------------------------------------------------------
 ### {data-width=350}
-Alpha diversity analyses showed a higher diversity for cecum compared to the other gut locations, larger microbiome alpha diversity being usually associated to better health status. However, it is also normal for each region of the gut to have different ranges of richness/diversity. The **cecal microbiome** tends to be very rich, while the small intestines and feces usually have a smaller number of bacterial species. 
+Alpha diversity analyses showed a higher diversity for Cecum compared to the other gut locations, larger microbiome alpha diversity being usually associated to better health status. However, it is also normal for each region of the gut to have different ranges of richness/diversity. The **cecal microbiome** tends to be very rich, while the small intestines and Feces usually have a smaller number of bacterial species. 
 
-Further alpha diversity analyses showed a few differences between treatment groups within the cecum samples and within the ileum samples. In the fecal samples there were no differences between treatments regardless of the index used. This is not uncommon; many changes in microbial diversity occur at the level of abundance, rather than richness. In other words, the types of bacteria present in a community may not change very much, but abundances of individual groups of bacteria can shift, generating changes in the ecosystem and representing the real differences between treatments. And this can not always be captured using alpha diversity calculations.
+Further alpha diversity analyses showed a few differences between treatment groups within the Cecum samples and within the Ileum samples. In the fecal samples there were no differences between treatments regardless of the index used. This is not uncommon; many changes in microbial diversity occur at the level of abundance, rather than richness. In other words, the types of bacteria present in a community may not change very much, but abundances of individual groups of bacteria can shift, generating changes in the ecosystem and representing the real differences between treatments. And this can not always be captured using alpha diversity calculations.
 
-### FIGURE 5: Alpha diversity grouped by sample location {data-width=650}
+### FIGURE 5: Alpha diversity grouped by sample location: Cecum(C), Ileum(I), Feces(F) {data-width=650}
 
 ```{r , echo=FALSE}
 #alpha diversity comparing locations
@@ -677,7 +692,7 @@ Row {data-height=30}
 Row {data-height=500}
 -----------------------------------------------------------------------
 ### {data-width=350}
-Hence, we went on to evaluate those differences in bacterial abundances between the samples, this is also known as beta diversity or **"compositional"** distance. These distances (In our case Bray Curtis dissimilarities) are often visualized with a method called **principal coordinates analysis (PCoA)**. Each axis represents a combination of features (OTUs) that account for high amounts of variation between samples.  The percentage of the differences for which this combination of features accounts is shown on the axis. Samples that are on opposite ends of an axis that accounts for a high percentage of variability are likely to be more different than samples that are on opposite ends of an axis that only accounts for low percentage of the total variability.
+Hence, we went on to evaluate those differences in bacterial abundances between the samples, this is also known as beta diversity or **"compositional"** distance. These distances (In our case Bray Curtis dissimilarities) are often visualized with a method called **principal coordinates analysis (PCoA)**. Each axis represents a combination of features (OTUs) that account for high amounts of variation between samples.  The percentage of the differences for which this combination of features accounts is shown on the axis. Each dot in the figure is a sample. Samples that are on opposite ends of an axis that accounts for a high percentage of variability are likely to be more different than samples that are on opposite ends of an axis that only accounts for low percentage of the total variability.
 
 These analyses evidenced clear differentiation between samples of different gut locations (pval=0.001), which was biologically expected since different locations of the gut have different dynamics, roles and environmental conditions.
 
@@ -902,9 +917,11 @@ Row {data-height=30}
 -----------------------------------------------------------------------
 **Comparisons between presence and absence of VitD:**
 
-Row {data-height=50}
+Row {data-height=70}
 -----------------------------------------------------------------------
-Here we compare two groups: one supplemented with VitD and the other one without VitD supplementation, regardless of Calcium level. In the following graphs we can see the features that are differentially abundant in the presence of VitD compared to the absence of VitD.
+Here we chose to compare two groups: one supplemented with VitD and the other one without VitD supplementation, regardless of Calcium level. In the following graphs we can see the features that are differentially abundant in the presence of VitD compared to the absence of VitD.
+Note: Here we show only two out of many possible group comparisons and these two do not represent the only comparisons with differences.
+
 
 Row {data-height=50}
 -----------------------------------------------------------------------
@@ -920,7 +937,8 @@ Row {data-height=500}
 #Be sure of the comparisons of interest we want to include in the report to add the corresponding title
 comparison= 1
 Title= "Cecum 0 VitD vs 1 VitD"
-p_cecum = plot_deseq_report(dfs_filtered, comparison, Title)  
+color_location= "#BA4FC8"
+p_cecum = plot_deseq_report(dfs_filtered, comparison, Title, color_location)  
 p_cecum
 ```
 
@@ -928,7 +946,8 @@ p_cecum
 ```{r , echo=FALSE}
 comparison= 7
 Title= "Feces 0 VitD vs 1 VitD"
-p_feces = plot_deseq_report(dfs_filtered, comparison, Title)  
+color_location= "#16DCC9"
+p_feces = plot_deseq_report(dfs_filtered, comparison, Title, color_location)  
 p_feces
 ```
 
@@ -989,7 +1008,7 @@ The following is an interactive table to browse available information and traits
 
 Row {data-height=900}
 -----------------------------------------------------------------------
-### TABLE 3: Metabolic information of groups corresponding to broad taxonomic ranges (Phylum, Class, Order, Family)
+### TABLE 3: Metabolic information of groups corresponding to higher taxonomic levels (Phylum, Class, Order, Family)
 
 ```{r broad groups table , echo=FALSE}
 df_2=broad_taxonomy_info[c("Group_Name","Finner_Classification", "Key_Findings")]
@@ -1013,7 +1032,7 @@ Row {data-height=30}
 
 Row {data-height=70}
 -----------------------------------------------------------------------
-We evaluated the **physical structures** of the intestinal tract tissue to understand the impact of Calcium levels on gastrointestinal **inflammation and integrity**. We employ a scoring system that allows for semi-quantitative analysis of the integrity and inflammatory status of the gut. A score of 0 indicates a normal, healthy gut with no appearance of damage or aberration. A score of 5 for a given metric indicates extreme damage or aberration in the traits being evaluated.
+We evaluated the **physical structures** of the intestinal tract tissue to understand the impact of Calcium levels on gastrointestinal **inflammation and integrity**. We employ a scoring system that allows for semi-quantitative analysis of the integrity and inflammatory status of the gut. A score of 0 indicates a normal, healthy gut with no appearance of damage or aberration. A score of 5 for a given metric indicates extreme damage or aberration in the traits being evaluated. Bars with different letters are significantly different based on Tukey test.
 
 Row {data-height=50}
 -----------------------------------------------------------------------
@@ -1024,34 +1043,34 @@ Row {data-height=30}
 -----------------------------------------------------------------------
 **Traits evaluated**
 
-Row {data-height=50}
+Row {data-height=70}
 -----------------------------------------------------------------------
-*InflammationSeverity*: An overview of changes in the architecture or integrity of the intestines due to **inflammation**.  These changes can be chronic, subacute, and acute.  Changes may include ballooning of the crypt, edema, and loss of crypt cell walls.  One aspect of the score accounts for the extent of the damage across the various layers of tissue in the intestine.
+**-InflammationSeverity**: An overview of changes in the architecture or integrity of the intestines due to **inflammation**.  These changes can be chronic, subacute, and acute.  Changes may include ballooning of the crypt, edema, and loss of crypt cell walls.  One aspect of the score accounts for the extent of the damage across the various layers of tissue in the intestine.
 
 
 Row {data-height=70}
 -----------------------------------------------------------------------
-*LymphoidImmune*: Infiltration of immune cells into the mucosa or serosa.  The **presence of immune cells** in the mucosa is normal, but most are in or near aggregations of lymphoid tissue called Gut Associated Lymphoid Tissue (GALT).  High levels of lymphoid cells throughout the mucosa or serosa indicate a subacute **adaptive immune response** to a recent or current immune challenge.  Similarly, growth in the GALT regions can indicate a pronounced antigenic challenge.
+**-LymphoidImmune**: Infiltration of immune cells into the mucosa or serosa.  The **presence of immune cells** in the mucosa is normal, but most are in or near aggregations of lymphoid tissue called Gut Associated Lymphoid Tissue (GALT).  High levels of lymphoid cells throughout the mucosa or serosa indicate a subacute **adaptive immune response** to a recent or current immune challenge.  Similarly, growth in the GALT regions can indicate a pronounced antigenic challenge.
 
 
 Row {data-height=50}
 -----------------------------------------------------------------------
-*MicrobialOrganisms*:  Normal and abnormal **infiltration** or attachment of microorganisms into the mucosa.  May include assessment of organism type (i.e. parasite, yeast, or bacteria).  Some association of microbes to the apical surface is normal.  Higher scores indicate infiltration of abnormal microbe types and/or excessive levels.
+**-MicrobialOrganisms**:  Normal and abnormal **infiltration** or attachment of microorganisms into the mucosa.  May include assessment of organism type (i.e. parasite, yeast, or bacteria).  Some association of microbes to the apical surface is normal.  Higher scores indicate infiltration of abnormal microbe types and/or excessive levels.
 
 
 Row {data-height=50}
 -----------------------------------------------------------------------
-*MucosalIntegrity*: Uniformity and consistency of the mucosa at the apical membrane, where absorption occurs.  Aberrations in this category include **micro-erosion** of the microvilli on the apical surface, **ulcers**, **necrosis**, and loss of gut-associated lymphoid tissue (GALT).  When severe, these changes can include the submucosa level, too.  
+**-MucosalIntegrity**: Uniformity and consistency of the mucosa at the apical membrane, where absorption occurs.  Aberrations in this category include **micro-erosion** of the microvilli on the apical surface, **ulcers**, **necrosis**, and loss of gut-associated lymphoid tissue (GALT).  When severe, these changes can include the submucosa level, too.  
 
 
 Row {data-height=70}
 -----------------------------------------------------------------------
-*OverallArchitecture*: Morphology and structure of the mucosa.  Aberrations would include **blunting** of villi, loss of mucus-producing goblet cells, and **hyperplasia**, in which excessive growth of absorptive enterocytes occurs at the expense of other important cell types such as goblet cells and endocrine cells.  These aberrations are reparative mechanisms used by the animal, and typically indicate a **repeated stress** or injury to the GI at this location.
+**-OverallArchitecture**: Morphology and structure of the mucosa.  Aberrations would include **blunting** of villi, loss of mucus-producing goblet cells, and **hyperplasia**, in which excessive growth of absorptive enterocytes occurs at the expense of other important cell types such as goblet cells and endocrine cells.  These aberrations are reparative mechanisms used by the animal, and typically indicate a **repeated stress** or injury to the GI at this location.
 
 
 Row {data-height=50}
 -----------------------------------------------------------------------
-*AdditiveScore*: Addition of all scores from all animals by treatment group.  This is a summary of the overall condition of the intestine.  However, it should be viewed with caution, as two groups or animals may have similar additive scores, but very different scores in individual traits.  This would mean that the two groups have different underlying pathologies.
+**-AdditiveScore**: Addition of all scores from all animals by treatment group.  This is a summary of the overall condition of the intestine.  However, it should be viewed with caution, as two groups or animals may have similar additive scores, but very different scores in individual traits.  This would mean that the two groups have different underlying pathologies.
 
 
 ```{r Histo,fig.width = 10, fig.height = 5, include=FALSE}
@@ -1135,7 +1154,7 @@ histo_ileum2 <- histo_ileum %>%
 #Stacked bars by SAMPLE 
 histo_by_samples_cecum <- ggplot(histo_cecum2, aes(fill = ScoreCategory, y =Value , x = SampleID)) + 
                           geom_bar(stat = "identity")  +
-                          ggtitle("Histopathology scores by sample (cecum)") +
+                          ggtitle("Histopathology scores by sample (Cecum)") +
                           theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) 
 histo_by_samples_cecum
 
@@ -1143,7 +1162,7 @@ histo_by_samples_cecum
 
 histo_by_samples_ileum <- ggplot(histo_ileum2, aes(fill = ScoreCategory, y =Value , x = SampleID)) + 
                             geom_bar(stat = "identity")  +
-                            ggtitle("Histopathology scores by sample (ileum)") +
+                            ggtitle("Histopathology scores by sample (Ileum)") +
                             theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) 
 histo_by_samples_ileum
 ```
@@ -1244,7 +1263,7 @@ The goal of gene expression is to evaluate how the **animal host is responding t
 
 Row {data-height=100}
 -----------------------------------------------------------------------
-To plot this data we use -log foldchange transformations relative to the control condition (in this case the control group is treatment "MediumLowCa" as this is the widely recommended level of Calcium for broilers diet). The **higher** the values, the higher the expression of the gene in the treatment compared to the **control** level. Significant differences between groups were tested by ANOVA or multiple t-test (ie
+To plot this data we use negative logarithmic fold change transformations relative to the control condition (in this case the control group is treatment "MediumLowCa" as this is the widely recommended level of Calcium for broilers diet). The **higher** the values, the higher the expression of the gene in the treatment compared to the **control** level. Significant differences between groups were tested by ANOVA or multiple t-test (ie
 <a href="https://en.wikipedia.org/wiki/Tukey%27s_range_test" target="_blank">Tukey’s test</a>), resulting only in some group differences for the expression of IL10 gene in the Cecum, and IL1B and IL10 genes in the Ileum. 
 
 
@@ -1600,9 +1619,9 @@ sel_vars <-
 
 ## Asi van a aparecer en el plot
 sel_vars_label <- list(
-  "DeltaCq_IL10" = "DeltaCq_IL10",
-  "DeltaCq_IL1B" = "DeltaCq_IL1B",
-  "DeltaCq_MUC2" = "DeltaCq_MUC2"
+  "DeltaCq_IL10" = "IL10",
+  "DeltaCq_IL1B" = "IL1B",
+  "DeltaCq_MUC2" = "MUC2"
   
 )
 
@@ -1885,6 +1904,7 @@ par(mar = c(6.5, 6.5, 0.5, 0.5), mgp = c(5, 1, 0))
 p <- ggplot(data=Melted[!is.na(Melted["level"]),], 
               aes_string(x="level", y="Abundance",fill="OTU")) + 
     geom_bar(stat="identity", position="fill") + 
+    labs(fill="Genera") +
     theme(legend.position = "bottom") + facet_grid(. ~ variable) + 
   theme(axis.text.x = element_text(hjust = 1))
 ggplotly(p) %>% 
@@ -1942,6 +1962,7 @@ par(mar = c(6.5, 6.5, 0.5, 0.5), mgp = c(5, 1, 0))
 p <- ggplot(data=Melted[!is.na(Melted["level"]),], 
               aes_string(x="level", y="Abundance",fill="OTU")) + 
     geom_bar(stat="identity", position="fill") + 
+    labs(fill="Genera") +
     theme(legend.position = "bottom") + facet_grid(. ~ variable) + 
   theme(axis.text.x = element_text(hjust = 1))
 ggplotly(p) %>% 
@@ -2096,7 +2117,7 @@ Row {data-height=30}
 
 Row {data-height=50}
 -----------------------------------------------------------------------
-Lactobacillus can account for as much as 90% of sequenced bacteria in the ileum of chickens.  By tracking this ratio, we can understand if higher or lower levels of Lactobacillus are correlated with health and performance outcomes.
+Lactobacillus can account for as much as 90% of sequenced bacteria in the Ileum of chickens.  By tracking this ratio, we can understand if higher or lower levels of Lactobacillus are correlated with health and performance outcomes.
 
 
 
@@ -2213,7 +2234,7 @@ gird_cecum
 
 ```
 
-### TABLE 6: CECUM - Statistics for the previous regressions {data-width=500}
+### TABLE 6: Cecum - Statistics for the previous regressions {data-width=500}
 ```{r aplhadiv + ge cecum tab,  include=TRUE, echo=FALSE, warning=FALSE}
 
 tab <- matrix(c(cec_IL10_Alfa_Observed_R, cec_IL10_Alfa_Observed_P,
@@ -2300,7 +2321,7 @@ gird_ileum
 
 ```
 
-### TABLE 7: ILEUM - Statistics for the previous regressions {data-width=500}
+### TABLE 7: Ileum - Statistics for the previous regressions {data-width=500}
 ```{r alphadiv + ge ileum tab, include=TRUE, echo=FALSE, warning=FALSE}
 
 tab <- matrix(c(ile_IL10_Alfa_Observed_R, ile_IL10_Alfa_Observed_P,
@@ -2417,7 +2438,7 @@ gird_cecum
 
 ```
 
-### TABLE 8: CECUM - Statistics for the previous regressions {data-width=500}
+### TABLE 8: Cecum - Statistics for the previous regressions {data-width=500}
 ```{r ratios + ge cecum tabb, include=TRUE, echo=FALSE, warning=FALSE}
 tab <- matrix(c(cec_IL10_Ratio1_R, cec_IL10_Ratio1_P, 
                 cec_IL10_Ratio2_R, cec_IL10_Ratio2_P,
@@ -2529,7 +2550,7 @@ gird_ileum
 
 ```
 
-### TABLE 9: ILEUM - Statistics for the previous regressions {data-width=500}
+### TABLE 9: Ileum - Statistics for the previous regressions {data-width=500}
 ```{r ratios + ge ileum tabb, include=TRUE, echo=FALSE, warning=FALSE}
 
 tab <- matrix(c(ile_IL10_Ratio1_R, ile_IL10_Ratio1_P, 
