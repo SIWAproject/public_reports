@@ -1147,7 +1147,7 @@ histo_by_samples_ileum
 Row
 -----------------------------------------------------------------------
 
-### FIGURE 12: Histopathology scores aggregated by Treatment - Cecum:  Letters indicate significantly different groups as calculated by Tukey test. There is a significant effect of treatment on the mean additive score: MedLow+VitD has the lowest score, indicating the lowest level of abnormality or damage.
+### FIGURE 12: Histopathology scores aggregated by Treatment - Cecum. <br/> Letters indicate significantly different groups as calculated by Tukey test. There is a significant effect of treatment on the mean additive score: MedLow+VitD has the lowest score, indicating the lowest level of abnormality or damage.
 
 ```{r Histo plots by treatment-cec,fig.width = 10, fig.height = 8, echo=FALSE}
 #Satcked bars by TREATMENT      
@@ -1187,7 +1187,7 @@ ggplotly(histo_cec_plot)
 Row
 -----------------------------------------------------------------------
 
-### FIGURE 13: Histopathology scores aggregated by Treatment - Ileum: Letters indicate significantly different groups as calculated by Tukey test. There is no significant impact of treatment on ileal histo scores.  However, it is of note that the general level of aberration in the ileum is much lower than in the cecum, regardless of treatment.
+### FIGURE 13: Histopathology scores aggregated by Treatment - Ileum. <br/> Letters indicate significantly different groups as calculated by Tukey test. There is no significant impact of treatment on ileal histo scores.  However, it is of note that the general level of aberration in the ileum is much lower than in the cecum, regardless of treatment.
  
 
 ```{r Histo plots by treatment-ile,fig.width = 10, fig.height = 8, echo=FALSE}
@@ -1391,7 +1391,7 @@ names(MUC2_ile)[1] <- "MUC2_ile"
 Row {data-height=500}
 -----------------------------------------------------------------------
 
-### FIGURE 14A: Cecum - IL1B: No impact of treatment on expression levels in the cecum.
+### FIGURE 14A: Cecum - IL1B. <br/> No impact of treatment on expression levels in the cecum.
 ```{r , echo=FALSE}
 meanscec <- aggregate(RQ_IL1B_log ~  Treatment, cec, mean)
 cec <- cec %>%
@@ -1410,7 +1410,7 @@ plot1 <- ggplot(cec, aes(x = Treatment, y = round(RQ_IL1B_log), fill = Treatment
 plot1
 ```
 
-### FIGURE 14B: Cecum - IL10: Addition of VitD to the MediumLow Ca group appears to reduce expression of IL10 compared to the control as well as several other groups.
+### FIGURE 14B: Cecum - IL10. <br/> Addition of VitD to the MediumLow Ca group appears to reduce expression of IL10 compared to the control as well as several other groups.
 ```{r fig14b, echo=FALSE}
 meanscec <- aggregate(RQ_IL10_log ~  Treatment, cec, mean)
 plot1 <- ggplot(cec, aes(x =Treatment, y = RQ_IL10_log, fill = Treatment)) +
@@ -1428,7 +1428,7 @@ plot1
 
 ```
 
-### FIGURE 14C: Cecum - MUC2: No impact of treatment on expression levels in the cecum.
+### FIGURE 14C: Cecum - MUC2. <br/> No impact of treatment on expression levels in the cecum.
 ```{r 14c, echo=FALSE}
 meanscec <- aggregate(RQ_MUC2_log ~  Treatment, cec, mean)
 plot1 <- ggplot(cec, aes(x = Treatment, y = RQ_MUC2_log, fill = Treatment)) +
@@ -1447,7 +1447,7 @@ plot1
 
 Row {data-height=500}
 -----------------------------------------------------------------------
-### FIGURE 15A: Ileum - IL1B: Higher levels of calcium in the diet appear to lead to higher levels of IL1B expression in the ileum.
+### FIGURE 15A: Ileum - IL1B. <br/> Higher levels of calcium in the diet appear to lead to higher levels of IL1B expression in the ileum.
 ```{r Gene expression plots ile il1b, echo=FALSE, warning=FALSE}
 #ileum (plots with letters for statistics)
 meansile <- aggregate(RQ_IL1B_log ~  Treatment, il, mean)
@@ -1468,7 +1468,7 @@ plot1 <- ggplot(il, aes(x = Treatment, y = RQ_IL1B_log, fill = Treatment)) +
 plot1
 ```
 
-### FIGURE 15B: Ileum - IL10: There may be a VitD-dependent difference in the expression of IL10 in the ileum.
+### FIGURE 15B: Ileum - IL10. <br/> There may be a VitD-dependent difference in the expression of IL10 in the ileum.
 ```{r Gene expression plots ile il10, echo=FALSE, warning=FALSE}
 meansile <- aggregate(RQ_IL10_log ~  Treatment, il, mean)
 plot1 <- ggplot(il, aes(x = Treatment, y = RQ_IL10_log, fill = Treatment)) +
@@ -1485,7 +1485,7 @@ plot1 <- ggplot(il, aes(x = Treatment, y = RQ_IL10_log, fill = Treatment)) +
 plot1 
 ```
 
-### FIGURE 15C: Ileum - MUC2: Expression of MUC2 in the ileum was not affected by treatment.
+### FIGURE 15C: Ileum - MUC2. <br/> Expression of MUC2 in the ileum was not affected by treatment.
 ```{r Gene expression plots ile muc2, echo=FALSE, warning=FALSE}
 meansile <- aggregate(RQ_MUC2_log ~  Treatment, il, mean)
 plot1 <- ggplot(il, aes(x =Treatment, y = RQ_MUC2_log, fill = Treatment)) +
@@ -1702,7 +1702,7 @@ df$label <- df$Taxa
 Row
 -----------------------------------------------------------------------
 
-### FIGURE 16: Kendall correlation heatmap between microbial families and host genes: Families such as Sutterellaceae, Erysipelotcrichaceae, Eggerthellaceae, and Anaerovoracaceae are strongly associated with higher Il10 expression in the ileum.  
+### FIGURE 16: Kendall correlation heatmap between microbial families and host genes. <br/> Families such as Sutterellaceae, Erysipelotcrichaceae, Eggerthellaceae, and Anaerovoracaceae are strongly associated with higher Il10 expression in the ileum.  
 
 
 ```{r crear plot 1, include=TRUE,echo=FALSE, warning=FALSE, fig.dim = c(10, 6)}
@@ -1877,7 +1877,7 @@ subset.genus.df_cecum %>%
 
 ```
 
-### FIGURE 17: Cecum taxonomic composition by histopathology score: The genus-level composition of the microbiome differs when samples are grouped by histopathology scores, but the imbalance of the data limits our ability to make conclusions from this analysis. {data-width=400}
+### FIGURE 17: Cecum taxonomic composition by histopathology score. <br/> The genus-level composition of the microbiome differs when samples are grouped by histopathology scores, but the imbalance of the data limits our ability to make conclusions from this analysis. {data-width=400}
 ```{r 17, include=TRUE, echo=FALSE, warning=FALSE}
 
 par(mar = c(6.5, 6.5, 0.5, 0.5), mgp = c(5, 1, 0))
@@ -1935,7 +1935,7 @@ subset.genus.df_cecum %>%
 
 ```
 
-### FIGURE 18: Ileum taxonomic composition by histopathology score: The genus-level composition of the microbiome differs when samples are grouped by histopathology scores, but the imbalance of the data limits our ability to make conclusions from this analysis. {data-width=400}
+### FIGURE 18: Ileum taxonomic composition by histopathology score. <br/> The genus-level composition of the microbiome differs when samples are grouped by histopathology scores, but the imbalance of the data limits our ability to make conclusions from this analysis. {data-width=400}
 ```{r 18, include=TRUE, echo=FALSE, warning=FALSE}
 
 par(mar = c(6.5, 6.5, 0.5, 0.5), mgp = c(5, 1, 0))
@@ -2006,7 +2006,7 @@ boxplot_data_ileum <- boxplot_data[boxplot_data$SampleLocation =="I",]
 Row 
 -----------------------------------------------------------------------
 
-### FIGURE 19: Gene expression vs. Histopathology in the Cecum: This plot does not show any clear relationship between gene expression and histopathology scores, but the imbalance of the histopathology data may be partly responsible for that.
+### FIGURE 19: Gene expression vs. Histopathology in the Cecum. <br/> This plot does not show any clear relationship between gene expression and histopathology scores, but the imbalance of the histopathology data may be partly responsible for that.
 
 
 ```{r ge histo plots cec, include=TRUE, echo=FALSE, fig.dim = c(10, 6)}
@@ -2028,7 +2028,7 @@ bp
 
 Row 
 -----------------------------------------------------------------------
-### FIGURE 20: Gene expression vs. Histopathology in the Ileum: This plot does not show any clear relationship between gene expression and histopathology scores, but the imbalance of the histopathology data may be partly responsible for that.
+### FIGURE 20: Gene expression vs. Histopathology in the Ileum. <br/> This plot does not show any clear relationship between gene expression and histopathology scores, but the imbalance of the histopathology data may be partly responsible for that.
 
 ```{r ge histo plots ile, include=TRUE, echo=FALSE, fig.dim = c(10, 6)}
 
@@ -2148,7 +2148,7 @@ get_stats_P <- function (x, y, metadata)  {
 
 Row 
 -----------------------------------------------------------------------
-### FIGURE 21: Alpha diversity vs. Gene expression - Cecum: There are no statistically significant relationships between gene expression and alpha diversity, however, IL1B shows a tendency to increase with increasing alpha diversity scores. {data-width=500}
+### FIGURE 21: Alpha diversity vs. Gene expression - Cecum. <br/> There are no statistically significant relationships between gene expression and alpha diversity, however, IL1B shows a tendency to increase with increasing alpha diversity scores. {data-width=500}
 ```{r aplhadiv + ge cecum,  include=TRUE, echo=FALSE, warning=FALSE}
 #Grid 1: CECUM 
 metadata= metadata_cecum
@@ -2235,7 +2235,7 @@ kbl(table_cecum_gene_aplhadiv, row.names = TRUE) %>% kable_styling(position= "le
 
 Row 
 -----------------------------------------------------------------------
-### FIGURE 22: Alpha diversity vs. Gene expression - Ileum: There are no statistically significant relationships between gene expression and alpha diversity in the ileum. {data-width=500}
+### FIGURE 22: Alpha diversity vs. Gene expression - Ileum. <br/> There are no statistically significant relationships between gene expression and alpha diversity in the ileum. {data-width=500}
 ```{r alphadiv + ge ileum, include=TRUE, echo=FALSE, warning=FALSE}
 #Grid 2: ILEUM
 metadata= metadata_ileum
@@ -2331,7 +2331,7 @@ Row {data-height=30}
 
 Row 
 -----------------------------------------------------------------------
-### FIGURE 23: Ratios vs. Gene Expression - Cecum: There are no statistically significant relationships between gene expression and SIWA ratios in the cecum.   {data-width=500}
+### FIGURE 23: Ratios vs. Gene Expression - Cecum. <br/> There are no statistically significant relationships between gene expression and SIWA ratios in the cecum.   {data-width=500}
 ```{r ratios + ge cecum, include=TRUE, echo=FALSE, warning=FALSE}
 #Grid 1: CECUM 
 metadata= metadata_cecum
@@ -2442,7 +2442,7 @@ kbl(table_cecum_gene_ratios, row.names = TRUE) %>% kable_styling(position= "left
 
 Row
 -----------------------------------------------------------------------
-### FIGURE 24: Ratios vs. Gene Expression - Ileum: There are no statistically significant relationships between gene expression and SIWA ratios in the ileum, however there may be a tendency for IL1B and MUC2 expression to decrease with increasing levels of Lactobacillus (Ratio 3). {data-width=500}
+### FIGURE 24: Ratios vs. Gene Expression - Ileum. <br/> There are no statistically significant relationships between gene expression and SIWA ratios in the ileum, however there may be a tendency for IL1B and MUC2 expression to decrease with increasing levels of Lactobacillus (Ratio 3). {data-width=500}
 ```{r ratios + ge ileum, include=TRUE, echo=FALSE, warning=FALSE}
 
 #Grid 2: ILEUM
@@ -2583,7 +2583,7 @@ boxplot_data_ileum <- boxplot_data[boxplot_data$SampleLocation =="I",]
 Row
 -----------------------------------------------------------------------
 
-### FIGURE 25A: Histo vs Alpha diversity - Cecum: There is no significant relationship between histopathology scores and alpha diversity in the cecum. {data-width=500}
+### FIGURE 25A: Histo vs Alpha diversity - Cecum. <br/> There is no significant relationship between histopathology scores and alpha diversity in the cecum. {data-width=500}
 
 ```{r Indexes histo plots cec, include=TRUE, echo=FALSE}
 #cecum plot
@@ -2604,7 +2604,7 @@ bp_cecum
 
 ```
 
-### FIGURE 25B: Histo vs Alpha diversity - Ileum: There is no significant relationship between histopathology scores and alpha diversity in the ileum. {data-width=500}
+### FIGURE 25B: Histo vs Alpha diversity - Ileum. <br/> There is no significant relationship between histopathology scores and alpha diversity in the ileum. {data-width=500}
 
 ```{r Indexes histo plots ile, include=TRUE, echo=FALSE}
 #Ileum plot
@@ -2655,7 +2655,7 @@ boxplot_data_ileum <- boxplot_data[boxplot_data$SampleLocation =="I",]
 Row
 -----------------------------------------------------------------------
 
-### FIGURE 26A: Histo vs Ratios - Cecum: There is no significant relationship between histopathology scores and SIWA ratios in the cecum. {data-width=500}
+### FIGURE 26A: Histo vs Ratios - Cecum. <br/> There is no significant relationship between histopathology scores and SIWA ratios in the cecum. {data-width=500}
 
 ```{r ratios histo plots cec, include=TRUE, echo=FALSE}
 #cecum plot
@@ -2677,7 +2677,7 @@ bp_cecum
 
 ```
 
-### FIGURE 26B: Histo vs Ratios - Ileum: There is no significant relationship between histopathology scores and SIWA ratios in the ileum. {data-width=500}
+### FIGURE 26B: Histo vs Ratios - Ileum. <br/> There is no significant relationship between histopathology scores and SIWA ratios in the ileum. {data-width=500}
 ```{r ratios histo plots ile, include=TRUE, echo=FALSE}
 #Ileum plot
 
