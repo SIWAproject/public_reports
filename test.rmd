@@ -1,0 +1,48 @@
+---
+title: "SIWA REPORT E335"
+output:
+  flexdashboard::flex_dashboard:
+    output_dir: docs
+    orientation: rows
+    vertical_layout: scroll
+    source_code: embed
+    css: estilo.css
+    mathjax: NULL
+    self_contained: FALSE
+    logo: "Siwa-blanco-01.png"
+    #runtime: shiny
+    #navbar:
+     # - { title: "About SIWA", href: "https://siwa.bio/" }
+---
+Project description {data-icon="fa-table"}
+===================================== 
+
+Row {data-height=100}
+-----------------------------------------------------------------------
+After filtering low-abundance sequences, the remaining data can be explored more easily. Exploring the distribution of sequences at different taxonomic levels can help us understand the general microbiome composition of the samples in the experiment as a whole.   
+
+Row {data-height=100}
+-----------------------------------------------------------------------
+In Figure 2 we can observe the prevalence and abundance of the OTUs at phylum level. Each point is a different OTU, prevalence in Y axis is the proportion of samples in which each OTU is present. The x axis is the abundance in which each OTU is found. 
+
+
+Row {data-height=700}
+-----------------------------------------------------------------------
+
+In Figure 2 we can observe the prevalence and abundance of the OTUs at phylum level. Each point is a different OTU, prevalence in Y axis is the proportion of samples in which each OTU is present. The x axis is the abundance in which each OTU is found. 
+
+```{r picture ranges, include= TRUE, echo=FALSE, out.width = '100%'}
+knitr::include_graphics("taxa_ranges.png")
+```
+
+
+Row {data-height=700}
+-----------------------------------------------------------------------
+###  {data-width=300}
+
+XXX
+
+### FIGURE 2: Prevalence of Major Phyla {data-width=700}
+
+XXXXX
+

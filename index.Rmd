@@ -362,55 +362,26 @@ annotate_figure(figure,
                 left = text_grob("Samples in which OTU is present (%)", rot=90)) 
 ```
 
-Row {data-height=550}
+Row {data-height=150}
 -----------------------------------------------------------------------
-###  {data-width=300}
+### {data-width=600}
 
-After filtering low-abundance sequences, the remaining data can be explored more easily. Exploring the distribution of sequences at different taxonomic levels can help us understand the general microbiome composition of the samples in the experiment as a whole.   
+After filtering low-abundance sequences, the remaining data can be explored more easily. Exploring the distribution of sequences at different taxonomic levels can help us understand the general microbiome composition of the samples in the experiment as a whole.  
 
-
-
-.
-
-
-.
-
-
-
-1
-
-
-
+###  {data-width=400}
 
 ```{r picture ranges, include= TRUE, echo=FALSE, out.width = '100%'}
 knitr::include_graphics("taxa_ranges.png")
 ```
 
 
-.
+Row {data-height=500}
+-----------------------------------------------------------------------
+### {data-width=200} 
 
+In Figure 2 we can observe the prevalence and abundance of the OTUs at phylum level. Each point is a different OTU, prevalence in Y axis is the proportion of samples in which each OTU is present. The x axis is the abundance in which each OTU is found. 
 
-
-3
-
-
-
-
-4
-
-
-
-5
-
-
-
-
-6
-
-
-In Figure 2 we can observe the prevalence and abundance of the OTUs at phylum level. Each point is a different OTU, prevalence in Y axis is the times an OTU is observed at least once, that is, the percentage of samples in which each OTU is present. The x axis is the abundance in which each OTU is found. 
-
-### FIGURE 2: Prevalence of Major Phyla {data-width=700}
+### FIGURE 2: Prevalence of Major Phyla {data-width=800}
 ```{r Prevalence Phylum, echo=FALSE, include=TRUE, cache=TRUE}
 pseq.rel <- microbiome::transform(ODLEPobj, "compositional")
 flist    <- filterfun(kOverA(5, 2e-05))
@@ -1034,14 +1005,14 @@ Row {data-height=70}
 -----------------------------------------------------------------------
 We evaluated the **physical structures** of the intestinal tract tissue to understand the impact of Calcium levels on gastrointestinal **inflammation and integrity**. We employ a scoring system that allows for semi-quantitative analysis of the integrity and inflammatory status of the gut. A score of 0 indicates a normal, healthy gut with no appearance of damage or aberration. A score of 5 for a given metric indicates extreme damage or aberration in the traits being evaluated. Bars with different letters are significantly different based on Tukey test.
 
-Row {data-height=50}
+Row {data-height=70}
 -----------------------------------------------------------------------
 The treatment with recommended levels of Ca (MediumLow) with VitD showed better gastrointestinal tissue health compared to the rest of the groups, particularly those with higher levels of Calcium.
 
 
 Row {data-height=30}
 -----------------------------------------------------------------------
-**Traits evaluated**
+**Traits evaluated:**
 
 Row {data-height=70}
 -----------------------------------------------------------------------
@@ -1170,7 +1141,7 @@ histo_by_samples_ileum
 Row
 -----------------------------------------------------------------------
 
-### FIGURE 12: Histopathology scores agreggated by Treatment - Cecum 
+### FIGURE 12: Histopathology scores aggregated by Treatment - Cecum 
 
 ```{r Histo plots by treatment-cec,fig.width = 10, fig.height = 8, echo=FALSE}
 #Satcked bars by TREATMENT      
@@ -2030,8 +2001,14 @@ Row
 
 ```{r ge histo plots cec, include=TRUE, echo=FALSE, fig.dim = c(10, 6)}
 #cecum plot
+
+# New facet label names 
+gene.labs <- c("IL10", "IL1B", "MUC2")
+names(gene.labs) <- c("DeltaCq_IL10", "DeltaCq_IL1B", "DeltaCq_MUC2")
+
 bp <- ggplot(boxplot_data_cecum, aes(x=Score, y=Value)) + 
-  geom_boxplot(aes(fill=Category)) + facet_grid(Gene~ Category)+
+  geom_boxplot(aes(fill=Category)) + 
+  facet_grid(Gene~ Category, labeller = labeller(Gene = gene.labs))+
   xlab("") + ylab("Gene expression") +
   theme(legend.position = "none") 
 bp
@@ -2045,10 +2022,16 @@ Row
 
 ```{r ge histo plots ile, include=TRUE, echo=FALSE, fig.dim = c(10, 6)}
 
-
 #Ileum plot
+
+# New facet label names 
+gene.labs <- c("IL10", "IL1B", "MUC2")
+names(gene.labs) <- c("DeltaCq_IL10", "DeltaCq_IL1B", "DeltaCq_MUC2")
+
+
 bp <- ggplot(boxplot_data_ileum, aes(x=Score, y=Value)) + 
-  geom_boxplot(aes(fill=Category)) + facet_grid(Gene~ Category)+
+  geom_boxplot(aes(fill=Category)) + 
+  facet_grid(Gene~ Category, labeller = labeller(Gene = gene.labs))+
   xlab("") + ylab("Gene expression") +
   theme(legend.position = "none") 
 bp
@@ -2073,19 +2056,6 @@ Here you will find **linear regressions** between single traits (alpha diversity
 
 Row {data-height=30}
 -----------------------------------------------------------------------
-**Diversity indexes:**
-
-Row {data-height=30}
------------------------------------------------------------------------
-*Observed features* = represents richness in the sample, defined as the number of different species present in it.
-
-Row {data-height=50}
------------------------------------------------------------------------
-*Shannon diversity* = This index measures the homogeneity in abundance of the different species in a sample. In other words, shannon index is an estimate of how complex the community is, both the number of different bacteria, and also how different these bacteria are in their function or genetics.
-
-
-Row {data-height=30}
------------------------------------------------------------------------
 
 Row {data-height=30}
 -----------------------------------------------------------------------
@@ -2097,7 +2067,7 @@ These ratios each use two major categories of bacteria in an attempt to **simpli
 
 Row {data-height=30}
 -----------------------------------------------------------------------
-*SIWA Ratio 1* = Lactobacillus/ Escherichia-Shigella
+**SIWA Ratio 1** = Lactobacillus/ Escherichia-Shigella
 
 Row {data-height=70}
 -----------------------------------------------------------------------
@@ -2105,7 +2075,7 @@ Lactobacillus species are overwhelmingly **beneficial** to the host, while E col
 
 Row {data-height=30}
 -----------------------------------------------------------------------
-*SIWA Ratio 2* = Firmicutes/ Proteobacteria
+**SIWA Ratio 2** = Firmicutes/ Proteobacteria
 
 Row {data-height=73}
 -----------------------------------------------------------------------
@@ -2113,7 +2083,7 @@ Firmicutes include both **beneficial** (Lactobacillus, Bacillus, Ruminococcus, L
 
 Row {data-height=30}
 -----------------------------------------------------------------------
-*SIWA Ratio 3* = Lactobacillus/rest of the genera
+**SIWA Ratio 3** = Lactobacillus/rest of the genera
 
 Row {data-height=50}
 -----------------------------------------------------------------------
@@ -2174,7 +2144,7 @@ Row
 metadata= metadata_cecum
 
 #IL10 + alphadiv
-x_label= "Observed features"
+x_label= "Richness"
 y_label= "IL10"
 x <- metadata$Alfa_Observed
 y <- metadata$DeltaCq_IL10
@@ -2182,7 +2152,7 @@ cec_IL10_Alfa_Observed= plot_regression(x, y, metadata, x_label, y_label)
 cec_IL10_Alfa_Observed_R=get_stats_R(x, y, metadata)
 cec_IL10_Alfa_Observed_P=get_stats_P(x, y, metadata)
 
-x_label= "Shannon diversity"
+x_label= "Shannon"
 y_label= "IL10"
 x <- metadata$Alfa_Shannon
 y <- metadata$DeltaCq_IL10
@@ -2191,7 +2161,7 @@ cec_IL10_Alfa_Shannon_R=get_stats_R(x, y, metadata)
 cec_IL10_Alfa_Shannon_P=get_stats_P(x, y, metadata)
 
 #IL1B + alphadiv 
-x_label= "Observed features"
+x_label= "Richness"
 y_label= "IL1B"
 x <- metadata$Alfa_Observed
 y <- metadata$DeltaCq_IL1B
@@ -2199,7 +2169,7 @@ cec_IL1B_Alfa_Observed= plot_regression(x, y, metadata, x_label, y_label)
 cec_IL1B_Alfa_Observed_R=get_stats_R(x, y, metadata)
 cec_IL1B_Alfa_Observed_P=get_stats_P(x, y, metadata)
 
-x_label= "Shannon diversity"
+x_label= "Shannon"
 y_label= "IL1B"
 x <- metadata$Alfa_Shannon
 y <- metadata$DeltaCq_IL1B
@@ -2208,7 +2178,7 @@ cec_IL1B_Alfa_Shannon_R=get_stats_R(x, y, metadata)
 cec_IL1B_Alfa_Shannon_P=get_stats_P(x, y, metadata)
 
 #MUC2 + alphadiv
-x_label= "Observed features"
+x_label= "Richness"
 y_label= "MUC2"
 x <- metadata$Alfa_Observed
 y <- metadata$DeltaCq_MUC2
@@ -2216,7 +2186,7 @@ cec_MUC2_Alfa_Observed= plot_regression(x, y, metadata, x_label, y_label)
 cec_MUC2_Alfa_Observed_R=get_stats_R(x, y, metadata)
 cec_MUC2_Alfa_Observed_P=get_stats_P(x, y, metadata)
 
-x_label= "Shannon diversity"
+x_label= "Shannon"
 y_label= "MUC2"
 x <- metadata$Alfa_Shannon
 y <- metadata$DeltaCq_MUC2
@@ -2244,9 +2214,9 @@ tab <- matrix(c(cec_IL10_Alfa_Observed_R, cec_IL10_Alfa_Observed_P,
                 cec_MUC2_Alfa_Observed_R, cec_MUC2_Alfa_Observed_P,
                 cec_MUC2_Alfa_Shannon_R,cec_MUC2_Alfa_Shannon_P), ncol=2, byrow=TRUE)
 colnames(tab) <- c('R2','Pval')
-rownames(tab) <- c('IL10_Observed','IL10_Shannon',
-                   'IL1B_Observed', 'IL1B_Shannon',
-                   'MUC2_Observed', 'MUC2_Shannon')
+rownames(tab) <- c('IL10_Richness','IL10_Shannon',
+                   'IL1B_Richness', 'IL1B_Shannon',
+                   'MUC2_Richness', 'MUC2_Shannon')
 table_cecum_gene_aplhadiv <- as.table(tab)
 kbl(table_cecum_gene_aplhadiv, row.names = TRUE) %>% kable_styling(position= "left", full_width = T)
 
@@ -2261,7 +2231,7 @@ Row
 metadata= metadata_ileum
 
 #IL10 + alphadiv
-x_label= "Observed features"
+x_label= "Richness"
 y_label= "IL10"
 x <- metadata$Alfa_Observed
 y <- metadata$ratio1LOG
@@ -2269,7 +2239,7 @@ ile_IL10_Alfa_Observed= plot_regression(x, y, metadata, x_label, y_label)
 ile_IL10_Alfa_Observed_R=get_stats_R(x, y, metadata)
 ile_IL10_Alfa_Observed_P=get_stats_P(x, y, metadata)
 
-x_label= "Shannon diversity"
+x_label= "Shannon"
 y_label= "IL10"
 x <- metadata$Alfa_Shannon
 y <- metadata$DeltaCq_IL10
@@ -2278,7 +2248,7 @@ ile_IL10_Alfa_Shannon_R=get_stats_R(x, y, metadata)
 ile_IL10_Alfa_Shannon_P=get_stats_P(x, y, metadata)
 
 #IL1B + alphadiv 
-x_label= "Observed features"
+x_label= "Richness"
 y_label= "IL1B"
 x <- metadata$Alfa_Observed
 y <- metadata$DeltaCq_IL1B
@@ -2286,7 +2256,7 @@ ile_IL1B_Alfa_Observed= plot_regression(x, y, metadata, x_label, y_label)
 ile_IL1B_Alfa_Observed_R=get_stats_R(x, y, metadata)
 ile_IL1B_Alfa_Observed_P=get_stats_P(x, y, metadata)
 
-x_label= "Shannon diversity"
+x_label= "Shannon"
 y_label= "IL1B"
 x <- metadata$Alfa_Shannon
 y <- metadata$DeltaCq_IL1B
@@ -2295,7 +2265,7 @@ ile_IL1B_Alfa_Shannon_R=get_stats_R(x, y, metadata)
 ile_IL1B_Alfa_Shannon_P=get_stats_P(x, y, metadata)
 
 #MUC2 + alphadiv
-x_label= "Observed features"
+x_label= "Richness"
 y_label= "MUC2"
 x <- metadata$Alfa_Observed
 y <- metadata$DeltaCq_MUC2
@@ -2303,7 +2273,7 @@ ile_MUC2_Alfa_Observed= plot_regression(x, y, metadata, x_label, y_label)
 ile_MUC2_Alfa_Observed_R=get_stats_R(x, y, metadata)
 ile_MUC2_Alfa_Observed_P=get_stats_P(x, y, metadata)
 
-x_label= "Shannon diversity"
+x_label= "Shannon"
 y_label= "MUC2"
 x <- metadata$Alfa_Shannon
 y <- metadata$DeltaCq_MUC2
@@ -2331,9 +2301,9 @@ tab <- matrix(c(ile_IL10_Alfa_Observed_R, ile_IL10_Alfa_Observed_P,
                 ile_MUC2_Alfa_Observed_R, ile_MUC2_Alfa_Observed_P,
                 ile_MUC2_Alfa_Shannon_R,ile_MUC2_Alfa_Shannon_P), ncol=2, byrow=TRUE)
 colnames(tab) <- c('R2','Pval')
-rownames(tab) <- c('IL10_Observed','IL10_Shannon',
-                   'IL1B_Observed', 'IL1B_Shannon',
-                   'MUC2_Observed', 'MUC2_Shannon')
+rownames(tab) <- c('IL10_Richness','IL10_Shannon',
+                   'IL1B_Richness', 'IL1B_Shannon',
+                   'MUC2_Richness', 'MUC2_Shannon')
 table_ileum_gene_aplhadiv <- as.table(tab)
 
 kbl(table_ileum_gene_aplhadiv, row.names = TRUE) %>% kable_styling(position= "left", full_width = T)
@@ -2608,9 +2578,16 @@ Row
 
 ```{r Indexes histo plots cec, include=TRUE, echo=FALSE}
 #cecum plot
+
+# New facet label names 
+index.labs <- c("Richness", "Shannon")
+names(index.labs) <- c("Alfa_Observed", "Alfa_Shannon")
+
+
 bp <- ggplot(boxplot_data_cecum, aes(x=Score, y=Value)) + 
   geom_boxplot(aes(fill=Category))
-bp_cecum <- bp + facet_grid(Index~ Category, scales = "free")+
+bp_cecum <- bp + 
+  facet_grid(Index~ Category, scales= "free", labeller = labeller(Index = index.labs))+
   xlab("") + ylab("Ratio Value") +
   theme(legend.position = "none") +
   theme(text=element_text(size=10))
@@ -2622,9 +2599,16 @@ bp_cecum
 
 ```{r Indexes histo plots ile, include=TRUE, echo=FALSE}
 #Ileum plot
+
+# New facet label names 
+index.labs <- c("Richness", "Shannon")
+names(index.labs) <- c("Alfa_Observed", "Alfa_Shannon")
+
+
 bp <- ggplot(boxplot_data_ileum, aes(x=Score, y=Value)) + 
   geom_boxplot(aes(fill=Category))
-bp_ileum <- bp + facet_grid(Index~ Category, scales = "free")+
+bp_ileum <- bp + 
+  facet_grid(Index~ Category, scales= "free", labeller = labeller(Index = index.labs))+
   xlab("") + ylab("Ratio Value") +
   theme(legend.position = "none") +
   theme(text=element_text(size=10))
@@ -2666,9 +2650,16 @@ Row
 
 ```{r ratios histo plots cec, include=TRUE, echo=FALSE}
 #cecum plot
+
+# New facet label names 
+ratio.labs <- c("Ratio 1", "Ratio 2", "Ratio 3")
+names(ratio.labs) <- c("ratio1LOG", "ratio2LOG", "ratio3LOG")
+
 bp <- ggplot(boxplot_data_cecum, aes(x=Score, y=Value)) + 
   geom_boxplot(aes(fill=Category))
-bp_cecum <- bp + facet_grid(Ratio~ Category)+
+
+bp_cecum <- bp + 
+  facet_grid(Ratio~ Category, labeller = labeller(Ratio = ratio.labs))+
   xlab("") + ylab("Ratio Value") +
   theme(legend.position = "none") +
   theme(text=element_text(size=10))
@@ -2680,9 +2671,16 @@ bp_cecum
 ### FIGURE 26B: Histo vs Ratios - Ileum{data-width=500}
 ```{r ratios histo plots ile, include=TRUE, echo=FALSE}
 #Ileum plot
+
+# New facet label names 
+ratio.labs <- c("Ratio 1", "Ratio 2", "Ratio 3")
+names(ratio.labs) <- c("ratio1LOG", "ratio2LOG", "ratio3LOG")
+
+
 bp <- ggplot(boxplot_data_ileum, aes(x=Score, y=Value)) + 
   geom_boxplot(aes(fill=Category))
-bp_ileum <- bp + facet_grid(Ratio~ Category)+
+bp_ileum <- bp + 
+  facet_grid(Ratio~ Category, labeller = labeller(Ratio = ratio.labs))+
   xlab("") + ylab("Ratio Value") +
   theme(legend.position = "none") +
   theme(text=element_text(size=10))
