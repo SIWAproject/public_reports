@@ -207,7 +207,7 @@ Row {data-height=500}
 
 The sequencing process identified more than 1300 unique sequences, and as expected, only a few OTUs are shared by the majority of samples (Fig1). Black percentages in each graph (Fig1) indicate the percentage of OTUs in that site that are present in at least 50% of the samples. As seen in the graph, most are rare taxa detected in only a small portion of samples. It is common to find a small number of OTUs which are dominant in the community, while most others are much less abundant and they are unlikely to be biologically related to any performance or treatment-based effects. Only 3% of OTUs in the feces are shared by more than 50% of samples, while in the cecum this number is 11%. This means that cecal samples tend to have more microbes in common than fecal samples. 
 
-### FIGURE 1:Prevalence of OTUs in samples: Regardless of treatment or group, a small number of OTUs dominate the community, and most OTUs are only present in a small number of samples. {data-width=700}
+### FIGURE 1:Prevalence of OTUs in samples. <br/> Regardless of treatment or group, a small number of OTUs dominate the community, and most OTUs are only present in a small number of samples. {data-width=700}
 ```{r Prevalence Plot, fig.height = 4, fig.width= 5, echo=FALSE}
 
 #OPTIONAL: OTUs of interest to highlight in the plot (add to the list the otu or otus of interest you want to highlight in the plot)
@@ -381,7 +381,7 @@ Row {data-height=500}
 
 In Figure 2 we can observe the prevalence and abundance of the OTUs at phylum level. Each point is a different OTU, prevalence in Y axis is the proportion of samples in which each OTU is present. The x axis is the abundance in which each OTU is found. Each dot represents an OTU. 
 
-### FIGURE 2: Prevalence of Major Phyla: Firmicutes have a larger share of the overall community than any other phylum.  The most abundant OTUs (x axis) also tend to be the most prevalent (y axis). {data-width=800}
+### FIGURE 2: Prevalence of Major Phyla. <br/> Firmicutes have a larger share of the overall community than any other phylum.  The most abundant OTUs (x axis) also tend to be the most prevalent (y axis). {data-width=800}
 ```{r Prevalence Phylum, echo=FALSE, include=TRUE, cache=TRUE}
 pseq.rel <- microbiome::transform(ODLEPobj, "compositional")
 flist    <- filterfun(kOverA(5, 2e-05))
@@ -527,7 +527,7 @@ plot_abundance_feces<- p + geom_bar(stat="identity", position="fill") +
 
 Row {data-height=500}
 -----------------------------------------------------------------------
-### FIGURE 4A: Taxonomic composition Cecum: The experimental groups are overall quite similar in their microbial composition, with some differences in abundance of Lactobacillus and Subdoligranulum to name just two.{data-width=1000}
+### FIGURE 4A: Taxonomic composition Cecum. <br/> The experimental groups are overall quite similar in their microbial composition, with some differences in abundance of Lactobacillus and Subdoligranulum to name just two.{data-width=1000}
 ```{r, echo=FALSE, include=TRUE}
 
 ggplotly(plot_abundance_cecum) %>%
@@ -540,7 +540,7 @@ ggplotly(plot_abundance_cecum) %>%
 
 Row {data-height=500}
 -----------------------------------------------------------------------
-### FIGURE 4B: Taxonomic composition Ileum: Lactobacillus is the dominant microbe in the ileum, and varies between 60-80% depending on the group. {data-width=1000}
+### FIGURE 4B: Taxonomic composition Ileum. <br/> Lactobacillus is the dominant microbe in the ileum, and varies between 60-80% depending on the group. {data-width=1000}
 ```{r, echo=FALSE, include=TRUE}
 ggplotly(plot_abundance_ileum) %>%
   layout(xaxis = list(automargin = TRUE),
@@ -550,8 +550,7 @@ ggplotly(plot_abundance_ileum) %>%
 
 Row {data-height=500}
 -----------------------------------------------------------------------
-### FIGURE 4C: Taxonomic composition Feces: The feces look very similar to the ileum, but with more variability.
- {data-width=1000}
+### FIGURE 4C: Taxonomic composition Feces. <br/> The feces look very similar to the ileum, but with more variability. {data-width=1000}
 ```{r, echo=FALSE, include=TRUE}
 ggplotly(plot_abundance_feces) %>%
   layout(xaxis = list(automargin = TRUE),
@@ -596,7 +595,7 @@ Alpha diversity analyses showed a higher diversity for Cecum compared to the oth
 
 Further alpha diversity analyses showed a few differences between treatment groups within the Cecum samples and within the Ileum samples. In the fecal samples there were no differences between treatments regardless of the index used. This is not uncommon; many changes in microbial diversity occur at the level of abundance, rather than richness. In other words, the types of bacteria present in a community may not change very much, but abundances of individual groups of bacteria can shift, generating changes in the ecosystem and representing the real differences between treatments. And this can not always be captured using alpha diversity calculations.
 
-### FIGURE 5: Alpha diversity grouped by sample location: Cecum(C), Ileum(I), Feces(F). The cecum has higher richness and diversity than the ileum and feces, and the feces have outlier samples that look more like the cecum. {data-width=650}
+### FIGURE 5: Alpha diversity grouped by sample location: Cecum(C), Ileum(I), Feces(F). <br/> The cecum has higher richness and diversity than the ileum and feces, and the feces have outlier samples that look more like the cecum. {data-width=650}
 
 ```{r , echo=FALSE}
 #alpha diversity comparing locations
@@ -610,7 +609,7 @@ pdiv
 
 Row {data-height=400}
 -----------------------------------------------------------------------
-### FIGURE 6A: Cecum diversity: There is variability in group-specific diversity within the cecum, but no clear pattern based on treatment.
+### FIGURE 6A: Cecum diversity. <br/> There is variability in group-specific diversity within the cecum, but no clear pattern based on treatment.
 
 ```{r , echo=FALSE}
 #Alpha diversity with ANOVA separated by location 
@@ -626,7 +625,7 @@ pc
 ```
 
 
-### FIGURE 6B: Ileum diversity: The MediumHigh + VitD group had higher richness than some other groups, but no clear pattern is indicated. Richness may increase with increasing Ca levels, but only to the MediumHigh level before falling in the High Ca group.
+### FIGURE 6B: Ileum diversity. <br/> The MediumHigh + VitD group had higher richness than some other groups, but no clear pattern is indicated. Richness may increase with increasing Ca levels, but only to the MediumHigh level before falling in the High Ca group.
 
 ```{r , echo=FALSE}
 
@@ -642,7 +641,7 @@ pi <- plot_anova_diversity_edit(ODLEPobj_ileum, method = c("richness", "shannon"
 pi
 ```
 
-### FIGURE 6C: Feces diversity: No clear pattern in richness or diversity between groups is indicated in the feces.
+### FIGURE 6C: Feces diversity. <br/> No clear pattern in richness or diversity between groups is indicated in the feces.
 
 ```{r , echo=FALSE}
 #feces
@@ -686,7 +685,7 @@ plot.beta.bray <- beta.bray + geom_point(size=4, alpha=0.75, na.rm=T) +  #sobrep
 
 ```
 
-### FIGURE 7: Dissimilarity between all samples (Bray distances): The cecum is distinct from the ileum and feces, while ileal and fecal samples are more variable, and more overlapping. {data-width=650}
+### FIGURE 7: Dissimilarity between all samples (Bray distances). <br/> The cecum is distinct from the ileum and feces, while ileal and fecal samples are more variable, and more overlapping. {data-width=650}
 ```{r , echo=FALSE}
 plot.beta.bray
 ```
@@ -738,18 +737,18 @@ plot.beta.bray.feces <- beta.bray + geom_point(size=4, alpha=0.75, na.rm=T) +  #
 
 ```
 
-### FIGURE 8A: Beta diversity Cecum (Treatment): The experimental groups do not cluster clearly when all treatment levels are included.
+### FIGURE 8A: Beta diversity Cecum (Treatment). <br/> The experimental groups do not cluster clearly when all treatment levels are included.
 
 ```{r , echo=FALSE}
 plot.beta.bray.cecum
 ```
 
-### FIGURE 8B: Beta diversity Ileum (Treatment): The experimental groups do not cluster clearly when all treatment levels are included.
+### FIGURE 8B: Beta diversity Ileum (Treatment). <br/> The experimental groups do not cluster clearly when all treatment levels are included.
 ```{r , echo=FALSE}
 plot.beta.bray.ileum
 ```
 
-### FIGURE 8C:Beta diversity Feces (Treatment): The experimental groups do not cluster clearly when all treatment levels are included.
+### FIGURE 8C:Beta diversity Feces (Treatment). <br/> The experimental groups do not cluster clearly when all treatment levels are included.
 
 ```{r , echo=FALSE}
 plot.beta.bray.feces
@@ -790,7 +789,7 @@ plot.beta.bray.feces<-beta.bray + geom_point(size=4, alpha=0.75, na.rm=T) +  #so
 
 ```
 
-### FIGURE 9A: Beta diversity Cecum (Calcium): The low calcium samples (1) and high calcium samples (4) separate cleanly, while the intermediate groups overlap them.
+### FIGURE 9A: Beta diversity Cecum (Calcium). <br/> The low calcium samples (1) and high calcium samples (4) separate cleanly, while the intermediate groups overlap them.
 
 ```{r , echo=FALSE}
 ggplotly(plot.beta.bray.cecum)%>%
@@ -799,7 +798,7 @@ ggplotly(plot.beta.bray.cecum)%>%
   style(hoverinfo = 'none') %>% partial_bundle()
 ```
 
-### FIGURE 9B: Beta diversity Ileum (Calcium): There is no clear impact of calcium level on beta diversity in the ileum.
+### FIGURE 9B: Beta diversity Ileum (Calcium). <br/> There is no clear impact of calcium level on beta diversity in the ileum.
 ```{r , echo=FALSE}
 ggplotly(plot.beta.bray.ileum) %>%
   layout(xaxis = list(automargin = TRUE),
@@ -808,7 +807,7 @@ ggplotly(plot.beta.bray.ileum) %>%
 
 ```
 
-### FIGURE 9C: Beta diversity Feces (Calcium): There is no clear impact of calcium level on beta diversity in the feces.
+### FIGURE 9C: Beta diversity Feces (Calcium). <br/> There is no clear impact of calcium level on beta diversity in the feces.
 
 ```{r , echo=FALSE}
 ggplotly(plot.beta.bray.feces) %>%
@@ -906,7 +905,7 @@ Hint: when dots are to the left it means these groups are more abundant in prese
 Row {data-height=500}
 -----------------------------------------------------------------------
 
-### FIGURE 11A: Cecum diff - VitD level: Lactobacillus coleohominis is increased with VitD supplementation, while several others are decreased.  {data-width=500}
+### FIGURE 11A: Cecum diff - VitD level. <br/> Lactobacillus coleohominis is increased with VitD supplementation, while several others are decreased.  {data-width=500}
 
 ```{r , echo=FALSE}
 #Be sure of the comparisons of interest we want to include in the report to add the corresponding title
@@ -917,7 +916,7 @@ p_cecum = plot_deseq_report(dfs_filtered, comparison, Title, color_location)
 p_cecum
 ```
 
-### FIGURE 11B: Feces diff - VitD level: Several bacterial groups were decreased with VitD supplementation.  {data-width=500}
+### FIGURE 11B: Feces diff - VitD level. <br/> Several bacterial groups were decreased with VitD supplementation.  {data-width=500}
 ```{r , echo=FALSE}
 comparison= 7
 Title= "Feces 0 VitD vs 1 VitD"
@@ -1006,7 +1005,7 @@ Row {data-height=30}
 -----------------------------------------------------------------------
 **Histopathology Analysis**
 
-Row {data-height=70}
+Row {data-height=90}
 -----------------------------------------------------------------------
 We evaluated the **physical structures** of the intestinal tract tissue to understand the impact of Calcium levels on gastrointestinal **inflammation and integrity**. We employ a scoring system that allows for semi-quantitative analysis of the integrity and inflammatory status of the gut. A score of 0 indicates a normal, healthy gut with no appearance of damage or aberration. A score of 5 for a given metric indicates extreme damage or aberration in the traits being evaluated. Bars with different letters are significantly different based on Tukey test.
 
