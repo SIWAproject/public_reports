@@ -1241,11 +1241,12 @@ The goal of gene expression is to evaluate how the **animal host is responding t
 
 Row {data-height=100}
 -----------------------------------------------------------------------
-To plot this data we use negative logarithmic fold change transformations relative to the control condition (in this case the control group is treatment "MediumLowCa" as this is the widely recommended level of Calcium for broilers diet). The **higher** the values, the higher the expression of the gene in the treatment compared to the **control** level. Significant differences between groups (indicated by letters in the figure) were tested by ANOVA or multiple t-test (ie
+To plot this data we use values (negative deltadeltaCq) relative to the control condition (in this case the control group is treatment "MediumLowCa" as this is the widely recommended level of Calcium for broilers diet). The **higher** the values, the higher the expression of the gene in the treatment compared to the **control** level. Significant differences between groups (indicated by letters in the figure) were tested by ANOVA or multiple t-test (ie
 <a href="https://en.wikipedia.org/wiki/Tukey%27s_range_test" target="_blank">Tukey’s test</a>), resulting only in some group differences for the expression of IL10 gene in the Cecum, and IL1B and IL10 genes in the Ileum. 
 
 
 ```{r Gene expression, include=FALSE}
+
 
 GENE <- complete_sample_table
 
@@ -1272,12 +1273,12 @@ GENE <- GENE %>%
 
 GENE <- GENE %>% 
   mutate(Alphalevel = if_else(KitID == 70, "0 VitD", 
-                                   ifelse(KitID == 71, "VitD",
-                                          ifelse(KitID == 72, "0 VitD",
-                                                 ifelse(KitID == 73, "VitD",
-                                                        ifelse(KitID == 74, "0 VitD",
-                                                               ifelse(KitID == 75, "VitD",
-                                                                      ifelse(KitID == 76, "0 VitD","VitD"))))))))
+                              ifelse(KitID == 71, "VitD",
+                                     ifelse(KitID == 72, "0 VitD",
+                                            ifelse(KitID == 73, "VitD",
+                                                   ifelse(KitID == 74, "0 VitD",
+                                                          ifelse(KitID == 75, "VitD",
+                                                                 ifelse(KitID == 76, "0 VitD","VitD"))))))))
 
 
 GENE$TreatmentNumber = as.factor(GENE$TreatmentNumber)
@@ -1303,35 +1304,28 @@ ref_value_IL10_c <- mean(cec[cec$TreatmentNumber == "3",]$DeltaCq_IL10)
 ref_value_IL1B_c <- mean(cec[cec$TreatmentNumber == "3",]$DeltaCq_IL1B)
 ref_value_MUC2_c <- mean(cec[cec$TreatmentNumber == "3",]$DeltaCq_MUC2)
 
-#Cecum calculations deltadelta and rq and new log transformation 
+#Cecum calculations deltadelta and -deltadelta. 
+#we plot the negative deltadelta to have a direct interpretation in the graph: 
+#because the higher the deltadelta, the more cicles needed to detect the molecule, hence the lower the expresion. 
+#If we plot the negative deltadelta we can interpret the plot more directly saying the higher the values in the plot, the higher the expression of the gene in the sample.  
+
 cec$DD_IL1B<-cec$DeltaCq_IL1B - ref_value_IL1B_c
-cec$RQ_IL1B<- (2^(-cec$DD_IL1B))
-cec$RQ_IL1B_log<-(-log(cec$RQ_IL1B))
-
+cec$neg_DD_IL1B<- -cec$DD_IL1B
 cec$DD_IL10<-cec$DeltaCq_IL10 - ref_value_IL10_c
-cec$RQ_IL10<- 2^(-cec$DD_IL10)
-cec$RQ_IL10_log<-(-log(cec$RQ_IL10))
-
+cec$neg_DD_IL10<- -cec$DD_IL10
 cec$DD_MUC2<-cec$DeltaCq_MUC2 - ref_value_MUC2_c
-cec$RQ_MUC2<- (2^(-cec$DD_MUC2))
-cec$RQ_MUC2_log<-(-log(cec$RQ_MUC2))
+cec$neg_DD_MUC2<- -cec$DD_MUC2
 
-#Ileum calculations deltadelta and rq and new log transformation 
+#Ileum calculations deltadelta and -deltadelta
 il$DD_IL1B<-il$DeltaCq_IL1B - ref_value_IL1B_i
-il$RQ_IL1B<- (2^(-il$DD_IL1B))
-il$RQ_IL1B_log<-(-log(il$RQ_IL1B))
-
+il$neg_DD_IL1B<- -il$DD_IL1B
 il$DD_IL10<-il$DeltaCq_IL10 - ref_value_IL10_i
-il$RQ_IL10<- 2^(-il$DD_IL10)
-il$RQ_IL10_log<-(-log(il$RQ_IL10))
-
+il$neg_DD_IL10<- -il$DD_IL10
 il$DD_MUC2<-il$DeltaCq_MUC2 - ref_value_MUC2_i
-il$RQ_MUC2<- (2^(-il$DD_MUC2))
-il$RQ_MUC2_log<-(-log(il$RQ_MUC2))
-
+il$neg_DD_MUC2<- -il$DD_MUC2
 
 #Statistics for Deltacq values 
-#(note: when computing the anova with the logtransformed values we get the exact same pvalues)
+#(note: when computing the anova with the logtransformed values we get the exact same p-values)
 
 #compute anova on treatment
 res.aov1= aov(DeltaCq_IL1B ~ Treatment, data=cec) 
@@ -1392,113 +1386,113 @@ Row {data-height=500}
 -----------------------------------------------------------------------
 
 ### FIGURE 14A: Cecum - IL1B. <br/> No impact of treatment on expression levels in the cecum.
-```{r , echo=FALSE}
-meanscec <- aggregate(RQ_IL1B_log ~  Treatment, cec, mean)
+```{r fig14a, echo=FALSE}
+meanscec <- aggregate(neg_DD_IL1B ~  Treatment, cec, mean)
 cec <- cec %>%
   mutate( Treatment=factor(Treatment,levels=c("LowCa", "LowCa+VitD", "MediumLowCa", "MediumLowCa+VitD", "MediumHighCa", "MediumHighCa+VitD", "HighCa","HighCa+VitD")) )
-plot1 <- ggplot(cec, aes(x = Treatment, y = round(RQ_IL1B_log), fill = Treatment)) +
+plot1 <- ggplot(cec, aes(x = Treatment, y = round(neg_DD_IL1B), fill = Treatment)) +
   geom_violin() + #geom_boxplot()+  #or geom_violin() + 
-  ylab("Log-fold-change") +  geom_hline(yintercept=0, linetype="dashed") + 
+  ylab("-DeltaDeltaCq") +  geom_hline(yintercept=0, linetype="dashed") + 
   theme(legend.position = "none") +
   theme(axis.text.x = element_text(angle = 60, hjust = 1))+
   stat_summary(fun=mean, geom="point", size=2, color="red", fill="red")+ 
-  geom_text(data = meanscec, aes(label = round(RQ_IL1B_log, 2), y = RQ_IL1B_log + 0.2), 
+  geom_text(data = meanscec, aes(label = round(neg_DD_IL1B, 2), y = neg_DD_IL1B + 0.2), 
             position = position_dodge(width = 1), vjust = -0.5, size = 4)+
-  coord_cartesian(ylim =  c(-8, 8))+
-  geom_text(data = IL1B_cec, aes(x = Treatment, y = 6, label = IL1B_cec), size = 5) 
+  coord_cartesian(ylim =  c(-7, 8))+
+  geom_text(data = IL1B_cec, aes(x = Treatment, y = 8, label = IL1B_cec), size = 5) 
   
 plot1
 ```
 
-### FIGURE 14B: Cecum - IL10. <br/> Addition of VitD to the MediumLow Ca group appears to reduce expression of IL10 compared to the control as well as several other groups.
+### FIGURE 14B: Cecum - IL10. <br/> Addition of VitD to the MediumLow Ca group appears to increase expression of IL10 compared to the control as well as several other groups.
 ```{r fig14b, echo=FALSE}
-meanscec <- aggregate(RQ_IL10_log ~  Treatment, cec, mean)
-plot1 <- ggplot(cec, aes(x =Treatment, y = RQ_IL10_log, fill = Treatment)) +
+meanscec <- aggregate(neg_DD_IL10 ~  Treatment, cec, mean)
+plot1 <- ggplot(cec, aes(x =Treatment, y = neg_DD_IL10, fill = Treatment)) +
   geom_violin() + #geom_boxplot()+  #or geom_violin()
   xlab("") + 
-  ylab("Log-fold-change") +  geom_hline(yintercept=0, linetype="dashed") + 
+  ylab("-DeltaDeltaCq") +  geom_hline(yintercept=0, linetype="dashed") + 
   theme(legend.position = "none") +
   theme(axis.text.x = element_text(angle = 60, hjust = 1))+
   stat_summary(fun=mean, geom="point", size=2, color="red", fill="red")+ 
-  geom_text(data = meanscec, aes(label = round(RQ_IL10_log, 2), y = RQ_IL10_log + 0.2), 
+  geom_text(data = meanscec, aes(label = round(neg_DD_IL10, 2), y = neg_DD_IL10 + 0.2), 
             position = position_dodge(width = 1),vjust = -0.5, size = 4)+
-  coord_cartesian(ylim =  c(-2.5, 1.5))+
-  geom_text(data = IL10_cec, aes(x = Treatment, y = 1, label = IL10_cec), size = 5)
+  coord_cartesian(ylim =  c(-1, 3.25))+
+  geom_text(data = IL10_cec, aes(x = Treatment, y = 3, label = IL10_cec), size = 5)
 plot1 
 
 ```
 
 ### FIGURE 14C: Cecum - MUC2. <br/> No impact of treatment on expression levels in the cecum.
 ```{r 14c, echo=FALSE}
-meanscec <- aggregate(RQ_MUC2_log ~  Treatment, cec, mean)
-plot1 <- ggplot(cec, aes(x = Treatment, y = RQ_MUC2_log, fill = Treatment)) +
+meanscec <- aggregate(neg_DD_MUC2 ~  Treatment, cec, mean)
+plot1 <- ggplot(cec, aes(x = Treatment, y = neg_DD_MUC2, fill = Treatment)) +
   geom_violin() + #geom_boxplot()+  #or geom_violin()
   xlab("") + 
-  ylab("Log-fold-change") +  geom_hline(yintercept=0, linetype="dashed") + 
+  ylab("-DeltaDeltaCq") +  geom_hline(yintercept=0, linetype="dashed") + 
   theme(legend.position = "none") +
   theme(axis.text.x = element_text(angle = 60, hjust = 1))+
   stat_summary(fun=mean, geom="point", size=2, color="red", fill="red")+ 
-  geom_text(data = meanscec, aes(label = round(RQ_MUC2_log,2), y = RQ_MUC2_log + 0.2), 
+  geom_text(data = meanscec, aes(label = round(neg_DD_MUC2,2), y = neg_DD_MUC2 + 0.2), 
             position = position_dodge(width = 1),vjust = -0.5, size = 4)+
-  coord_cartesian(ylim =  c(-6, 6))+
-  geom_text(data = MUC2_cec, aes(x = Treatment, y = 5, label = MUC2_cec), size = 5)
+  coord_cartesian(ylim =  c(-6, 7))+
+  geom_text(data = MUC2_cec, aes(x = Treatment, y = 6.5, label = MUC2_cec), size = 5)
 plot1 
 ```
 
 Row {data-height=500}
 -----------------------------------------------------------------------
-### FIGURE 15A: Ileum - IL1B. <br/> Higher levels of calcium in the diet appear to lead to higher levels of IL1B expression in the ileum.
+### FIGURE 15A: Ileum - IL1B. <br/> Higher levels of calcium in the diet appear to lead to lower levels of IL1B expression in the ileum.
 ```{r Gene expression plots ile il1b, echo=FALSE, warning=FALSE}
 #ileum (plots with letters for statistics)
-meansile <- aggregate(RQ_IL1B_log ~  Treatment, il, mean)
+meansile <- aggregate(neg_DD_IL1B ~  Treatment, il, mean)
 il <- il %>%
   mutate( Treatment=factor(Treatment,levels=c("LowCa", "LowCa+VitD", "MediumLowCa", "MediumLowCa+VitD", "MediumHighCa", "MediumHighCa+VitD", "HighCa","HighCa+VitD")) )
 
-plot1 <- ggplot(il, aes(x = Treatment, y = RQ_IL1B_log, fill = Treatment)) +
+plot1 <- ggplot(il, aes(x = Treatment, y = neg_DD_IL1B, fill = Treatment)) +
   geom_violin() + #geom_boxplot()+  #or geom_violin()
   xlab("") + 
-  ylab("Log-fold-change") +  geom_hline(yintercept=0, linetype="dashed") + 
+  ylab("-DeltaDeltaCq") +  geom_hline(yintercept=0, linetype="dashed") + 
   theme(legend.position = "none") +
   theme(axis.text.x = element_text(angle = 60, hjust = 1))+
   stat_summary(fun=mean, geom="point", size=2, color="red", fill="red")+ 
-  geom_text(data = meansile, aes(label = round(RQ_IL1B_log,2), y = RQ_IL1B_log + 0.2), 
+  geom_text(data = meansile, aes(label = round(neg_DD_IL1B,2), y = neg_DD_IL1B + 0.2), 
             position = position_dodge(width = 1),vjust = -0.5, size = 4)+
-  coord_cartesian(ylim =  c(-5, 7)) +
-  geom_text(data = IL1B_ile, aes(x = Treatment, y = 7, label = IL1B_ile), size = 5)
+  coord_cartesian(ylim =  c(-9, 7)) +
+  geom_text(data = IL1B_ile, aes(x = Treatment, y = 6, label = IL1B_ile), size = 5)
 plot1
 ```
 
 ### FIGURE 15B: Ileum - IL10. <br/> There may be a VitD-dependent difference in the expression of IL10 in the ileum.
 ```{r Gene expression plots ile il10, echo=FALSE, warning=FALSE}
-meansile <- aggregate(RQ_IL10_log ~  Treatment, il, mean)
-plot1 <- ggplot(il, aes(x = Treatment, y = RQ_IL10_log, fill = Treatment)) +
+meansile <- aggregate(neg_DD_IL10 ~  Treatment, il, mean)
+plot1 <- ggplot(il, aes(x = Treatment, y = neg_DD_IL10, fill = Treatment)) +
   geom_violin() + #geom_boxplot()+  #or geom_violin()
   xlab("") + 
-  ylab("Log-fold-change") +  geom_hline(yintercept=0, linetype="dashed") + 
+  ylab("-DeltaDeltaCq") +  geom_hline(yintercept=0, linetype="dashed") + 
   theme(legend.position = "none") +
   theme(axis.text.x = element_text(angle = 60, hjust = 1))+
   stat_summary(fun=mean, geom="point", size=2, color="red", fill="red")+ 
-  geom_text(data = meansile, aes(label = round(RQ_IL10_log,2), y = RQ_IL10_log + 0.2), 
+  geom_text(data = meansile, aes(label = round(neg_DD_IL10,2), y = neg_DD_IL10 + 0.2), 
             position = position_dodge(width = 1),vjust = -0.5, size = 4)+
-  coord_cartesian(ylim =  c(-1, 1.6))+
+  coord_cartesian(ylim =  c(-2, 1.7))+
   geom_text(data = IL10_ile, aes(x = Treatment, y = 1.5, label = IL10_ile), size = 5)
 plot1 
 ```
 
 ### FIGURE 15C: Ileum - MUC2. <br/> Expression of MUC2 in the ileum was not affected by treatment.
 ```{r Gene expression plots ile muc2, echo=FALSE, warning=FALSE}
-meansile <- aggregate(RQ_MUC2_log ~  Treatment, il, mean)
-plot1 <- ggplot(il, aes(x =Treatment, y = RQ_MUC2_log, fill = Treatment)) +
+meansile <- aggregate(neg_DD_MUC2 ~  Treatment, il, mean)
+plot1 <- ggplot(il, aes(x =Treatment, y = neg_DD_MUC2, fill = Treatment)) +
   geom_violin() + #geom_boxplot()+  #or geom_violin()
   xlab("") + 
-  ylab("Log-fold-change") +  geom_hline(yintercept=0, linetype="dashed") + 
+  ylab("-DeltaDeltaCq") +  geom_hline(yintercept=0, linetype="dashed") + 
   theme(legend.position = "none") +
   theme(axis.text.x = element_text(angle = 60, hjust = 1))+
   stat_summary(fun=mean, geom="point", size=2, color="red", fill="red")+ 
-  geom_text(data = meansile, aes(label = round(RQ_MUC2_log,2), y = RQ_MUC2_log + 0.2), 
+  geom_text(data = meansile, aes(label = round(neg_DD_MUC2,2), y = neg_DD_MUC2 + 0.2), 
             position = position_dodge(width = 1),vjust = -0.5, size = 4)+
-  coord_cartesian(ylim =  c(-4, 2.3))+
-  geom_text(data = MUC2_ile, aes(x = Treatment, y = 2, label = MUC2_ile), size = 5)
+  coord_cartesian(ylim =  c(-3, 6.5))+
+  geom_text(data = MUC2_ile, aes(x = Treatment, y = 6, label = MUC2_ile), size = 5)
   
 plot1 
 
