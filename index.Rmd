@@ -67,7 +67,7 @@ source("/Volumes/GoogleDrive/Mi unidad/SIWAproject/Methods-review/functions.R")
 
 ```
 
-```{r All inputs, include=FALSE}
+```{r All inputs MARIA, include=FALSE,eval = FALSE}
 #open phyloseq object
 #folder <- "/Users/mcadavid/Documents/Reports_review/E335_Maria/"
 #ODLEPobj <- readRDS(paste0(folder, "phyloseqObject_April11.rds"))
@@ -97,6 +97,25 @@ broad_taxonomy_info <- read.csv(file="/Users/mcadavid/Documents/Reports_review/M
 
 #Deseq outputs
 dfs_filtered <- readRDS(file="/Volumes/GoogleDrive/Mi unidad/SIWAproject/Reports/Version1.0/Input_data/dfs_filtered.RData")
+
+```
+
+```{r All inputs DANIELA, include=FALSE}
+FOLDER = "/Users/dvarelat/Documents/SIWA/Reports/Version1.0/Input_data/"
+#open phyloseq object
+ODLEPobj <- readRDS(paste0(FOLDER, "phyloseqObject_April11.rds"))
+
+#open data-table
+## Data creada con create_full_file_for_correlations_to_analytics - Jupyter Notebook
+complete_sample_table <-read.table(paste0(FOLDER, "performance_histo_ge_ratios_alphadiv_for_correlations.csv"),check.names = FALSE, header=T, sep="\t")
+  
+#EAFIT surveillance tables (same for all reports)
+species_taxonomy_info <-read.csv(file=paste0(FOLDER, "species_metabolic_effects.csv") ,check.names = FALSE, sep=";")
+genera_taxonomy_info <- read.csv(file=paste0(FOLDER,"genus_metabolic_effects.csv"), check.names = FALSE, sep=";")
+broad_taxonomy_info <- read.csv(file=paste0(FOLDER, "broad_groups_metabolic_effects.csv"), check.names = FALSE, sep=";")
+
+#Deseq outputs
+dfs_filtered <- readRDS(file=paste0(FOLDER, "dfs_filtered.RData"))
 
 ```
 
