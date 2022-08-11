@@ -449,82 +449,101 @@ Row {data-height=50}
 In the following interactive graphs we can view the main **genera** present in the treatments at each location. 
 
 ```{r  Taxonomic composition , include=FALSE, warning=FALSE}
-#####Plot Taxonomic composition feces#####  
-#Aggregate OTUs according to genus 
-ODLEPobj_cecum_glom <- tax_glom(ODLEPobj_cecum, taxrank="Genus", NArm=FALSE)
-#create dataframe from phyloseq object
-subset.genus.df <- psmelt(ODLEPobj_cecum_glom) 
-subset.genus.df$genus <- as.character(subset.genus.df$Genus) #convert to character
-#calculate median rel. abundance
-medians <- ddply(subset.genus.df, ~genus, function(x) c(median=median(x$Abundance)))
-#calculate remainder
-remainder <- medians[medians$median <= 0.01,]$genus
-subset.genus.df[subset.genus.df$genus %in% remainder,]$genus <- "Genera < 1% abund."
+#####Plot Taxonomic composition cecum#####  
+#Aggregate OTUs according to genus
+ODLEPobj_cecum_rel <- microbiome::transform(ODLEPobj_cecum, "compositional")
+grouped <- aggregate_taxa_siwa(ODLEPobj_cecum_rel, "Genus")
+melted <- psmelt(otu_table(grouped,taxa_are_rows=TRUE))
+
+#Create genus label for plot including "Genera < 1% abund."
+grouped$meanrelativeabunance = rowMeans(grouped)
+grouped$genus <- row.names(grouped) 
+grouped$genus_label <- "na"
+grouped <- grouped %>% mutate(genus_label = if_else(meanrelativeabunance > 0.01, genus, "Genera < 1% abund."))
+genus_labels <- grouped$genus_label
+names(genus_labels) <- rownames(grouped)
+melted$label <- as.character(lapply(melted$OTU, function(x){genus_labels[x]}))
+#add treatment info 
+melted$SampleID <- (melted$Sample)
+metadata_cec <- sample_data(ODLEPobj_cecum)
+melted <- dplyr::left_join(melted, metadata_cec, by="SampleID")
+melted <- melted %>%
+  mutate( Treatment=factor(Treatment,levels=c("LowCa", "LowCa+VitD", "MediumLowCa", "MediumLowCa+VitD", "MediumHighCa", "MediumHighCa+VitD", "HighCa","HighCa+VitD")) )
 
 #Figures abundances
-subset.genus.df <- subset.genus.df %>%
-  mutate( Treatment=factor(Treatment,levels=c("LowCa", "LowCa+VitD", "MediumLowCa", "MediumLowCa+VitD", "MediumHighCa", "MediumHighCa+VitD", "HighCa","HighCa+VitD")) )
 #plot with condensed genera into "< 1% abund" category by Treatment
-plot_abundance_cecum<- ggplot(subset.genus.df, aes(x = Treatment, y = Abundance, fill = genus)) +
-  geom_bar(stat="identity", position="fill") + 
+p <- ggplot(data=melted, aes(x=Treatment, y=Abundance ,fill=label))
+plot_abundance_cecum<- p + geom_bar(stat="identity", position="fill") + 
+  labs(title ="Taxonomic composition cecum", fill="Genera") +
   xlab("Treatment") +
   ylab("Relative abundance")+
-  labs(fill="Genera") +
   #stat_compare_means(method = "anova")+ 
-  theme(axis.text.x = element_text(angle = 60, hjust = 1))+
-  theme(text=element_text(size=12)) 
+  theme(axis.text.x = element_text(angle = 60, hjust = 1))
+
 
 
 #####Plot Taxonomic composition ileum#####  
-#Aggregate OTUs according to genus 
-ODLEPobj_ileum_glom = tax_glom(ODLEPobj_ileum, taxrank="Genus", NArm=FALSE)
-#create dataframe from phyloseq object
-subset.genus.df <- psmelt(ODLEPobj_ileum_glom) 
-subset.genus.df$genus <- as.character(subset.genus.df$Genus) #convert to character
-#calculate median rel. abundance
-medians <- ddply(subset.genus.df, ~genus, function(x) c(median=median(x$Abundance)))
-#calculate remainder
-remainder <- medians[medians$median <= 0.01,]$genus
-subset.genus.df[subset.genus.df$genus %in% remainder,]$genus <- "Genera < 1% abund."
+#Aggregate OTUs according to genus
+ODLEPobj_ileum_rel <- microbiome::transform(ODLEPobj_ileum, "compositional")
+grouped <- aggregate_taxa_siwa(ODLEPobj_ileum_rel, "Genus")
+melted <- psmelt(otu_table(grouped,taxa_are_rows=TRUE))
+
+#Create genus label for plot including "Genera < 1% abund."
+grouped$meanrelativeabunance = rowMeans(grouped)
+grouped$genus <- row.names(grouped) 
+grouped$genus_label <- "na"
+grouped <- grouped %>% mutate(genus_label = if_else(meanrelativeabunance > 0.01, genus, "Genera < 1% abund."))
+genus_labels <- grouped$genus_label
+names(genus_labels) <- rownames(grouped)
+melted$label <- as.character(lapply(melted$OTU, function(x){genus_labels[x]}))
+#add treatment info 
+melted$SampleID <- (melted$Sample)
+metadata_cec <- sample_data(ODLEPobj_ileum)
+melted <- dplyr::left_join(melted, metadata_cec, by="SampleID")
+melted <- melted %>%
+  mutate( Treatment=factor(Treatment,levels=c("LowCa", "LowCa+VitD", "MediumLowCa", "MediumLowCa+VitD", "MediumHighCa", "MediumHighCa+VitD", "HighCa","HighCa+VitD")) )
 
 #Figures abundances
-subset.genus.df <- subset.genus.df %>%
-  mutate( Treatment=factor(Treatment,levels=c("LowCa", "LowCa+VitD", "MediumLowCa", "MediumLowCa+VitD", "MediumHighCa", "MediumHighCa+VitD", "HighCa","HighCa+VitD")) )
 #plot with condensed genera into "< 1% abund" category by Treatment
-p <- ggplot(data=subset.genus.df, aes(x=reorder(Treatment, KitID), y=Abundance ,fill=genus))
+p <- ggplot(data=melted, aes(x=Treatment, y=Abundance ,fill=label))
 plot_abundance_ileum<- p + geom_bar(stat="identity", position="fill") + 
+  labs(title ="Taxonomic composition ileum", fill="Genera") +
   xlab("Treatment") +
   ylab("Relative abundance")+
-  labs(fill="Genera") +
   #stat_compare_means(method = "anova")+ 
-  theme(axis.text.x = element_text(angle = 60, hjust = 1))+
-  theme(text=element_text(size=12)) 
+  theme(axis.text.x = element_text(angle = 60, hjust = 1))
 
 
 #####Plot Taxonomic composition feces#####  
-#Aggregate OTUs according to genus 
-ODLEPobj_feces_glom = tax_glom(ODLEPobj_feces, taxrank="Genus", NArm=FALSE)
-#create dataframe from phyloseq object
-subset.genus.df <- psmelt(ODLEPobj_feces_glom) 
-subset.genus.df$genus <- as.character(subset.genus.df$Genus) #convert to character
-#calculate median rel. abundance
-medians <- ddply(subset.genus.df, ~genus, function(x) c(median=median(x$Abundance)))
-#calculate remainder
-remainder <- medians[medians$median <= 0.01,]$genus
-subset.genus.df[subset.genus.df$genus %in% remainder,]$genus <- "Genera < 1% abund."
+#Aggregate OTUs according to genus
+ODLEPobj_feces_rel <- microbiome::transform(ODLEPobj_feces, "compositional")
+grouped <- aggregate_taxa_siwa(ODLEPobj_feces_rel, "Genus")
+melted <- psmelt(otu_table(grouped,taxa_are_rows=TRUE))
+
+#Create genus label for plot including "Genera < 1% abund."
+grouped$meanrelativeabunance = rowMeans(grouped)
+grouped$genus <- row.names(grouped) 
+grouped$genus_label <- "na"
+grouped <- grouped %>% mutate(genus_label = if_else(meanrelativeabunance > 0.01, genus, "Genera < 1% abund."))
+genus_labels <- grouped$genus_label
+names(genus_labels) <- rownames(grouped)
+melted$label <- as.character(lapply(melted$OTU, function(x){genus_labels[x]}))
+#add treatment info 
+melted$SampleID <- (melted$Sample)
+metadata_cec <- sample_data(ODLEPobj_feces)
+melted <- dplyr::left_join(melted, metadata_cec, by="SampleID")
+melted <- melted %>%
+  mutate( Treatment=factor(Treatment,levels=c("LowCa", "LowCa+VitD", "MediumLowCa", "MediumLowCa+VitD", "MediumHighCa", "MediumHighCa+VitD", "HighCa","HighCa+VitD")) )
 
 #Figures abundances
-subset.genus.df <- subset.genus.df %>%
-  mutate( Treatment=factor(Treatment,levels=c("LowCa", "LowCa+VitD", "MediumLowCa", "MediumLowCa+VitD", "MediumHighCa", "MediumHighCa+VitD", "HighCa","HighCa+VitD")) )
 #plot with condensed genera into "< 1% abund" category by Treatment
-p <- ggplot(data=subset.genus.df, aes(x=Treatment, y=Abundance ,fill=genus))
+p <- ggplot(data=melted, aes(x=Treatment, y=Abundance ,fill=label))
 plot_abundance_feces<- p + geom_bar(stat="identity", position="fill") + 
+  labs(title ="Taxonomic composition feces", fill="Genera") +
   xlab("Treatment") +
   ylab("Relative abundance")+
-  labs(fill="Genera") +
   #stat_compare_means(method = "anova")+ 
-  theme(axis.text.x = element_text(angle = 60, hjust = 1))+
-  theme(text=element_text(size=12)) 
+  theme(axis.text.x = element_text(angle = 60, hjust = 1))
 
 ```
 
