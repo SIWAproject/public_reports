@@ -63,7 +63,7 @@ library(DT)
 library(stringr)
 
 ## FUNCTIONS
-source("/Volumes/GoogleDrive/Mi unidad/SIWAproject/Methods-review/functions.R")
+source("/Volumes/GoogleDrive/Mi unidad/SIWAproject/Methods-review(master)/functions.R")
 
 ```
 
@@ -120,7 +120,7 @@ Project E335 was an experimental trial done at Iluma's broiler experimental farm
 
 The experiment consisted of 8 treatments differing in Ca concentration across the growth stages and also including presence or absence of VitD in the diet. 
 
-Microbiome, gut histology and gene expression data were collected from animals at 33 days of age, following treatment from day of hatch. For microbiome samples, gut content was collected from three different sampling locations: Cecum(C), Ileum(I) and Feces(F). For gene expression and histology samples, tissue samples were collected from two sampling locations: Cecum and Ileum (refer to diagram).
+Microbiome, gut histology and gene expression data were collected from animals at 42 days of age, following treatment from day of hatch. For microbiome samples, gut content was collected from three different sampling locations: Cecum(C), Ileum(I) and Feces(F). For gene expression and histology samples, tissue samples were collected from two sampling locations: Cecum and Ileum (refer to diagram).
 
 
 ### {data-with=800}
