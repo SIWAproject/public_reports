@@ -61,6 +61,9 @@ library(flexdashboard)
 library(shiny)
 library(DT)
 library(stringr)
+library(rstatix)
+library(microViz)
+library(lsr)
 
 ## FUNCTIONS
 source("/Volumes/GoogleDrive/Mi unidad/SIWAproject/Methods-review(master)/functions.R")
@@ -127,8 +130,6 @@ Microbiome, gut histology and gene expression data were collected from animals a
 ```{r picture, include= TRUE, echo=FALSE, out.width = '100%'}
 knitr::include_graphics("diagram_E335.png")
 ```
-
-
 
 # Exploration {data-navmenu="Microbiome"}
 
@@ -2705,5 +2706,520 @@ bp_ileum
 ```
 
 
+
+
+
+# Extra graphs  {data-icon="fa fa-bookmark-o"}
+Row {data-height=50}
+-----------------------------------------------------------------------
+
+Row {data-height=30}
+-----------------------------------------------------------------------
+**Additional visualizations of data**
+
+Row {data-height=50}
+-----------------------------------------------------------------------
+Extra analysis added after discussion of initial results with the project owner.
+
+```{r, include=FALSE}
+#add treatment and kit id
+complete_sample_table <- complete_sample_table %>% 
+  mutate(Treatment = if_else(KitID == 70, "LowCa", 
+                             ifelse(KitID == 71, "LowCa+VitD",
+                                    ifelse(KitID == 72, "MediumLowCa",
+                                           ifelse(KitID == 73, "MediumLowCa+VitD",
+                                                  ifelse(KitID == 74, "MediumHighCa",
+                                                         ifelse(KitID == 75, "MediumHighCa+VitD",
+                                                                ifelse(KitID == 76, "HighCa",
+                                                                       ifelse(KitID == 77, "HighCa+VitD","other")))))))))
+
+
+
+
+
+complete_sample_table <- complete_sample_table %>% 
+  mutate(Alphalevel = if_else(KitID == 70, "0 VitD", 
+                              ifelse(KitID == 71, "VitD",
+                                     ifelse(KitID == 72, "0 VitD",
+                                            ifelse(KitID == 73, "VitD",
+                                                   ifelse(KitID == 74, "0 VitD",
+                                                          ifelse(KitID == 75, "VitD",
+                                                                 ifelse(KitID == 76, "0 VitD","VitD"))))))))
+
+```
+
+
+Row {data-height=30}
+-----------------------------------------------------------------------
+**Performance: FCR across treatments **
+
+Row {data-height=70}
+-----------------------------------------------------------------------
+Feed conversion rate (from day 22 to day 33) changes with treatments, specifically there is a trend for it to increase with the use of a higher concentration of calcium in the diet (anova p-value<2e-16). The use of VitD in the diet dies not cause any significant difference in FCR (anova p-value= 0.178). Even at the recommended level of calcium (MediumLow) there is no changes in FCR between the use or no use of VitD in the diet. (Fig27)
+
+Row {data-height=500}
+-----------------------------------------------------------------------
+### FIGURE 27: Feed Conversion Rate days 22-33 (g:g) across treatments. <br/> There are no statistically significant changes of FCR with the use of VitD, however, there is a tendency to increase with increasing calcium levels. {data-width=500}
+
+```{r, include=FALSE}
+#FCR by alpha
+#anova
+#summary(aov(FCR_corr_days22_33 ~ Alphalevel,data=complete_sample_table)) #alpha not significant
+
+#FCR by treatment
+#anova
+summary(aov(FCR_corr_days22_33 ~ Treatment,data=complete_sample_table)) #treatment super significant
+##anova-tukey test
+res.aov <- aov(FCR_corr_days22_33 ~ Treatment,data=complete_sample_table)
+summary(res.aov)
+tukey <- TukeyHSD(res.aov)
+print(tukey)
+#letters to add statistics to graph 
+cld <- multcompLetters4(res.aov, tukey)
+cld2 <- data.frame(letters = cld$'Treatment'$Letters) #table with letters per treatment
+cld2$Treatment <- rownames(cld2)
+names(cld2)[1] <- "sig"
+
+#plots with letters for statistics
+plot_FCR <- ggplot(complete_sample_table, aes(x =reorder(Treatment, KitID), y = FCR_corr_days22_33, fill = Treatment)) +
+  geom_boxplot(outlier.shape = NA) + #geom_boxplot()+  #or geom_violin()
+  xlab("") + 
+  theme(legend.position = "none") +
+  geom_jitter(color="black", size=0.4, alpha=0.9) +
+  #ggtitle("Feed Conversion Rate days 22-33 (g:g)") +
+  labs(y = "FCR") + 
+  theme(axis.text.x = element_text(angle = 60, hjust = 1))+
+  geom_text(data = cld2, aes(x = Treatment, y = 2.7, label = sig), size = 4) 
+```
+```{r, include=TRUE, echo=FALSE}
+plot_FCR
+```
+
+Row {data-height=30}
+-----------------------------------------------------------------------
+
+Row {data-height=30}
+-----------------------------------------------------------------------
+**Inflammation severity in the ileum**
+
+Row {data-height=90}
+-----------------------------------------------------------------------
+When analyzing histopathology results, the specific trait of inflammation severity in the ileum stood out. Anova test indicates inflammation severity tends to change with treatment use in ileum (p-value=0.03). Specifically there is a significant change between samples of MediumLowCa+VitD and samples of MediumLowCa, the last one having lower Inflammation scores, which could indicate that the addition of VitD using the recommended level of calcium in diet could reduce the damages in the architecture or integrity of the intestines related with inflammation (Fig 28).
+
+Row {data-height=50}
+-----------------------------------------------------------------------
+Hence, a t-test was done across the samples of these two groups to zoom into the previously seen difference of inflammation severity with the use of VitD, confirming it once again (t-test p-value = 0.001709) (Fig 29).
+
+
+Row {data-height=600}
+-----------------------------------------------------------------------
+### FIGURE 28: Inflammation severity in the ileum. <br/> Impact of treatment on inflammation severity.
+```{r INFLAMMATION SEVERITY ILEUM by treatment, include=FALSE}
+histo <- complete_sample_table
+
+#subset by location
+histo_cecum <- histo[histo$SampleLocation == 'C',]
+histo_ileum <- histo[histo$SampleLocation == 'I',]
+
+####Anova test
+
+#ileum AdditiveScore
+res.aov <- aov(InflammationSeverity ~ Treatment, data = histo_ileum)
+summary(res.aov) #inflammation tends to change with treatment in ileum. pval=0.03
+tukey <- TukeyHSD(res.aov)
+print(tukey)
+#letters to add statistics to graph 
+cld <- multcompLetters4(res.aov, tukey, threshold = 0.1 )
+cld3 <- data.frame(letters = cld$'Treatment'$Letters) #table with letters per treatment
+cld3$Treatment <- rownames(cld3)
+names(cld3)[1] <- "InflammationSeverity"
+
+#PLOT INFLAMMATION ILEUM
+histo_ileum2 <- histo_ileum %>% 
+  pivot_longer(cols = c( "InflammationSeverity"), names_to = "InfammationSeverity", values_to = "Value")
+
+
+#ileum
+histo_i <- split(histo_ileum2, histo_ileum2$Treatment)
+dff <- lapply(histo_i, function(x) ddply(x, .(InfammationSeverity), 
+                                         summarize, mean=mean(Value)))
+listDF <- list()
+for (i in 1:length(dff)){
+  #print(i)  
+  dff[[i]]$Treatment <- names(dff)[i]
+  listDF[[i]] <- dff[[i]]
+}
+dfff <- do.call(rbind, listDF)
+
+dfff <- dfff %>%
+  mutate( Treatment=factor(Treatment,levels=c("LowCa", "LowCa+VitD", "MediumLowCa", "MediumLowCa+VitD", "MediumHighCa", "MediumHighCa+VitD", "HighCa","HighCa+VitD")) )
+
+InfammationSeverity_plot <- ggplot(dfff, aes(y =mean , x = Treatment)) + 
+  ylab("Mean Ileum Inflammation Severity") + xlab("") + 
+  geom_bar(stat = "identity", fill = '#FFA076')  +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) +
+  geom_text(data = cld3, aes(x = Treatment, y = 2.5, label = InflammationSeverity)) #significance letters 
+
+
+```
+```{r plot INFLAMMATION SEVERITY ILEUM by treatment, include=TRUE, echo=FALSE}
+InfammationSeverity_plot
+```
+
+### FIGURE 29: Ileum Inflammation severity scores for individual samples at recomended level of calcium. 
+```{r inflammation by vit level, include=FALSE}
+#by sample
+histo_ileum3<- histo_ileum2[histo_ileum2$Treatment  %in% c("MediumLowCa+VitD","MediumLowCa"),]
+t.test(Value ~ Treatment, data = histo_ileum3)
+
+histo_by_samples_ileum <- ggplot(histo_ileum3, aes(x = Treatment, y =Value, fill=SampleID)) + 
+  geom_bar(stat="identity", position="dodge", show.legend = FALSE)  +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) 
+
+
+```
+```{r inflammation plot by vit level, include=TRUE, echo=FALSE}
+histo_by_samples_ileum
+```
+
+Row {data-height=30}
+-----------------------------------------------------------------------
+
+Row {data-height=30}
+-----------------------------------------------------------------------
+**Gene Expression**
+
+Row {data-height=160}
+-----------------------------------------------------------------------
+Also the expression of the anti-inflammatory IL10 gene is something to look at. For the recommended level of calcium the expression of the gene changed notoriously with and without the addition of VitD in both the ileum and cecum tissues (Fig30). In the cecum the expression of the gene IL10 was increased with the use of VitD in the diet while in the ileum the behavior was contrary, and the expression decreased with the use of VitD. This may be because the action of the vitamin is specific for a tissue, or it may even be the case that the vitamin has different effects on different tissues. A low expression of an anti-inflammatory gene could mean that the tissue is healthy, with no severe inflammation, hence there is no need for the inflammatory gene to express. But a low expression of an anti-inflammatory gene could also mean that the gene is not sufficiently expressed to suppress inflammation, hence the tissue is inflamed. This could be verified in an experiment with a critical level of intestinal health, in this experiment the basal levels of intestinal tissue health, especially in the ileum, are very good.
+
+Row {data-height=500}
+-----------------------------------------------------------------------
+### FIGURE 30: IL10 Gene expression for treatments at recomended level of calcium. 
+```{r ge il10 reco ca, include=FALSE}
+GENE$TreatmentNumber = as.factor(GENE$TreatmentNumber)
+GENE$SampleLocation = as.factor(GENE$SampleLocation)
+
+#Subset kits de interés y separar por location 
+subset <- GENE[GENE$TreatmentNumber %in% c(3,4),]
+cec <- subset[subset$SampleLocation == "C",]
+il <- subset[subset$SampleLocation == "I",]
+
+t.test(DeltaCq_IL10 ~ Treatment, data = cec) #p-value = 0.01829
+t.test(DeltaCq_IL10 ~ Treatment, data = il) #p-value = 0.0006908
+
+#Calcular referencias (en este caso uso el tratamiento 3-MEDIUMLOWCA como mi control para el delta delta)
+ref_value_IL10_i <- mean(il[il$TreatmentNumber == "3",]$DeltaCq_IL10)
+ref_value_IL10_c <- mean(cec[cec$TreatmentNumber == "3",]$DeltaCq_IL10)
+
+#calculations deltadelta and -deltadelta. 
+#we plot the negative deltadelta to have a direct interpretation in the graph: 
+#because the higher the deltadelta, the more cicles needed to detect the molecule, hence the lower the expresion. 
+#If we plot the negative deltadelta we can interpret the plot more directly saying the higher the values in the plot, the higher the expression of the gene in the sample.  
+
+cec$DD_IL10<-cec$DeltaCq_IL10 - ref_value_IL10_c
+cec$neg_DD_IL10<- -cec$DD_IL10
+
+il$DD_IL10<-il$DeltaCq_IL10 - ref_value_IL10_i
+il$neg_DD_IL10<- -il$DD_IL10
+
+#Statistics for Deltacq values 
+#(note: when computing the anova with the logtransformed values we get the exact same p-values)
+
+#compute anova on treatment
+res.aov2= aov(DeltaCq_IL10 ~ Treatment, data=cec)
+res.aov5= aov(DeltaCq_IL10 ~ Treatment, data=il) 
+
+summary(res.aov2) #pval= 0.017 *
+summary(res.aov5) #pval= 0.000 ***
+
+#tukey
+tukey2 = TukeyHSD(res.aov2) 
+tukey5 = TukeyHSD(res.aov5)
+
+
+#Define letters to add statistics to the graph 
+cld <- multcompLetters4(res.aov2, tukey2)
+IL10_cec <- data.frame(letters = cld$'Treatment'$Letters)
+IL10_cec$Treatment <- rownames(IL10_cec)
+names(IL10_cec)[1] <- "IL10_cec"
+
+cld <- multcompLetters4(res.aov5, tukey5)
+IL10_ile <- data.frame(letters = cld$'Treatment'$Letters)
+IL10_ile$Treatment <- rownames(IL10_ile)
+names(IL10_ile)[1] <- "IL10_ile"
+
+#plot
+meanscec <- aggregate(neg_DD_IL10 ~  Treatment, cec, mean)
+plotcec <- ggplot(cec, aes(x =Treatment, y = neg_DD_IL10, fill = Treatment)) +
+  geom_violin() + #geom_boxplot()+  #or geom_violin()
+  xlab("") + 
+  ylab("Relative gene expression cecum") +  geom_hline(yintercept=0, linetype="dashed") + 
+  theme(legend.position = "none") +
+  theme(axis.text.x = element_text(angle = 60, hjust = 1))+
+  stat_summary(fun=mean, geom="point", size=2, color="red", fill="red")+ 
+  geom_text(data = meanscec, aes(label = round(neg_DD_IL10, 2), y = neg_DD_IL10 + 0.2), 
+            position = position_dodge(width = 1),vjust = -0.5, size = 4)+
+  coord_cartesian(ylim =  c(-1, 3.25))+
+  geom_text(data = IL10_cec, aes(x = Treatment, y = 3, label = IL10_cec), size = 5)
+
+meansile <- aggregate(neg_DD_IL10 ~  Treatment, il, mean)
+plotile <- ggplot(il, aes(x = Treatment, y = neg_DD_IL10, fill = Treatment)) +
+  geom_violin() + #geom_boxplot()+  #or geom_violin()
+  xlab("") + 
+  ylab("Relative gene expression ileum") +  geom_hline(yintercept=0, linetype="dashed") + 
+  theme(legend.position = "none") +
+  theme(axis.text.x = element_text(angle = 60, hjust = 1))+
+  stat_summary(fun=mean, geom="point", size=2, color="red", fill="red")+ 
+  geom_text(data = meansile, aes(label = round(neg_DD_IL10,2), y = neg_DD_IL10 + 0.2), 
+            position = position_dodge(width = 1),vjust = -0.5, size = 4)+
+  coord_cartesian(ylim =  c(-2, 1.7))+
+  geom_text(data = IL10_ile, aes(x = Treatment, y = 1.5, label = IL10_ile), size = 5)
+
+```
+```{r plot ge il10 reco ca, include=TRUE, echo=FALSE}
+ggarrange(plotcec,plotile, nrow = 1, ncol = 2)
+```
+
+Row {data-height=30}
+-----------------------------------------------------------------------
+
+Row {data-height=30}
+-----------------------------------------------------------------------
+**SIWA Ratios**
+
+Row {data-height=80}
+-----------------------------------------------------------------------
+The SIWA ratios seek to broadly explain the composition of the microbiome in a single indicator. thus their behavior across treatments and across vitamin D levels is of interest. Some significant differences were found, nevertheless no trend was constant, specially with the use of VitD product, which means that the AlphaD3 product does not greatly modulate gut microbiom (Fig 31 and 32).
+
+Row {data-height=900}
+-----------------------------------------------------------------------
+### FIGURE 31: SIWA ratios acorss treatments {data-width=800}
+```{r, include=FALSE}
+ratios <- complete_sample_table
+ratios$TreatmentNumber<-as.factor(ratios$TreatmentNumber)
+
+#####Ratio 1
+stat.test <- ratios %>%
+  group_by(SampleLocation) %>%
+  t_test(ratio1LOG ~ TreatmentNumber) %>%
+  adjust_pvalue(method = "none") %>%
+  add_significance(cutpoints = c(0, 1e-04, 0.001, 0.01, 0.05, 0.1, 1),
+                   symbols = c("*****", "****", "***", "**", "*", "ns"))
+#Organice to Plot
+ratio1<- ggplot(ratios, aes(y =ratio1LOG , x =TreatmentNumber)) + 
+  ylab("Ratio1- Lactobacillus/Escherichia-Shigella") + xlab("") + 
+  geom_boxplot(fill = '#B3FF9D', outlier.shape = NA)  +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) +
+  theme(text=element_text(size=7))+
+  geom_jitter(size=0.5)+
+  facet_grid(rows="SampleLocation", scales="free")+
+  scale_x_discrete(labels=c("LowCa", "LowCa+VitD","MediumLowCa","MediumLowCa+VitD","MediumHighCa", "MediumHighCa+VitD","HighCa","HighCa+VitD"))
+# Make facet and add p-values
+stat.test <- stat.test %>% add_xy_position(x = "TreatmentNumber")
+ratio1<-ratio1 +  stat_pvalue_manual(stat.test, bracket.nudge.y = -2, hide.ns = TRUE,
+                                     label = "{p.adj}{p.adj.signif}", step.increase = 0.015, label.size = 2) 
+
+#####Ratio 2
+stat.test <- ratios %>%
+  group_by(SampleLocation) %>%
+  t_test(ratio2LOG ~ TreatmentNumber) %>%
+  adjust_pvalue(method = "none") %>%
+  add_significance(cutpoints = c(0, 1e-04, 0.001, 0.01, 0.05, 0.1, 1),
+                   symbols = c("*****", "****", "***", "**", "*", "ns"))
+#Organice to Plot
+ratio2<- ggplot(ratios, aes(y =ratio2LOG , x =TreatmentNumber)) + 
+  ylab("Ratio2- Firmicutes/ Proteobacteria") + xlab("") + 
+  geom_boxplot(fill = '#9DFFD2', outlier.shape = NA)  +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) +
+  theme(text=element_text(size=7))+
+  geom_jitter(size=0.5)+
+  facet_grid(rows="SampleLocation", scales="free")+
+  scale_x_discrete(labels=c("LowCa", "LowCa+VitD","MediumLowCa","MediumLowCa+VitD","MediumHighCa", "MediumHighCa+VitD","HighCa","HighCa+VitD"))
+# Make facet and add p-values
+stat.test <- stat.test %>% add_xy_position(x = "TreatmentNumber")
+ratio2<-ratio2 +  stat_pvalue_manual(stat.test, bracket.nudge.y = -2, hide.ns = TRUE,
+                                 label = "{p.adj}{p.adj.signif}", step.increase = 0.015, label.size = 2)
+#####Ratio 3
+stat.test <- ratios %>%
+  group_by(SampleLocation) %>%
+  t_test(ratio3LOG ~ TreatmentNumber) %>%
+  adjust_pvalue(method = "none") %>%
+  add_significance(cutpoints = c(0, 1e-04, 0.001, 0.01, 0.05, 0.1, 1),
+                   symbols = c("*****", "****", "***", "**", "*", "ns"))
+#Organice to Plot
+ratio3<- ggplot(ratios, aes(y =ratio3LOG , x =TreatmentNumber)) + 
+  ylab("Ratio3- Lactobacillus/rest of the genera") + xlab("") + 
+  geom_boxplot(fill = '#9DDCFF', outlier.shape = NA)  +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) +
+  theme(text=element_text(size=7))+
+  geom_jitter(size=0.5)+
+  facet_grid(rows="SampleLocation", scales="free")+
+  scale_x_discrete(labels=c("LowCa", "LowCa+VitD","MediumLowCa","MediumLowCa+VitD","MediumHighCa", "MediumHighCa+VitD","HighCa","HighCa+VitD"))
+# Make facet and add p-values
+stat.test <- stat.test %>% add_xy_position(x = "TreatmentNumber")
+ratio3<-ratio3 +  stat_pvalue_manual(stat.test, bracket.nudge.y = -2, hide.ns = TRUE,
+                                     label = "{p.adj}{p.adj.signif}", step.increase = 0.015, label.size = 2) 
+
+```
+```{r, include=TRUE, echo=FALSE}
+
+ggarrange(ratio1, ratio2, ratio3, ncol=3, nrow = 1)
+
+```
+
+### FIGURE 32: SIWA ratios with and without vitamin D 
+```{r, include=FALSE}
+#####Ratio 1
+stat.test <- ratios %>%
+  group_by(SampleLocation) %>%
+  t_test(ratio1LOG ~ Alphad3_level) %>%
+  adjust_pvalue(method = "none") %>%
+  add_significance(cutpoints = c(0, 1e-04, 0.001, 0.01, 0.05, 0.1, 1),
+                   symbols = c("*****", "****", "***", "**", "*", "ns"))
+#Organice to Plot
+ratio1<- ggplot(ratios, aes(y =ratio1LOG , x =Alphad3_level)) + 
+  ylab("Ratio1- Lactobacillus/Escherichia-Shigella") + xlab("") + 
+  geom_boxplot(fill = '#B3FF9D', outlier.shape = NA)  +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) +
+  geom_jitter(size=0.5)+
+  facet_grid(rows="SampleLocation", scales="free")
+
+# Make facet and add p-values
+stat.test <- stat.test %>% add_xy_position(x = "Alphad3_level")
+ratio1<-ratio1 +  stat_pvalue_manual(stat.test, bracket.nudge.y = -2, hide.ns = TRUE,
+                                     label = "{p.adj}{p.adj.signif}", step.increase = 0.015)
+
+
+#####Ratio 2
+stat.test <- ratios %>%
+  group_by(SampleLocation) %>%
+  t_test(ratio2LOG ~ Alphad3_level) %>%
+  adjust_pvalue(method = "none") %>%
+  add_significance(cutpoints = c(0, 1e-04, 0.001, 0.01, 0.05, 0.1, 1),
+                   symbols = c("*****", "****", "***", "**", "*", "ns"))
+#Organice to Plot
+ratio2<- ggplot(ratios, aes(y =ratio2LOG , x =Alphad3_level)) + 
+  ylab("Ratio2- Firmicutes/ Proteobacteria") + xlab("") + 
+  geom_boxplot(fill = '#9DFFD2', outlier.shape = NA)  +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) +
+  geom_jitter(size=0.5)+
+  facet_grid(rows="SampleLocation", scales="free")
+# Make facet and add p-values
+stat.test <- stat.test %>% add_xy_position(x = "Alphad3_level")
+ratio2<-ratio2 +  stat_pvalue_manual(stat.test, bracket.nudge.y = -2, hide.ns = TRUE,
+                                     label = "{p.adj}{p.adj.signif}", step.increase = 0.015)
+
+
+#####Ratio 3
+stat.test <- ratios %>%
+  group_by(SampleLocation) %>%
+  t_test(ratio3LOG ~ Alphad3_level) %>%
+  adjust_pvalue(method = "none") %>%
+  add_significance(cutpoints = c(0, 1e-04, 0.001, 0.01, 0.05, 0.1, 1),
+                   symbols = c("*****", "****", "***", "**", "*", "ns"))
+#Organice to Plot
+ratio3<- ggplot(ratios, aes(y =ratio3LOG , x =Alphad3_level)) + 
+  ylab("Ratio3- Lactobacillus/rest of the genera") + xlab("") + 
+  geom_boxplot(fill = '#9DDCFF', outlier.shape = NA)  +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) +
+  geom_jitter(size=0.5)+
+  facet_grid(rows="SampleLocation", scales="free")
+
+# Make facet and add p-values
+stat.test <- stat.test %>% add_xy_position(x = "Alphad3_level")
+ratio3<-ratio3 +  stat_pvalue_manual(stat.test, bracket.nudge.y = -2, hide.ns = TRUE,
+                                     label = "{p.adj}{p.adj.signif}", step.increase = 0.015) 
+
+```
+```{r, include=TRUE, echo=FALSE}
+
+ggarrange(ratio1, ratio2, ratio3, ncol=3, nrow = 1)
+
+```
+
+Row {data-height=30}
+-----------------------------------------------------------------------
+
+Row {data-height=30}
+-----------------------------------------------------------------------
+**Benchmarks**
+
+Row {data-height=90}
+-----------------------------------------------------------------------
+Benchmarks help compare a group of samples to a larger population of animals that have the same age and wide range of diets, in that way one can understand if the group of interest falls into the average range or if it is an outlier group in any microbiome indicator. In this case we evaluated how the different calcium level fall into a larger population of 42 days old broilers in terms of SIWA ratio 1 (Lactobacillus/ Escherichia-Shigella) value (Fig 33). As well as with and without vitamin D with the recomended level of calclium (Fig 34). In none of the benchmarks the groups of interest stood out of the average range for SIWA Ratio 1. The same was found using alpha divesity of the microbiome as an indicator (not shown).
+
+
+Row {data-height=400}
+-----------------------------------------------------------------------
+### FIGURE 33: Benchmark of different levels of calcium un diet{data-with=500}
+```{r picture bench all, include= TRUE, echo=FALSE, out.width = '100%'}
+knitr::include_graphics("Benchmark_alltreatments.jpeg")
+```
+
+### FIGURE 34: Benchmark of recomended level of calcium with and without vitamin{data-with=500}
+```{r picture bench 3 and 4, include= TRUE, echo=FALSE, out.width = '100%'}
+knitr::include_graphics("Benchmark_treatments3and4.jpeg")
+```
+
+Row {data-height=30}
+-----------------------------------------------------------------------
+
+Row {data-height=30}
+-----------------------------------------------------------------------
+**Differential Abundance**
+
+Row {data-height=70}
+-----------------------------------------------------------------------
+Differential abundance analyzes were performed to understand which bacteria are more abundant in one group compared to another. Comparing the recommended level of calcium without the use of vitamin D vs. the same level using vitamin some differing bacteria were found (Fig 35A). However, it must be taken into account that these results are very specific for this calcium level, when doing so for the other calcium levels the results were not consistent and different bacteria appeared differentially abundant (not shown).
+
+```{r dif abund vit, include=FALSE}
+### leer archivo ya generado
+list_dfs_filtered <- readRDS("/Volumes/GoogleDrive/Mi unidad/SIWAproject/Reports/Projects/E335_MS/diff_abund/list_dfs_filtered_bygenus.RData")
+groups=list_dfs_filtered$groups
+list_dfs_filtered$groups[[227]]
+```
+
+Row {data-height=500}
+-----------------------------------------------------------------------
+### FIGURE 35A: Differential abundance between presenece and absense of VitD with recomended level of calcium- cecum {data-with=500}
+```{r dif abund vit cecum, include=TRUE, echo=FALSE}
+plot_deseq_report_with_color_easyread_for_genera (list_dfs_filtered, 71, "Cecum: MediumLowCa(3) vs MediumLowCa+VitD(4)", species_taxonomy_info, genera_taxonomy_info,  size=8)
+```
+
+### FIGURE 35B: Differential abundance between presenece and absense of VitD with recomended level of calcium- ileum. {data-with=500}
+```{r dif abund vit ile, include=TRUE, echo=FALSE}
+plot_deseq_report_with_color_easyread_for_genera (list_dfs_filtered, 227, "Ileum: MediumLowCa(3) vs MediumLowCa+VitD(4)", species_taxonomy_info, genera_taxonomy_info,  size=8)
+```
+
+Row {data-height=30}
+-----------------------------------------------------------------------
+
+Row {data-height=100}
+-----------------------------------------------------------------------
+In addition, a partition of samples was made not by their diet but by their performance and it was analyzed if there was any differentially abundant bacteria between the samples that had a good performance (lower FCR) vs. the samples that had low performance (higher FCR) (Fig 36). Indeed there are some bacterial groups that differ between these conditions of the animal, however, they do not match the groups that are increased when using vitamin D in the diet. Therefore it is not possible to affirm that the vitamin D increases bacteria that are beneficial for the animal or are related to an increase in productivity.
+
+
+Row {data-height=500}
+-----------------------------------------------------------------------
+### FIGURE 36A: Differential abundance between high and low perfomance animals- cecum. {data-with=500}
+```{r, include=TRUE, echo=FALSE, warning=FALSE}
+
+list_dfs_filtered <- readRDS("/Volumes/GoogleDrive/Mi unidad/SIWAproject/Reports/Projects/E335_MS/diff_abund/list_dfs_filtered_bygenus_perf.RData")
+
+plot_deseq_report_with_color_easyread_for_genera(list_dfs_filtered, 1, 
+                                                 "Cecum: Low vs. High FCR", 
+                                                 species_taxonomy_info, 
+                                                 genera_taxonomy_info,  size=8) 
+```
+
+
+### FIGURE 36B: Differential abundance between high and low perfomance animals- cecum. {data-with=500}
+```{r, include=TRUE, echo=FALSE, warning=FALSE}
+plot_deseq_report_with_color_easyread_for_genera(list_dfs_filtered, 2, 
+                                                 "Ileum: Low vs. High FCR", 
+                                                 species_taxonomy_info, 
+                                                 genera_taxonomy_info,  size=8) 
+```
 
 

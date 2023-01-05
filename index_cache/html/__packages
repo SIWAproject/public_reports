@@ -37,3 +37,6 @@ flexdashboard
 shiny
 DT
 tidyMicro
+rstatix
+microViz
+lsr
