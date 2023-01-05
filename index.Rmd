@@ -63,7 +63,7 @@ library(DT)
 library(stringr)
 
 ## FUNCTIONS
-source("/Volumes/GoogleDrive/Mi unidad/SIWAproject/Methods-review/functions.R")
+source("/Users/dvarelat/Documents/SIWA/Methods-review/functions.R")
 
 ```
 
@@ -149,14 +149,12 @@ knitr::include_graphics("diagram_E335.png")
 ```{r Explore and filter Phyloseq Object, include=FALSE}
 
 #Explore Phylosec object....
-<<<<<<< HEAD
 ### OJO -->> REEMPLAZAR VitD NAME
 sample_data(ODLEPobj)$Treatment <- as.factor(stringr::str_replace(sample_data(ODLEPobj)$Treatment, "AlphaD3","VitD"))
 
-=======
 ### OJO -->> REEMPLAZAR VitD NAME to send reports to externos
 sample_data(ODLEPobj)$Treatment <- as.factor(stringr::str_replace(sample_data(ODLEPobj)$Treatment, "MediumAlphaD3","VitD"))
->>>>>>> dd73f96090e95e26cc11c8229d07cf5ebb91a7d5
+
 sample_data(ODLEPobj)$VitDLevel <- as.factor(sample_data(ODLEPobj)$Alphalevel)
 sample_data(ODLEPobj)$VitDLevel_label <- as.factor(sample_data(ODLEPobj)$Alphad3level)
 
@@ -196,23 +194,6 @@ fec = table(subset(as.data.frame(as.matrix(sample_data(ODLEPobj_feces))), select
 tab=rbind(ile,cec,fec)
 tab <- as.data.frame(t(tab))
 colnames(tab)=c("Ileum","Cecum","Feces")
-<<<<<<< HEAD
-l <- list("LowCa",
-"LowCa+MediumVitD",
-"MediumLowCa",
-"MediumLowCa+MediumVitD",
-"MediumHighCa",
-"MediumHighCa+MediumVitD",
-"HighCa",
-"HighCa+MediumVitD")
-
-tab <- tab[order(match(rownames(tab), l)),]
-kbl(tab, centering = FALSE) %>% 
-  kable_styling(full_width = F, position = "center")  %>%
-   column_spec(2, color = spec_color(tab$Ileum, end=0.5)) %>%
-   column_spec(3, color = spec_color(tab$Cecum, end=0.5)) %>%
-   column_spec(4, color = spec_color(tab$Feces, end=0.5)) 
-=======
 
 l <- list("LowCa",
 "LowCa+VitD",
@@ -235,7 +216,6 @@ kbl(ttab, centering = FALSE) %>%
    #column_spec(7, color = spec_color(ttab$"MediumHighCa+VitD", end = 0.5, direction= -1, option= "magma")) %>%
    #column_spec(8, color = spec_color(ttab$"HighCa", end = 0.5, direction= -1, option= "magma")) %>%
    #column_spec(9, color = spec_color(ttab$"HighCa+VitD", end = 0.5, direction= -1, option= "magma")) 
->>>>>>> dd73f96090e95e26cc11c8229d07cf5ebb91a7d5
 
 rownames(tab)
 
