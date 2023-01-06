@@ -2755,7 +2755,7 @@ Row {data-height=30}
 
 Row {data-height=70}
 -----------------------------------------------------------------------
-Feed conversion rate (from day 22 to day 33) changes with treatments, specifically there is a trend for it to increase with the use of a higher concentration of calcium in the diet (anova p-value<2e-16). The use of VitD in the diet dies not cause any significant difference in FCR (anova p-value= 0.178). Even at the recommended level of calcium (MediumLow) there is no changes in FCR between the use or no use of VitD in the diet. (Fig27)
+Feed conversion rate (from day 22 to day 33) changes with treatments, specifically there is a trend for it to increase with the use of a higher concentration of calcium in the diet (anova p-value<2e-16). The use of VitD in the diet dies not cause any significant difference in FCR (anova p-value= 0.178). Even at the recommended level of calcium (MediumLow) there is no changes in FCR between the use or no use of VitD in the diet (Fig27).
 
 Row {data-height=500}
 -----------------------------------------------------------------------
@@ -2804,7 +2804,7 @@ Row {data-height=30}
 
 Row {data-height=90}
 -----------------------------------------------------------------------
-When analyzing histopathology results, the specific trait of inflammation severity in the ileum stood out. Anova test indicates inflammation severity tends to change with treatment use in ileum (p-value=0.03). Specifically there is a significant change between samples of MediumLowCa+VitD and samples of MediumLowCa, the last one having lower Inflammation scores, which could indicate that the addition of VitD using the recommended level of calcium in diet could reduce the damages in the architecture or integrity of the intestines related with inflammation (Fig 28).
+When analyzing histopathology results, the specific trait of inflammation severity in the ileum stood out. Anova test indicates inflammation severity tends to change with treatment in ileum (p-value=0.03). Specifically there is a significant change between samples of MediumLowCa and samples of MediumLowCa+VitD, the last one having lower Inflammation scores, which could indicate that the addition of VitD using the recommended level of calcium in diet can reduce the damages in the architecture or integrity of the intestines related with inflammation (Fig 28).
 
 Row {data-height=50}
 -----------------------------------------------------------------------
@@ -2891,7 +2891,7 @@ Row {data-height=30}
 
 Row {data-height=160}
 -----------------------------------------------------------------------
-Also the expression of the anti-inflammatory IL10 gene is something to look at. For the recommended level of calcium the expression of the gene changed notoriously with and without the addition of VitD in both the ileum and cecum tissues (Fig30). In the cecum the expression of the gene IL10 was increased with the use of VitD in the diet while in the ileum the behavior was contrary, and the expression decreased with the use of VitD. This may be because the action of the vitamin is specific for a tissue, or it may even be the case that the vitamin has different effects on different tissues. A low expression of an anti-inflammatory gene could mean that the tissue is healthy, with no severe inflammation, hence there is no need for the inflammatory gene to express. But a low expression of an anti-inflammatory gene could also mean that the gene is not sufficiently expressed to suppress inflammation, hence the tissue is inflamed. This could be verified in an experiment with a critical level of intestinal health, in this experiment the basal levels of intestinal tissue health, especially in the ileum, are very good.
+Also the expression of the anti-inflammatory IL10 gene is something to look at. For the recommended level of calcium the expression of the gene changed notoriously with and without the addition of VitD in both the ileum and cecum tissues (Fig30). In the cecum the expression of the gene IL10 was increased with the use of VitD in the diet while in the ileum the behavior was contrary, and the expression decreased with the use of VitD. This may be due to a tissue specific action of the vitamin. A low expression of an anti-inflammatory gene could mean that the tissue is healthy, with no severe inflammation, hence there is no need for the inflammatory gene to express. But a low expression of an anti-inflammatory gene could also mean that the gene is not sufficiently expressed to suppress inflammation, hence the tissue is inflamed. This could be verified in an experiment with a critical level of intestinal health, in this experiment the basal levels of intestinal tissue health, especially in the ileum, are very good.
 
 Row {data-height=500}
 -----------------------------------------------------------------------
@@ -2990,7 +2990,7 @@ Row {data-height=30}
 
 Row {data-height=80}
 -----------------------------------------------------------------------
-The SIWA ratios seek to broadly explain the composition of the microbiome in a single indicator. thus their behavior across treatments and across vitamin D levels is of interest. Some significant differences were found, nevertheless no trend was constant, specially with the use of VitD product, which means that the AlphaD3 product does not greatly modulate gut microbiom (Fig 31 and 32).
+The SIWA ratios seek to broadly explain the composition of the microbiome in a single indicator, thus, their behavior across treatments and across vitamin D levels is of interest. Some significant differences were found as seen below, nevertheless no trend was constant, specially with the use of VitD product, which means that the AlphaD3 product does not greatly modulate gut microbiome (Fig 31 and 32).
 
 Row {data-height=900}
 -----------------------------------------------------------------------
@@ -3145,9 +3145,13 @@ Row {data-height=30}
 -----------------------------------------------------------------------
 **Benchmarks**
 
-Row {data-height=90}
+Row {data-height=80}
 -----------------------------------------------------------------------
-Benchmarks help compare a group of samples to a larger population of animals that have the same age and wide range of diets, in that way one can understand if the group of interest falls into the average range or if it is an outlier group in any microbiome indicator. In this case we evaluated how the different calcium level fall into a larger population of 42 days old broilers in terms of SIWA ratio 1 (Lactobacillus/ Escherichia-Shigella) value (Fig 33). As well as with and without vitamin D with the recomended level of calclium (Fig 34). In none of the benchmarks the groups of interest stood out of the average range for SIWA Ratio 1. The same was found using alpha divesity of the microbiome as an indicator (not shown).
+Benchmarks help compare a group of samples to a larger population of animals that have the same age and wide range of diets, in that way one can understand if the group of interest falls into the average range or if it is an outlier group in any microbiome indicator. The groups of interest in shapes and colors described in the legend and the wider population to which they are compared in drak blue as individual measurements (dots to the left) and quartiles (box to the right). 
+
+Row {data-height=100}
+-----------------------------------------------------------------------
+In this case we evaluated how the different calcium levels fall into a larger population of 42 days old broilers in terms of SIWA ratio 1 (Lactobacillus/ Escherichia-Shigella) (Fig 33). As well as with and without vitamin D with the recomended level of calclium (Fig 34). In none of the benchmarks the groups of interest stood out of the average range for SIWA Ratio 1. The same was found using alpha diversity of the microbiome as an indicator (not shown). Once again indicating that either (calcium level or vitamin use) modulate greatly the microbiome composition.
 
 
 Row {data-height=400}
@@ -3171,7 +3175,7 @@ Row {data-height=30}
 
 Row {data-height=70}
 -----------------------------------------------------------------------
-Differential abundance analyzes were performed to understand which bacteria are more abundant in one group compared to another. Comparing the recommended level of calcium without the use of vitamin D vs. the same level using vitamin some differing bacteria were found (Fig 35A). However, it must be taken into account that these results are very specific for this calcium level, when doing so for the other calcium levels the results were not consistent and different bacteria appeared differentially abundant (not shown).
+Differential abundance analyzes were performed to understand which bacteria are more abundant in one group compared to another. Then comparing the recommended level of calcium without the use of vitamin D vs. the same level using vitamin D some differing bacteria were found (Fig 35A). However, it must be taken into account that these results are very specific for this calcium level, when doing so for the other calcium levels the results were not consistent and different bacteria appeared differentially abundant (not shown).
 
 ```{r dif abund vit, include=FALSE}
 ### leer archivo ya generado
@@ -3197,7 +3201,7 @@ Row {data-height=30}
 
 Row {data-height=100}
 -----------------------------------------------------------------------
-In addition, a partition of samples was made not by their diet but by their performance and it was analyzed if there was any differentially abundant bacteria between the samples that had a good performance (lower FCR) vs. the samples that had low performance (higher FCR) (Fig 36). Indeed there are some bacterial groups that differ between these conditions of the animal, however, they do not match the groups that are increased when using vitamin D in the diet. Therefore it is not possible to affirm that the vitamin D increases bacteria that are beneficial for the animal or are related to an increase in productivity.
+In addition, a partition of samples was made not by their diet but by their performance and it was explored if there was any differentially abundant bacteria between the samples that had a good performance (1 lower FCR) vs. the samples that had low performance (2 higher FCR) (Fig 36). Indeed there are some bacterial groups that differ between these conditions of the animal, however, they do not match the groups that are increased when using vitamin D in the diet. Therefore it is not possible to affirm that the vitamin D increases bacteria that are beneficial for the animal or are related to an increase in productivity.
 
 
 Row {data-height=500}
@@ -3222,4 +3226,13 @@ plot_deseq_report_with_color_easyread_for_genera(list_dfs_filtered, 2,
                                                  genera_taxonomy_info,  size=8) 
 ```
 
+Row {data-height=30}
+-----------------------------------------------------------------------
 
+Row {data-height=30}
+-----------------------------------------------------------------------
+**Conclusions**
+
+Row {data-height=150}
+-----------------------------------------------------------------------
+In terms of performance, feed conversion rate increases with the increase of calcium concentration in the diet and the use of vitamin D does not seem to relieve the effect. However, at the recommended level of calcium (MedLow) the use of vitamin D has correlation with benefits such as the improvement of mucosal integrity and overall gut architecture, the reduction of inflammation mainly of the ileum tissue, changes in expression of anti-inflamatory genes. In the microbiome, either calcium level or the use of vitamin seem to have a great and consistent effect on its modulation, which could be considered as beneficial as it does not interfere greatly in order to cause a dysbiosis. 
