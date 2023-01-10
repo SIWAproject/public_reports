@@ -2889,9 +2889,13 @@ Row {data-height=30}
 -----------------------------------------------------------------------
 **Gene Expression**
 
-Row {data-height=160}
+Row {data-height=90}
 -----------------------------------------------------------------------
-Also the expression of the anti-inflammatory IL10 gene is something to look at. For the recommended level of calcium the expression of the gene changed notoriously with and without the addition of VitD in both the ileum and cecum tissues (Fig30). In the cecum the expression of the gene IL10 was increased with the use of VitD in the diet while in the ileum the behavior was contrary, and the expression decreased with the use of VitD. This may be due to a tissue specific action of the vitamin. A low expression of an anti-inflammatory gene could mean that the tissue is healthy, with no severe inflammation, hence there is no need for the inflammatory gene to express. But a low expression of an anti-inflammatory gene could also mean that the gene is not sufficiently expressed to suppress inflammation, hence the tissue is inflamed. This could be verified in an experiment with a critical level of intestinal health, in this experiment the basal levels of intestinal tissue health, especially in the ileum, are very good.
+Also the expression of the anti-inflammatory IL10 gene is something to look at. For the recommended level of calcium the expression of the gene changed notoriously with and without the addition of VitD in both the ileum and cecum tissues (Fig30). In the cecum the expression of the gene IL10 was increased with the use of VitD in the diet while in the ileum the behavior was contrary, and the expression decreased with the use of VitD. This may be due to a tissue specific action of the vitamin, which is expected to have a stronger effect on the ileum. 
+
+Row {data-height=90}
+-----------------------------------------------------------------------
+A low expression of an anti-inflammatory gene in the ileum could indicate that the tissue is in a pro-inflammatory stage and the gene is not yet expressed to start suppressing the inflammation, which is probably not the case since the histopathology scores evidenced that there wasn't a strong inflammation of the tissue. Nevertheless, a low expression of an anti-inflammatory gene could also mean that the tissue is healthy, with no severe inflammation, hence there is no need for the anti-inflammatory gene to express. This could be better studied in an experiment with critical levels of intestinal health, in this experiment the basal levels of intestinal tissue health, especially in the ileum, are very good.
 
 Row {data-height=500}
 -----------------------------------------------------------------------
@@ -3233,6 +3237,10 @@ Row {data-height=30}
 -----------------------------------------------------------------------
 **Conclusions**
 
+Row {data-height=100}
+-----------------------------------------------------------------------
+In terms of performance, feed conversion rate increases with the increase of calcium concentration in the diet and the use of vitamin D does not seem to relieve the effect. However, at the recommended level of calcium (MedLow) the use of vitamin D has correlation with benefits such as the improvement of mucosal integrity and overall gut architecture, the reduction of inflammation mainly of the ileum tissue, changes in expression of anti-inflamatory genes. 
+
 Row {data-height=150}
 -----------------------------------------------------------------------
-In terms of performance, feed conversion rate increases with the increase of calcium concentration in the diet and the use of vitamin D does not seem to relieve the effect. However, at the recommended level of calcium (MedLow) the use of vitamin D has correlation with benefits such as the improvement of mucosal integrity and overall gut architecture, the reduction of inflammation mainly of the ileum tissue, changes in expression of anti-inflamatory genes. In the microbiome, either calcium level or the use of vitamin seem to have a great and consistent effect on its modulation, which could be considered as beneficial as it does not interfere greatly in order to cause a dysbiosis. 
+The microbiome, only with extreme low or extreme high calcium concentrations evidences changes in microbiome composition in terms of beta divesity. But within a regular range of calcium concentration neither calcium level or the use of vitamin D seem to have a great and consistent effect on its modulation, which could be considered as beneficial as it does not interfere greatly in order to cause a dysbiosis. 
