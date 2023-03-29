@@ -80,9 +80,9 @@ ODLEPobj <- readRDS(paste0(folder, "phyloseqObject_April11.rds"))
 complete_sample_table <-read.table(paste0(folder, "performance_histo_ge_ratios_alphadiv_for_correlations.csv"),check.names = FALSE, header=T, sep="\t")
   
 #EAFIT surveillance tables (same for all reports)
-species_taxonomy_info <-read.csv(paste0(folder, "species_metabolic_effects.csv"),check.names = FALSE, sep=";")
-genera_taxonomy_info <- read.csv(paste0(folder, "genus_metabolic_effects.csv"), check.names = FALSE, sep=";")
-broad_taxonomy_info <- read.csv(paste0(folder, "broad_groups_metabolic_effects.csv"), check.names = FALSE, sep=";")
+species_taxonomy_info <-read.csv(file=paste0(folder, "species_metabolic_effects.csv") ,check.names = FALSE, sep=";", row.names = 1)
+genera_taxonomy_info <- read.csv(file=paste0(folder,"genus_metabolic_effects.csv"), check.names = FALSE, sep=";", row.names = 1)
+broad_taxonomy_info <- read.csv(file=paste0(folder, "broad_groups_metabolic_effects.csv"), check.names = FALSE, sep=";")
 
 #Deseq outputs
 dfs_filtered <- readRDS(file="/Volumes/GoogleDrive/Mi unidad/SIWAproject/Reports/Version1.0/Input_data/dfs_filtered.RData")
@@ -2813,7 +2813,7 @@ Hence, a t-test was done across the samples of these two groups to zoom into the
 
 Row {data-height=600}
 -----------------------------------------------------------------------
-### FIGURE 28: Inflammation severity in the ileum. <br/> Impact of treatment on inflammation severity.
+### FIGURE 28A: Inflammation severity in the ileum. <br/> Impact of treatment on inflammation severity.
 ```{r INFLAMMATION SEVERITY ILEUM by treatment, include=FALSE}
 histo <- complete_sample_table
 
@@ -2866,7 +2866,7 @@ InfammationSeverity_plot <- ggplot(dfff, aes(y =mean , x = Treatment)) +
 InfammationSeverity_plot
 ```
 
-### FIGURE 29: Ileum Inflammation severity scores for individual samples at recomended level of calcium. 
+### FIGURE 28B: Ileum Inflammation severity scores for individual samples at recomended level of calcium. 
 ```{r inflammation by vit level, include=FALSE}
 #by sample
 histo_ileum3<- histo_ileum2[histo_ileum2$Treatment  %in% c("MediumLowCa+VitD","MediumLowCa"),]
@@ -2882,23 +2882,83 @@ histo_by_samples_ileum <- ggplot(histo_ileum3, aes(x = Treatment, y =Value, fill
 histo_by_samples_ileum
 ```
 
-Row {data-height=30}
+Row {data-height=600}
 -----------------------------------------------------------------------
+### FIGURE 29A: Cecum histopathology traits with and without VitD at recomended level of calcium (individual samples). 
+```{r Histo plots by sample subset,fig.width = 10, fig.height = 5, include=TRUE, echo=FALSE}
 
-Row {data-height=30}
------------------------------------------------------------------------
-**Gene Expression**
+histo <- complete_sample_table
 
-Row {data-height=90}
------------------------------------------------------------------------
-Also the expression of the anti-inflammatory IL10 gene is something to look at. For the recommended level of calcium the expression of the gene changed notoriously with and without the addition of VitD in both the ileum and cecum tissues (Fig30). In the cecum the expression of the gene IL10 was increased with the use of VitD in the diet while in the ileum the behavior was contrary, and the expression decreased with the use of VitD. This may be due to a tissue specific action of the vitamin, which is expected to have a stronger effect on the ileum. 
+#subset by location
+histo_cecum <- histo[histo$SampleLocation == 'C',]
+#subset treatments with med-low ca
+histoca_cecum<- histo_cecum[histo_cecum$TreatmentNumber  %in% c("3","4"),]
 
-Row {data-height=90}
------------------------------------------------------------------------
-A low expression of an anti-inflammatory gene in the ileum could indicate that the tissue is in a pro-inflammatory stage and the gene is not yet expressed to start suppressing the inflammation, which is probably not the case since the histopathology scores evidenced that there wasn't a strong inflammation of the tissue. Nevertheless, a low expression of an anti-inflammatory gene could also mean that the tissue is healthy, with no severe inflammation, hence there is no need for the anti-inflammatory gene to express. This could be better studied in an experiment with critical levels of intestinal health, in this experiment the basal levels of intestinal tissue health, especially in the ileum, are very good.
+histoca_cecum <- histoca_cecum %>% 
+  pivot_longer(cols = c("OverallArchitecture", "MucosalIntegrity", "LymphoidImmune", "InflammationSeverity", "MicrobialOrganisms"), names_to = "ScoreCategory", values_to = "Value")
+#t.test(Value ~ TreatmentNumber, data = histoca_cecum)
+
+
+#Stacked bars by SAMPLE 
+histo_by_samples_cecum <- ggplot(histoca_cecum, aes(fill = ScoreCategory, y =Value , x = AnimalID)) + 
+                          geom_bar(stat = "identity")  +
+                          ylab("Mean additive Score") + 
+                          ggtitle("Histopathology scores by sample (Cecum)") +
+                          theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) 
+histo_by_samples_cecum
+
+
+
+```
+
+### FIGURE 29B: Cecum histopathology traits with and without VitD at recomended level of calcium. <br/> Letters indicate significantly different groups as calculated by Tukey test. There is a significant effect of treatment on the mean additive score: MedLow+VitD has a lower score, indicating the lowest level of abnormality or damage.
+
+```{r Histo plots by treatment-cec subset,fig.width = 10, fig.height = 8, echo=FALSE}
+
+#ANOVA STATS
+#cecum AdditiveScore
+res.aov <- aov(AdditiveScore ~ Alphad3_level, data = histoca_cecum)
+#summary(res.aov) #Additive score changes significantly with treatment in cecum. pval=8.86e-13 ***
+tukey <- TukeyHSD(res.aov)
+#print(tukey)
+#letters to add statistics to graph 
+cld <- multcompLetters4(res.aov, tukey)
+cld2 <- data.frame(letters = cld$'Alphad3_level'$Letters) #table with letters per treatment
+cld2$Alphad3_level <- rownames(cld2)
+names(cld2)[1] <- "histosig"
+
+
+#Satcked bars by TREATMENT      
+#cecum
+histo_c <- split(histoca_cecum, histoca_cecum$Alphad3_level)
+dff <- lapply(histo_c, function(x) ddply(x, .(ScoreCategory), 
+                                         summarize, mean=mean(Value)))
+listDF <- list()
+for (i in 1:length(dff)){
+  #print(i)  
+  dff[[i]]$Alphad3_level <- names(dff)[i]
+  listDF[[i]] <- dff[[i]]
+}
+dfff <- do.call(rbind, listDF)
+
+treatments_cecum <- ggplot(dfff, aes(fill = ScoreCategory, y =mean , x =Alphad3_level)) + 
+  ylab("Mean additive Score") + xlab("") + 
+  geom_bar(stat = "identity")  +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) +
+  theme(text=element_text(size=15))
+
+#Add significancy letters manually 
+histo_cec_plot <- treatments_cecum+ annotate("text", x = 1, y = 12, label = cld2$histosig[1]) + 
+    annotate("text", x = 2, y = 12, label = cld2$histosig[2]) 
+
+ggplotly(histo_cec_plot)
+#histo_cec_plot
+```
+
 
 Row {data-height=500}
 -----------------------------------------------------------------------
+
 ### FIGURE 30: IL10 Gene expression for treatments at recomended level of calcium. 
 ```{r ge il10 reco ca, include=FALSE}
 GENE$TreatmentNumber = as.factor(GENE$TreatmentNumber)
