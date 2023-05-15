@@ -63,37 +63,23 @@ library(DT)
 library(stringr)
 
 ## FUNCTIONS
-source("/Users/dvarelat/Documents/SIWA/Methods-review/functions.R")
+source("/Volumes/GoogleDrive/Mi unidad/SIWAproject/Methods-review/functions.R")
 
 ```
 
-```{r All inputs MARIA, include=FALSE,eval = FALSE}
+```{r All inputs MARIA, include=FALSE}
 #open phyloseq object
-#folder <- "/Users/mcadavid/Documents/Reports_review/E335_Maria/"
-#ODLEPobj <- readRDS(paste0(folder, "phyloseqObject_April11.rds"))
+folder <- "/Volumes/GoogleDrive/Mi unidad/SIWAproject/Reports/Version1.0/Input_data/"
+ODLEPobj <- readRDS(paste0(folder, "phyloseqObject_April11.rds"))
 
 #open data-table
 ## Data creada con create_full_file_for_correlations_to_analytics - Jupyter Notebook
-#complete_sample_table <-read.table(paste0(folder, "performance_histo_ge_ratios_alphadiv_for_correlations.csv"),check.names = FALSE, header=T, sep="\t")
+complete_sample_table <-read.table(paste0(folder, "performance_histo_ge_ratios_alphadiv_for_correlations.csv"),check.names = FALSE, header=T, sep="\t")
   
 #EAFIT surveillance tables (same for all reports)
-#species_taxonomy_info <-read.csv(paste0(folder, "species_metabolic_effects.csv"),check.names = FALSE, sep=";")
-#genera_taxonomy_info <- read.csv(paste0(folder, "genus_metabolic_effects.csv"), check.names = FALSE, sep=";")
-#broad_taxonomy_info <- read.csv(paste0(folder, "broad_groups_metabolic_effects.csv"), check.names = FALSE, sep=";")
-
-
-
-#open phyloseq object
-ODLEPobj <- readRDS("/Users/mcadavid/Documents/Reports_review/E335_Maria/phyloseqObject_April11.rds")
-
-#open data-table
-## Data creada con create_full_file_for_correlations_to_analytics - Jupyter Notebook
-complete_sample_table <-read.table("/Users/mcadavid/Documents/Reports_review/E335_Maria/Subset_exp1/Correlations/performance_histo_ge_ratios_alphadiv_for_correlations.csv",check.names = FALSE, header=T, sep="\t")
-  
-#EAFIT surveillance tables (same for all reports)
-species_taxonomy_info <-read.csv(file="/Users/mcadavid/Documents/Reports_review/Metabolic_effects_table_V2/species_metabolic_effects.csv",check.names = FALSE, sep=";")
-genera_taxonomy_info <- read.csv(file="/Users/mcadavid/Documents/Reports_review/Metabolic_effects_table_V2/genus_metabolic_effects.csv", check.names = FALSE, sep=";")
-broad_taxonomy_info <- read.csv(file="/Users/mcadavid/Documents/Reports_review/Metabolic_effects_table_V2/broad_groups_metabolic_effects.csv", check.names = FALSE, sep=";")
+species_taxonomy_info <-read.csv(paste0(folder, "species_metabolic_effects.csv"),check.names = FALSE, sep=";")
+genera_taxonomy_info <- read.csv(paste0(folder, "genus_metabolic_effects.csv"), check.names = FALSE, sep=";")
+broad_taxonomy_info <- read.csv(paste0(folder, "broad_groups_metabolic_effects.csv"), check.names = FALSE, sep=";")
 
 #Deseq outputs
 dfs_filtered <- readRDS(file="/Volumes/GoogleDrive/Mi unidad/SIWAproject/Reports/Version1.0/Input_data/dfs_filtered.RData")
@@ -101,21 +87,21 @@ dfs_filtered <- readRDS(file="/Volumes/GoogleDrive/Mi unidad/SIWAproject/Reports
 ```
 
 ```{r All inputs DANIELA, include=FALSE}
-FOLDER = "/Users/dvarelat/Documents/SIWA/Reports/Version1.0/Input_data/"
+#FOLDER = "/Users/dvarelat/Documents/SIWA/Reports/Version1.0/Input_data/"
 #open phyloseq object
-ODLEPobj <- readRDS(paste0(FOLDER, "phyloseqObject_April11.rds"))
+#ODLEPobj <- readRDS(paste0(FOLDER, "phyloseqObject_April11.rds"))
 
 #open data-table
 ## Data creada con create_full_file_for_correlations_to_analytics - Jupyter Notebook
-complete_sample_table <-read.table(paste0(FOLDER, "performance_histo_ge_ratios_alphadiv_for_correlations.csv"),check.names = FALSE, header=T, sep="\t")
+#complete_sample_table <-read.table(paste0(FOLDER, "performance_histo_ge_ratios_alphadiv_for_correlations.csv"),check.names = FALSE, header=T, sep="\t")
   
-#EAFIT surveillance tables (same for all reports)
-species_taxonomy_info <-read.csv(file=paste0(FOLDER, "species_metabolic_effects.csv") ,check.names = FALSE, sep=";")
-genera_taxonomy_info <- read.csv(file=paste0(FOLDER,"genus_metabolic_effects.csv"), check.names = FALSE, sep=";")
-broad_taxonomy_info <- read.csv(file=paste0(FOLDER, "broad_groups_metabolic_effects.csv"), check.names = FALSE, sep=";")
+##EAFIT surveillance tables (same for all reports)
+#species_taxonomy_info <-read.csv(file=paste0(FOLDER, "species_metabolic_effects.csv") ,check.names = FALSE, sep=";")
+#genera_taxonomy_info <- read.csv(file=paste0(FOLDER,"genus_metabolic_effects.csv"), check.names = FALSE, sep=";")
+#broad_taxonomy_info <- read.csv(file=paste0(FOLDER, "broad_groups_metabolic_effects.csv"), check.names = FALSE, sep=";")
 
 #Deseq outputs
-dfs_filtered <- readRDS(file=paste0(FOLDER, "dfs_filtered.RData"))
+#dfs_filtered <- readRDS(file=paste0(FOLDER, "dfs_filtered.RData"))
 
 ```
 
@@ -134,7 +120,7 @@ Project E335 was an experimental trial done at Iluma's broiler experimental farm
 
 The experiment consisted of 8 treatments differing in Ca concentration across the growth stages and also including presence or absence of VitD in the diet. 
 
-Microbiome, gut histology and gene expression data were collected from animals at 33 days of age, following treatment from day of hatch. For microbiome samples, gut content was collected from three different sampling locations: Cecum(C), Ileum(I) and Feces(F). For gene expression and histology samples, tissue samples were collected from two sampling locations: Cecum and Ileum (refer to diagram).
+Microbiome, gut histology and gene expression data were collected from animals at 42 days of age, following treatment from day of hatch. For microbiome samples, gut content was collected from three different sampling locations: Cecum(C), Ileum(I) and Feces(F). For gene expression and histology samples, tissue samples were collected from two sampling locations: Cecum and Ileum (refer to diagram).
 
 
 ### {data-with=800}
@@ -206,8 +192,9 @@ l <- list("LowCa",
 
 tab <- tab[order(match(rownames(tab), l)),]
 ttab <-as.data.frame(t(tab))
+
 kbl(ttab, centering = FALSE) %>% 
-  kable_styling(full_width = F, position = "center") # %>%
+  kable_styling(full_width = F, position = "center") #agregando lo siguiente podria cambiar el color de los numeros en las columnas 2 y 3 por ejemplo %>%
    #column_spec(2, color = spec_color(ttab$"LowCa", end = 0.5, direction= -1, option= "magma")) %>%
    #column_spec(3, color = spec_color(ttab$"LowCa+VitD",end = 0.5, direction= -1, option= "magma")) %>%
    #column_spec(4, color = spec_color(ttab$"MediumLowCa", end = 0.5, direction= -1, option= "magma")) %>%
@@ -216,11 +203,6 @@ kbl(ttab, centering = FALSE) %>%
    #column_spec(7, color = spec_color(ttab$"MediumHighCa+VitD", end = 0.5, direction= -1, option= "magma")) %>%
    #column_spec(8, color = spec_color(ttab$"HighCa", end = 0.5, direction= -1, option= "magma")) %>%
    #column_spec(9, color = spec_color(ttab$"HighCa+VitD", end = 0.5, direction= -1, option= "magma")) 
-
-rownames(tab)
-
-
-
  
 ```
 
@@ -423,7 +405,6 @@ ggplotly(p) %>%
  ) %>% 
   style(hoverinfo = 'none') %>% partial_bundle() 
 
-
 ```
 
 
@@ -474,82 +455,95 @@ Row {data-height=50}
 In the following interactive graphs we can view the main **genera** present in the treatments at each location. 
 
 ```{r  Taxonomic composition , include=FALSE, warning=FALSE}
-#####Plot Taxonomic composition feces#####  
-#Aggregate OTUs according to genus 
-ODLEPobj_cecum_glom <- tax_glom(ODLEPobj_cecum, taxrank="Genus", NArm=FALSE)
-#create dataframe from phyloseq object
-subset.genus.df <- psmelt(ODLEPobj_cecum_glom) 
-subset.genus.df$genus <- as.character(subset.genus.df$Genus) #convert to character
-#calculate median rel. abundance
-medians <- ddply(subset.genus.df, ~genus, function(x) c(median=median(x$Abundance)))
-#calculate remainder
-remainder <- medians[medians$median <= 0.01,]$genus
-subset.genus.df[subset.genus.df$genus %in% remainder,]$genus <- "Genera < 1% abund."
+#####Plot Taxonomic composition cecum#####  
+#Aggregate OTUs according to genus
+ODLEPobj_cecum_rel <- microbiome::transform(ODLEPobj_cecum, "compositional")
+grouped <- aggregate_taxa_siwa(ODLEPobj_cecum_rel, "Genus")
+melted <- psmelt(otu_table(grouped,taxa_are_rows=TRUE))
+
+#create genus label for ploting, keeping only top x
+ps.com.gen <- microbiomeutilities::aggregate_top_taxa2(ODLEPobj_cecum, top = 12, "Genus")
+keep_genus <-as.list(as.data.frame(tax_table(ps.com.gen))$Genus)
+keep_genus <- keep_genus[keep_genus!= "UNKNOWN"]
+keep_genus <- keep_genus[keep_genus!= "Other"]
+melted$label <- as.character(if_else(melted$OTU %in% keep_genus, melted$OTU, "Others"))
+
+#add treatment info 
+melted$SampleID <- (melted$Sample)
+metadata_cec <- sample_data(ODLEPobj_cecum)
+melted <- dplyr::left_join(melted, metadata_cec, by="SampleID")
+melted <- melted %>%
+  mutate( Treatment=factor(Treatment,levels=c("LowCa", "LowCa+VitD", "MediumLowCa", "MediumLowCa+VitD", "MediumHighCa", "MediumHighCa+VitD", "HighCa","HighCa+VitD")) )
 
 #Figures abundances
-subset.genus.df <- subset.genus.df %>%
-  mutate( Treatment=factor(Treatment,levels=c("LowCa", "LowCa+VitD", "MediumLowCa", "MediumLowCa+VitD", "MediumHighCa", "MediumHighCa+VitD", "HighCa","HighCa+VitD")) )
-#plot with condensed genera into "< 1% abund" category by Treatment
-plot_abundance_cecum<- ggplot(subset.genus.df, aes(x = Treatment, y = Abundance, fill = genus)) +
-  geom_bar(stat="identity", position="fill") + 
+p <- ggplot(data=melted, aes(x=Treatment, y=Abundance ,fill=label))
+plot_abundance_cecum<- p + geom_bar(stat="identity", position="fill") + 
+  labs(title ="Taxonomic composition cecum", fill="Genera") +
   xlab("Treatment") +
   ylab("Relative abundance")+
-  labs(fill="Genera") +
   #stat_compare_means(method = "anova")+ 
-  theme(axis.text.x = element_text(angle = 60, hjust = 1))+
-  theme(text=element_text(size=12)) 
+  theme(axis.text.x = element_text(angle = 60, hjust = 1))
 
 
 #####Plot Taxonomic composition ileum#####  
-#Aggregate OTUs according to genus 
-ODLEPobj_ileum_glom = tax_glom(ODLEPobj_ileum, taxrank="Genus", NArm=FALSE)
-#create dataframe from phyloseq object
-subset.genus.df <- psmelt(ODLEPobj_ileum_glom) 
-subset.genus.df$genus <- as.character(subset.genus.df$Genus) #convert to character
-#calculate median rel. abundance
-medians <- ddply(subset.genus.df, ~genus, function(x) c(median=median(x$Abundance)))
-#calculate remainder
-remainder <- medians[medians$median <= 0.01,]$genus
-subset.genus.df[subset.genus.df$genus %in% remainder,]$genus <- "Genera < 1% abund."
+#Aggregate OTUs according to genus
+ODLEPobj_ileum_rel <- microbiome::transform(ODLEPobj_ileum, "compositional")
+grouped <- aggregate_taxa_siwa(ODLEPobj_ileum_rel, "Genus")
+melted <- psmelt(otu_table(grouped,taxa_are_rows=TRUE))
+
+#create genus label for ploting, keeping only top x
+ps.com.gen <- microbiomeutilities::aggregate_top_taxa2(ODLEPobj_ileum, top = 12, "Genus")
+keep_genus <-as.list(as.data.frame(tax_table(ps.com.gen))$Genus)
+keep_genus <- keep_genus[keep_genus!= "UNKNOWN"]
+keep_genus <- keep_genus[keep_genus!= "Other"]
+melted$label <- as.character(if_else(melted$OTU %in% keep_genus, melted$OTU, "Others"))
+
+#add treatment info 
+melted$SampleID <- (melted$Sample)
+metadata_ile <- sample_data(ODLEPobj_ileum)
+melted <- dplyr::left_join(melted, metadata_ile, by="SampleID")
+melted <- melted %>%
+  mutate( Treatment=factor(Treatment,levels=c("LowCa", "LowCa+VitD", "MediumLowCa", "MediumLowCa+VitD", "MediumHighCa", "MediumHighCa+VitD", "HighCa","HighCa+VitD")) )
 
 #Figures abundances
-subset.genus.df <- subset.genus.df %>%
-  mutate( Treatment=factor(Treatment,levels=c("LowCa", "LowCa+VitD", "MediumLowCa", "MediumLowCa+VitD", "MediumHighCa", "MediumHighCa+VitD", "HighCa","HighCa+VitD")) )
-#plot with condensed genera into "< 1% abund" category by Treatment
-p <- ggplot(data=subset.genus.df, aes(x=reorder(Treatment, KitID), y=Abundance ,fill=genus))
+p <- ggplot(data=melted, aes(x=Treatment, y=Abundance ,fill=label))
 plot_abundance_ileum<- p + geom_bar(stat="identity", position="fill") + 
+  labs(title ="Taxonomic composition ileum", fill="Genera") +
   xlab("Treatment") +
   ylab("Relative abundance")+
-  labs(fill="Genera") +
   #stat_compare_means(method = "anova")+ 
-  theme(axis.text.x = element_text(angle = 60, hjust = 1))+
-  theme(text=element_text(size=12)) 
+  theme(axis.text.x = element_text(angle = 60, hjust = 1))
 
 
 #####Plot Taxonomic composition feces#####  
-#Aggregate OTUs according to genus 
-ODLEPobj_feces_glom = tax_glom(ODLEPobj_feces, taxrank="Genus", NArm=FALSE)
-#create dataframe from phyloseq object
-subset.genus.df <- psmelt(ODLEPobj_feces_glom) 
-subset.genus.df$genus <- as.character(subset.genus.df$Genus) #convert to character
-#calculate median rel. abundance
-medians <- ddply(subset.genus.df, ~genus, function(x) c(median=median(x$Abundance)))
-#calculate remainder
-remainder <- medians[medians$median <= 0.01,]$genus
-subset.genus.df[subset.genus.df$genus %in% remainder,]$genus <- "Genera < 1% abund."
+#Aggregate OTUs according to genus
+ODLEPobj_feces_rel <- microbiome::transform(ODLEPobj_feces, "compositional")
+grouped <- aggregate_taxa_siwa(ODLEPobj_feces_rel, "Genus")
+melted <- psmelt(otu_table(grouped,taxa_are_rows=TRUE))
+
+#create genus label for ploting, keeping only top x
+ps.com.gen <- microbiomeutilities::aggregate_top_taxa2(ODLEPobj_feces, top = 12, "Genus")
+keep_genus <-as.list(as.data.frame(tax_table(ps.com.gen))$Genus)
+keep_genus <- keep_genus[keep_genus!= "UNKNOWN"]
+keep_genus <- keep_genus[keep_genus!= "Other"]
+melted$label <- as.character(if_else(melted$OTU %in% keep_genus, melted$OTU, "Others"))
+
+
+#add treatment info 
+melted$SampleID <- (melted$Sample)
+metadata_fec <- sample_data(ODLEPobj_feces)
+melted <- dplyr::left_join(melted, metadata_fec, by="SampleID")
+melted <- melted %>%
+  mutate( Treatment=factor(Treatment,levels=c("LowCa", "LowCa+VitD", "MediumLowCa", "MediumLowCa+VitD", "MediumHighCa", "MediumHighCa+VitD", "HighCa","HighCa+VitD")) )
 
 #Figures abundances
-subset.genus.df <- subset.genus.df %>%
-  mutate( Treatment=factor(Treatment,levels=c("LowCa", "LowCa+VitD", "MediumLowCa", "MediumLowCa+VitD", "MediumHighCa", "MediumHighCa+VitD", "HighCa","HighCa+VitD")) )
-#plot with condensed genera into "< 1% abund" category by Treatment
-p <- ggplot(data=subset.genus.df, aes(x=Treatment, y=Abundance ,fill=genus))
+p <- ggplot(data=melted, aes(x=Treatment, y=Abundance ,fill=label))
 plot_abundance_feces<- p + geom_bar(stat="identity", position="fill") + 
+  labs(title ="Taxonomic composition feces", fill="Genera") +
   xlab("Treatment") +
   ylab("Relative abundance")+
-  labs(fill="Genera") +
   #stat_compare_means(method = "anova")+ 
-  theme(axis.text.x = element_text(angle = 60, hjust = 1))+
-  theme(text=element_text(size=12)) 
+  theme(axis.text.x = element_text(angle = 60, hjust = 1))
 
 ```
 
@@ -1084,24 +1078,42 @@ histo <- complete_sample_table
 
 #change labels 
 #Add treatments and treatment numbers (1-8)
-histo <- histo %>% 
-  mutate(TreatmentNumber = if_else(KitID == 70, 1, 
-                             ifelse(KitID == 71, 2,
-                                    ifelse(KitID == 72, 3,
-                                           ifelse(KitID == 73, 4,
-                                                  ifelse(KitID == 74, 5,
-                                                         ifelse(KitID == 75, 6,
-                                                                ifelse(KitID == 76, 7,8))))))))
 
-histo <- histo %>% 
-  mutate(Treatment = if_else(KitID == 70, "LowCa", 
-                                ifelse(KitID == 71, "LowCa+VitD",
-                                       ifelse(KitID == 72, "MediumLowCa",
-                                              ifelse(KitID == 73, "MediumLowCa+VitD",
-                                                     ifelse(KitID == 74, "MediumHighCa",
-                                                            ifelse(KitID == 75, "MediumHighCa+VitD",
-                                                                   ifelse(KitID == 76, "HighCa",
-                                                                          ifelse(KitID == 77, "HighCa+VitD","other")))))))))
+histo <- histo %>%
+  mutate(TreatmentNumber = if_else(KitID == 70, 1,
+                                   ifelse(
+                                     KitID == 71, 2,
+                                     ifelse(KitID == 72, 3,
+                                            ifelse(
+                                              KitID == 73, 4,
+                                              ifelse(KitID == 74, 5,
+                                                     ifelse(KitID == 75, 6,
+                                                            ifelse(KitID == 76, 7, 8))))))))
+
+histo <- histo %>%
+  mutate(Treatment = if_else(KitID == 70, "LowCa",
+                             ifelse(
+                               KitID == 71,
+                               "LowCa+VitD",
+                               ifelse(
+                                 KitID == 72,
+                                 "MediumLowCa",
+                                 ifelse(
+                                   KitID == 73,
+                                   "MediumLowCa+VitD",
+                                   ifelse(
+                                     KitID == 74,
+                                     "MediumHighCa",
+                                     ifelse(
+                                       KitID == 75,
+                                       "MediumHighCa+VitD",
+                                       ifelse(KitID == 76, "HighCa",
+                                              ifelse(KitID == 77, "HighCa+VitD", "other"))
+                                     )
+                                   )
+                                 )
+                               )
+                             )))
 
 
 
@@ -1420,7 +1432,7 @@ cec <- cec %>%
   mutate( Treatment=factor(Treatment,levels=c("LowCa", "LowCa+VitD", "MediumLowCa", "MediumLowCa+VitD", "MediumHighCa", "MediumHighCa+VitD", "HighCa","HighCa+VitD")) )
 plot1 <- ggplot(cec, aes(x = Treatment, y = round(neg_DD_IL1B), fill = Treatment)) +
   geom_violin() + #geom_boxplot()+  #or geom_violin() + 
-  ylab("-DeltaDeltaCq") +  geom_hline(yintercept=0, linetype="dashed") + 
+  ylab("Relative gene expression") +  geom_hline(yintercept=0, linetype="dashed") + 
   theme(legend.position = "none") +
   theme(axis.text.x = element_text(angle = 60, hjust = 1))+
   stat_summary(fun=mean, geom="point", size=2, color="red", fill="red")+ 
@@ -1435,10 +1447,11 @@ plot1
 ### FIGURE 14B: Cecum - IL10. <br/> Addition of VitD to the MediumLow Ca group appears to increase expression of IL10 compared to the control as well as several other groups.
 ```{r fig14b, echo=FALSE}
 meanscec <- aggregate(neg_DD_IL10 ~  Treatment, cec, mean)
+
 plot1 <- ggplot(cec, aes(x =Treatment, y = neg_DD_IL10, fill = Treatment)) +
   geom_violin() + #geom_boxplot()+  #or geom_violin()
   xlab("") + 
-  ylab("-DeltaDeltaCq") +  geom_hline(yintercept=0, linetype="dashed") + 
+  ylab("Relative gene expression") +  geom_hline(yintercept=0, linetype="dashed") + 
   theme(legend.position = "none") +
   theme(axis.text.x = element_text(angle = 60, hjust = 1))+
   stat_summary(fun=mean, geom="point", size=2, color="red", fill="red")+ 
@@ -1456,7 +1469,7 @@ meanscec <- aggregate(neg_DD_MUC2 ~  Treatment, cec, mean)
 plot1 <- ggplot(cec, aes(x = Treatment, y = neg_DD_MUC2, fill = Treatment)) +
   geom_violin() + #geom_boxplot()+  #or geom_violin()
   xlab("") + 
-  ylab("-DeltaDeltaCq") +  geom_hline(yintercept=0, linetype="dashed") + 
+  ylab("Relative gene expression") +  geom_hline(yintercept=0, linetype="dashed") + 
   theme(legend.position = "none") +
   theme(axis.text.x = element_text(angle = 60, hjust = 1))+
   stat_summary(fun=mean, geom="point", size=2, color="red", fill="red")+ 
@@ -1479,7 +1492,7 @@ il <- il %>%
 plot1 <- ggplot(il, aes(x = Treatment, y = neg_DD_IL1B, fill = Treatment)) +
   geom_violin() + #geom_boxplot()+  #or geom_violin()
   xlab("") + 
-  ylab("-DeltaDeltaCq") +  geom_hline(yintercept=0, linetype="dashed") + 
+  ylab("Relative gene expression") +  geom_hline(yintercept=0, linetype="dashed") + 
   theme(legend.position = "none") +
   theme(axis.text.x = element_text(angle = 60, hjust = 1))+
   stat_summary(fun=mean, geom="point", size=2, color="red", fill="red")+ 
@@ -1496,7 +1509,7 @@ meansile <- aggregate(neg_DD_IL10 ~  Treatment, il, mean)
 plot1 <- ggplot(il, aes(x = Treatment, y = neg_DD_IL10, fill = Treatment)) +
   geom_violin() + #geom_boxplot()+  #or geom_violin()
   xlab("") + 
-  ylab("-DeltaDeltaCq") +  geom_hline(yintercept=0, linetype="dashed") + 
+  ylab("Relative gene expression") +  geom_hline(yintercept=0, linetype="dashed") + 
   theme(legend.position = "none") +
   theme(axis.text.x = element_text(angle = 60, hjust = 1))+
   stat_summary(fun=mean, geom="point", size=2, color="red", fill="red")+ 
@@ -1513,7 +1526,7 @@ meansile <- aggregate(neg_DD_MUC2 ~  Treatment, il, mean)
 plot1 <- ggplot(il, aes(x =Treatment, y = neg_DD_MUC2, fill = Treatment)) +
   geom_violin() + #geom_boxplot()+  #or geom_violin()
   xlab("") + 
-  ylab("-DeltaDeltaCq") +  geom_hline(yintercept=0, linetype="dashed") + 
+  ylab("Relative gene expression") +  geom_hline(yintercept=0, linetype="dashed") + 
   theme(legend.position = "none") +
   theme(axis.text.x = element_text(angle = 60, hjust = 1))+
   stat_summary(fun=mean, geom="point", size=2, color="red", fill="red")+ 
@@ -2715,5 +2728,7 @@ bp_ileum <- bp +
 bp_ileum
 
 ```
+
+
 
 
