@@ -1,0 +1,135 @@
+#dashboard-container {
+  max-width: 80%;
+  margin: auto;
+  padding-top: 50px;
+}
+
+#section-section-1{
+  background-color: #D3D3D3;
+}
+@font-face {
+  font-family: "Larsseit";
+  src: url('Larsseit/Larsseit.otf') 
+  format('opentype');
+}
+  
+body{
+  font-family: "Larsseit", "gochi";
+  color: #0A283D;
+  font-size: 12;
+}
+.plotly{
+  font-family: "Larsseit";
+}
+
+.dropdown-menu>li>a {
+  color: white;
+}
+
+.section {
+  text-align: justify;
+  text-justify: inter-word;
+}
+
+.chart-stage {
+  text-align: justify;
+  text-justify: inter-word;
+  margin: 0;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+    
+    
+.datatables{
+  min-height: 800px;
+}
+
+.dataTables_scrollBody {
+    max-height: 100% !important;
+}
+
+.container-fluid {
+  max-width: 80%;
+  margin: auto;
+}
+
+.navbar,
+[data-toggle=tab],
+
+.navbar-brand {
+  background-color: #0A283D;
+  border-color: black;
+  color: white;
+}
+
+.navbar.navbar-inverse .navbar-header {
+  text-align: center;
+  width: 90%;
+}
+
+.navbar.navbar-inverse .navbar-header .navbar-brand {
+  display: inline-block;
+  float: none;
+}
+
+.navbar-logo {
+  width: 80px;
+  position: absolute;
+  right: 5px;
+}
+
+.navbar-collapse {
+  padding: 10px;
+  font-size: 15px;
+}
+
+
+.card {
+width: 50%;
+height: 20%;
+margin: 12px;
+background-color: rgb(255, 255, 255);
+box-shadow: 0 0 12px rgb(63, 63, 63);
+}
+
+.custom-card {
+  width: 40%; /* Use a percentage for flexible width */
+  min-width: 200px; /* Set a minimum width */
+  max-width: 300px; /* Set a maximum width */
+  height: auto; /* Height is adjusted automatically based on content */
+  background-color: #f7f7f7;
+  border: 1px solid #ddd;
+  padding: 10px;
+  border-radius: 5px;
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+}
+
+.card-container {
+  display: inline-flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  gap: 8vmin;
+}
+
+.image-container{
+  max-width: 100%;
+  max-height: 95%;
+}
+
+.details {
+  max-height: 400px; /* Set the maximum height */
+  overflow-y: scroll; /* Add a vertical scroll bar if content overflows */
+  position: relative; /* Set the position to relative */
+  z-index: 1; 
+}
+
+.mytable{
+  max-height: 300px; /* Set the maximum height */
+  overflow-y: scroll; /* Add a vertical scroll bar if content overflows */
+  order: 1px solid;
+  max-width: 100%;
+  position: center;
+  margin: 0 auto;
+}
