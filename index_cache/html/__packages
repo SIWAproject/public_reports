@@ -36,4 +36,7 @@ plotly
 flexdashboard
 shiny
 DT
+rstatix
+microViz
+lsr
 tidyMicro

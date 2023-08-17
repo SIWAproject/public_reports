@@ -1,0 +1,706 @@
+---
+title: "Siwa PETS"
+output:
+  flexdashboard::flex_dashboard:
+    output_dir: docs
+    orientation: rows
+    vertical_layout: scroll
+    social: embed
+    css: estilo.css
+    logo: Wsiwa.png
+    mathjax: null
+    #self_contained: FALSE
+---
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+# editor_options:
+#   chunk_output_type: console
+```
+
+```{css, echo=FALSE}
+.center {
+  display: table;
+  margin-right: auto;
+  margin-left: auto;
+}
+```
+
+### Perrito's report
+
+Project description {data-icon="fa-table"}
+===================================== 
+
+Row {data-height=600}
+-------------------------------------
+
+### {data-width=400}
+
+```{r colors, include= TRUE, echo=FALSE}
+knitr::include_graphics("perro.jpg")
+
+cvi_colours = list(
+    cvi_siwa = c("#03343a", "#4e8e74","#f99b35",  "#e5c217",  
+               "#075b44", "#f9b870", "#f7e76d", "#ABF4D4",
+               "#017fb1", "#5cb08e" , "#fcd8b6", "#fcf5cd", 
+               "#8CDBF4","#F7927F", "#075b09", "green",
+                "pink", "gray", "brown", "purple", "blue"),
+  
+  alpha_colors = c( "#075b44",  "#017fb1"),
+  bad_good_stool = c( "#f9b870","#f9b870", "#5cb08e"),
+  mydogs = c("#bc8808", "#5cb08e"), 
+  groups=c("#4e8e74", "#035060", "#f99b35", "#BC8808")
+)
+
+cvi_palettes = function(name, n, all_palettes = cvi_colours, type = c("discrete", "continuous")) {
+  palette = all_palettes[[name]]
+  if (missing(n)) {
+    n = length(palette)
+  }
+  type = match.arg(type)
+  out = switch(type,continuous = grDevices::colorRampPalette(palette)(n),discrete = palette[1:n]
+  )
+  structure(out, name = name, class = "palette")
+}
+
+scale_color_cvi_d = function(name) {
+  ggplot2::scale_colour_manual(values = cvi_palettes(name, type = "discrete"))
+}
+scale_fill_cvi_d = function(name) {
+  ggplot2::scale_fill_manual(values = cvi_palettes(name,type = "discrete"))
+}
+
+```
+
+### {data-width=300}
+
+**TBD**
+
+At SIWA, we understand how important a healthy gut is for your dog's energy and happiness. That's why we encourage you to keep an eye on their gut bacteria through regular microbiome check-ups. Our unique service uses science to learn about what's going on in your dog's gut, helping you make smart choices for their food and making their life even better!
+
+**TBD**
+
+Awareness of the crucial role played by the microbial community living within a pet's intestines has increased in the fields of animal health and nutrition. However, the complexity of the microbiome,  not to mention its location, makes it challenging to observe and comprehend. With SIWA Pets, our objective is to enhance dogs' well-being, promote their health, and ensure proper nutrition by employing scientific methods to unravel the mysteries of the pet gut microbiome.
+
+
+**This dog's data:**
+
+<ul>
+  <li>Number of samples: xxx </li>
+  <li>Age: xxxx </li>
+  <li>Date of sample: xxxx  </li>
+  <li>Breed: xxxx </li>
+  <li>Sample type: xxx </li>
+</ul>
+
+My dog’s microbiota {data-icon="fa-table"}
+===================================== 
+
+```{r , echo=FALSE, include=TRUE}
+library(phyloseq)
+library(ggplot2)
+library(microbiomeutilities)
+library(gridExtra)
+library(RColorBrewer)
+library(plotly)
+library(knitr)
+library(kableExtra)
+
+
+setwd("/Users/dvarelat/Documents/SIWA/public_reports/SingleDog")
+source("functions.R")
+
+all_physeq <- readRDS("all_physeq_agosto2023.rds") 
+PHYLO_forum <- subset_samples(all_physeq, ProjectID == "Forum")
+
+```
+
+
+Row {data-height=150}
+-----------------------------------------------------------------------
+
+Numerous environmental factors influence the structure and functions of the gut microbiota. Domestic dogs share various physiological, dietary, and pathological traits with humans. They possess an omnivorous metabolism, and can process dietary carbohydrates. Many naturally occurring human diseases have analogous counterparts in dogs, particularly conditions like chronic inflammatory diseases, diabetes mellitus, and obesity. Moreover, dogs share the living environment and lifestyle of their owners. These external factors, combined with their genetic characteristics, contribute to shaping the unique microbiome of each dog. As a result, there is considerable variability among individual dogs, making their microbiomes truly distinctive.
+
+Row {data-height=50}
+-----------------------------------------------------------------------
+
+Here, you will discover the bacteria residing in your dog's gut, along with their corresponding abundance percentages. Additionally, you'll gain insights into the impact of the most prevalent ones:
+
+
+Row {data-height=500}
+-----------------------------------------------------------------------
+
+### Figure 1: Taxonomic composition {data-width=600}
+
+```{r taxo, include=TRUE, echo=FALSE, fig.width=10, fig.height=6}
+Sample <- "0232_04F-M"
+pseq.rel <- microbiome::transform(PHYLO_forum, "compositional")
+ph_dog <- subset_samples(pseq.rel, SampleID == Sample)
+keep_taxa_dog <- taxa(ph_dog)[taxa_sums(ph_dog) > 0]
+my_subset <- subset(otu_table(ph_dog), rownames(otu_table(ph_dog)) %in% keep_taxa_dog)
+ph_dog <- merge_phyloseq(my_subset, tax_table(ph_dog), sample_data(ph_dog))
+
+df_genus <- aggregate_taxa_siwa(ph_dog, "Genus")
+df_genus$Genus <- rownames(df_genus)
+df_genus <- df_genus[order(-df_genus$`0232_04F-M`),]
+topn <- df_genus[1:15,]
+generos <-  topn$Genus
+generos <- generos[generos!= "UNKNOWN"]
+generos <- generos[generos!= "Other"]
+df_genus$Genus <- NULL
+melted_dog <- psmelt(phyloseq::otu_table(df_genus, taxa_are_rows=TRUE))
+melted_dog$label <- as.character(if_else(melted_dog$OTU %in% generos, 
+                                         melted_dog$OTU, "Others"))
+melted_dog$SampleID <- melted_dog$Sample
+melted_dog$Rank <- "Genus"
+
+melted_dog <-
+  melted_dog %>% mutate(Color = factor(label, levels = unique(label), labels = cvi_colours$cvi_siwa[1:15]))
+
+p1 <- ggplot(data=melted_dog, aes(x=SampleID, y=Abundance ,fill=label)) + 
+  geom_bar(stat="identity", position="fill") + 
+  labs(fill="Genus") + xlab("") + 
+  theme(axis.text.x = element_blank(), 
+        text=element_text(size=15))+
+  scale_fill_manual(values = cvi_colours$cvi_siwa[1:15])
+
+colors_genus = list("#03343a", "#4e8e74","#f99b35",  "#e5c217",  
+               "#075b44", "#f9b870", "#f7e76d", "#ABF4D4",
+               "#017fb1", "#5cb08e" , "#fcd8b6", "#fcf5cd", 
+               "#8CDBF4","#F7927F", "#075b09")
+names(colors_genus) <- sort(unique(melted_dog$label))
+colors_family <- c(
+  "#033421", "#4e8e45",
+  "#0752b6", "#f9b823", "#ABa4e0",
+  "#017fb0", "#5cb04e", "#fce8c9",
+  "#8CDB12", "#F79299", "#e75a09",
+  "#e5e003"
+)
+
+df_family <- aggregate_taxa_siwa(ph_dog, "Family")
+df_family$Family <- rownames(df_family)
+df_family <- df_family[order(-df_family$`0232_04F-M`),]
+topn <- df_family[1:10,]
+familias <-  topn$Family
+familias <- familias[familias!= "UNKNOWN"]
+familias <- familias[familias!= "Other"]
+df_family$Family <- NULL
+melted_dog_f <- psmelt(phyloseq::otu_table(df_family, taxa_are_rows=TRUE))
+melted_dog_f$label <- as.character(if_else(melted_dog_f$OTU %in% familias, 
+                                         melted_dog_f$OTU, "Others"))
+melted_dog_f$SampleID <- melted_dog_f$Sample
+melted_dog_f$Rank <- "Family"
+
+
+p2 <- ggplot(data=melted_dog_f, aes(x=SampleID, y=Abundance ,fill=label)) + 
+  geom_bar(stat="identity", position="fill") + 
+  labs(fill="Family") +xlab("")+
+  theme(axis.text.x = element_blank(), 
+        text=element_text(size=15)) + 
+  scale_fill_manual(values = colors_family)
+
+gridExtra::grid.arrange(p2, p1, ncol = 2)
+
+
+```
+
+### {data-width=200}
+
+PARA ESTE EXPERIMENTO TOP 5 BACTERIAS EN ORDEN ABUNDANCIA:
+- Prevotella               
+- Faecalibacterium            
+- Fusobacterium                
+- Peptoclostridium             
+- Streptococcus  
+
+Todas entre las más comunes de perros 
+
+Mencionar Phyla or Family
+
+Row {data-height=20}
+-----------------------------------------------------------------------
+
+Row {data-height=20}
+-----------------------------------------------------------------------
+
+**TOP BACTERIAS**
+
+
+Row {data-height=20}
+-----------------------------------------------------------------------
+
+
+Row {data-height=500}
+-----------------------------------------------------------------------
+
+```{r, echo=FALSE}
+library(htmltools)
+
+cards <- c(
+  '<div class="custom-card">
+    <div class="card-body">
+      <h5 class="card-title">Prevotella</h5>
+      <p class="card-text">
+      Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec ac fringilla eros. Nulla eget pellentesque nunc, id finibus arcu. Nunc id est ac neque rhoncus viverra at vel metus. Ut rhoncus felis est, id bibendum ante imperdiet a. Ut sollicitudin nunc in massa tincidunt ultricies. Fusce porta enim id venenatis facilisis. Interdum et malesuada fames ac ante ipsum primis in faucibus. Fusce mattis pulvinar nisl ac fringilla. Suspendisse mollis nunc non turpis scelerisque mattis. Nam et quam porta mauris mollis convallis. Fusce sed lacus ut nisl placerat finibus. Curabitur pharetra aliquet finibus. Nam varius leo sed volutpat tincidunt.</p>
+    </div>
+  </div>',
+    '<div class="custom-card">
+    <div class="card-body">
+      <h5 class="card-title">Faecalibacterium</h5>
+      <p class="card-text">
+      Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec ac fringilla eros. Nulla eget pellentesque nunc, id finibus arcu. Nunc id est ac neque rhoncus viverra at vel metus. Ut rhoncus felis est, id bibendum ante imperdiet a. Ut sollicitudin nunc in massa tincidunt ultricies. Fusce porta enim id venenatis facilisis. Interdum et malesuada fames ac ante ipsum primis in faucibus. Fusce mattis pulvinar nisl ac fringilla. Suspendisse mollis nunc non turpis scelerisque mattis. Nam et quam porta mauris mollis convallis. Fusce sed lacus ut nisl placerat finibus. Curabitur pharetra aliquet finibus. Nam varius leo sed volutpat tincidunt.</p>
+    </div>
+  </div>',
+    '<div class="custom-card">
+    <div class="card-body">
+      <h5 class="card-title">Fusobacterium</h5>
+      <p class="card-text">
+      Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec ac fringilla eros. Nulla eget pellentesque nunc, id finibus arcu. Nunc id est ac neque rhoncus viverra at vel metus. Ut rhoncus felis est, id bibendum ante imperdiet a. Ut sollicitudin nunc in massa tincidunt ultricies. Fusce porta enim id venenatis facilisis. Interdum et malesuada fames ac ante ipsum primis in faucibus. Fusce mattis pulvinar nisl ac fringilla. Suspendisse mollis nunc non turpis scelerisque mattis. Nam et quam porta mauris mollis convallis. Fusce sed lacus ut nisl placerat finibus. Curabitur pharetra aliquet finibus. Nam varius leo sed volutpat tincidunt.</p>
+    </div>
+  </div>',
+'<div class="custom-card">
+    <div class="card-body">
+      <h5 class="card-title">Peptoclostridium</h5>
+      <p class="card-text">      Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec ac fringilla eros. Nulla eget pellentesque nunc, id finibus arcu. Nunc id est ac neque rhoncus viverra at vel metus. Ut rhoncus felis est, id bibendum ante imperdiet a. Ut sollicitudin nunc in massa tincidunt ultricies. Fusce porta enim id venenatis facilisis. Interdum et malesuada fames ac ante ipsum primis in faucibus. Fusce mattis pulvinar nisl ac fringilla. Suspendisse mollis nunc non turpis scelerisque mattis. Nam et quam porta mauris mollis convallis. Fusce sed lacus ut nisl placerat finibus. Curabitur pharetra aliquet finibus. Nam varius leo sed volutpat tincidunt.</p>
+.</p>
+    </div>
+  </div>',
+  '<div class="custom-card">
+    <div class="card-body">
+      <h5 class="card-title">Streptococcus</h5>
+      <p class="card-text">      Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec ac fringilla eros. Nulla eget pellentesque nunc, id finibus arcu. Nunc id est ac neque rhoncus viverra at vel metus. Ut rhoncus felis est, id bibendum ante imperdiet a. Ut sollicitudin nunc in massa tincidunt ultricies. Fusce porta enim id venenatis facilisis. Interdum et malesuada fames ac ante ipsum primis in faucibus. Fusce mattis pulvinar nisl ac fringilla. Suspendisse mollis nunc non turpis scelerisque mattis. Nam et quam porta mauris mollis convallis. Fusce sed lacus ut nisl placerat finibus. Curabitur pharetra aliquet finibus. Nam varius leo sed volutpat tincidunt.</p>
+</p>
+    </div>
+  </div>')
+
+cards_output <- lapply(cards, HTML)
+container <- tags$div(class = "card-container", cards_output)
+tagList(container)
+
+```
+  
+Comparison {data-icon="fa-table"}
+===================================== 
+
+Row {data-height=500}
+-----------------------------------------------------------------------
+
+### Figure 2: {data-width=500}
+
+```{r alpha, include=TRUE, echo=FALSE, fig.width=10, fig.height=6}
+all_metadata <- as.data.frame(as.matrix(sample_data(all_physeq)))
+
+lib_size <- as.data.frame(sample_sums(all_physeq))
+lib_size$SampleID <- rownames(lib_size)
+lib_size$LibrarySize <- lib_size$`sample_sums(all_physeq)`
+all_metadata <- left_join(all_metadata, lib_size, by="SampleID")
+all_metadata$Alfa_Shannon <- as.numeric(all_metadata$Alfa_Shannon)
+
+all_metadata$Alfa_Shannon_norm <- all_metadata$Alfa_Shannon / all_metadata$LibrarySize
+
+cs = list(list(0, "#03343a"), list(1, "#f7e76d"))
+
+all_metadata_alpha <- all_metadata[!is.na(all_metadata$Alfa_Shannon) ,]
+all_metadata_alpha <- all_metadata_alpha[!is.na(all_metadata_alpha$Alfa_Shannon_norm),]
+all_metadata_alpha <- all_metadata_alpha[all_metadata_alpha$ProjectID!="603883",]
+
+all_metadata_alpha$quant <- gtools::quantcut(abs(all_metadata_alpha$Alfa_Shannon_norm), 10, label = FALSE)
+
+df_c <- all_metadata_alpha
+df_c$quant <- as.factor(df_c$quant)
+
+color_palette <- colorRampPalette(c("#03343a",  "#f7e76d"))(10)
+
+mydog_x_norm = df_c[df_c$SampleID == Sample,]$Alfa_Shannon_norm
+mydog_x = df_c[df_c$SampleID == Sample,]$Alfa_Shannon
+footer_text <-
+  paste0(
+    "*My dog's alpha diversity ",
+    round(mydog_x, 2),
+    " is in quantile number ",
+    sum(mydog_x > levels(df_c$quant)) + 1
+  )
+
+ggplot(df_c, aes(y = 0.5, x = Alfa_Shannon_norm)) +
+  geom_boxplot(fill = "#4e8e74") +
+  geom_jitter(data = df_c,
+              aes(y = jitter(runif(dim(df_c)[1], min = 0.3, max = 0.4)), 
+                  x = Alfa_Shannon_norm, color=quant), width = -10, height = 0) + 
+  scale_color_manual(values = color_palette, guide = "none") +
+  labs(x = "Normalized alpha diversity", y = NULL) +
+  theme_minimal() +
+  theme(axis.title.y = element_blank(), 
+        axis.text.y = element_blank(), 
+        axis.ticks.y = element_blank(),
+        axis.text.x = element_blank()) +  
+  annotate("text", x = mydog_x_norm, y = 0.6, label = paste0("My dog: ", as.character(round(mydog_x, 2))), vjust = -1)+
+    geom_segment(aes(x = mydog_x_norm, xend = mydog_x_norm, y = 0.6, yend = 0.5),
+               arrow = arrow(type = "closed", length = unit(0.1, "inches")))+
+  annotate("text", x = Inf, y = -Inf, hjust = 1, vjust = -1, label = footer_text, size = 3, color = "darkgray")
+
+```
+
+### {data-width=200}
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec ac fringilla eros. Nulla eget pellentesque nunc, id finibus arcu. Nunc id est ac neque rhoncus viverra at vel metus. Ut rhoncus felis est, id bibendum ante imperdiet a. Ut sollicitudin nunc in massa tincidunt ultricies. Fusce porta enim id venenatis facilisis. Interdum et malesuada fames ac ante ipsum primis in faucibus. Fusce mattis pulvinar nisl ac fringilla. Suspendisse mollis nunc non turpis scelerisque mattis. Nam et quam porta mauris mollis convallis. Fusce sed lacus ut nisl placerat finibus. Curabitur pharetra aliquet finibus. Nam varius leo sed volutpat tincidunt.
+
+
+
+Row {data-height=400}
+-----------------------------------------------------------------------
+
+### Figure 3: {data-width=500}
+
+```{r beta bench, include= TRUE, echo=FALSE, fig.width=10, fig.height=6}
+#setwd("/Users/dvarelat/Documents/SIWA/PETS")
+plot_beta <- readRDS("betabench.rds")
+plot_beta + scale_color_cvi_d("mydogs") + labs(color = "") +  theme(
+      axis.text.x= element_text(size=10, hjust=1),
+        axis.text.y= element_text(size=10),
+        axis.title.x = element_text(size=13),
+        legend.text = element_text(size=13),
+        axis.title.y = element_text(size=13))
+
+```
+
+### {data-width=200}
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec ac fringilla eros. Nulla eget pellentesque nunc, id finibus arcu. Nunc id est ac neque rhoncus viverra at vel metus. Ut rhoncus felis est, id bibendum ante imperdiet a. Ut sollicitudin nunc in massa tincidunt ultricies. Fusce porta enim id venenatis facilisis. Interdum et malesuada fames ac ante ipsum primis in faucibus. Fusce mattis pulvinar nisl ac fringilla. Suspendisse mollis nunc non turpis scelerisque mattis. Nam et quam porta mauris mollis convallis. Fusce sed lacus ut nisl placerat finibus. Curabitur pharetra aliquet finibus. Nam varius leo sed volutpat tincidunt. Nunc rhoncus lacinia posuere. Proin eleifend nibh sem, non maximus sem accumsan vulputate. Aliquam mauris tortor, sollicitudin quis viverra eget, consectetur vitae est.
+
+
+
+Row {data-height=500}
+-----------------------------------------------------------------------
+
+### Figure 4: {data-width=500}
+
+```{r taxo bench, include= TRUE, echo=FALSE}
+#setwd("/Users/dvarelat/Documents/SIWA/PETS")
+taxo_comparison <- readRDS("taxo_comparison.rds")
+
+taxo_comparison +  theme(
+      axis.text.x= element_text(size=10, hjust=1),
+        axis.text.y= element_text(size=10),
+        axis.title.x = element_blank(),
+        legend.text = element_text(size=12),
+        axis.title.y = element_text(size=13))
+
+```
+
+
+### {data-width=200}
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec ac fringilla eros. Nulla eget pellentesque nunc, id finibus arcu. Nunc id est ac neque rhoncus viverra at vel metus. Ut rhoncus felis est, id bibendum ante imperdiet a. Ut sollicitudin nunc in massa tincidunt ultricies. Fusce porta enim id venenatis facilisis. Interdum et malesuada fames ac ante ipsum primis in faucibus. Fusce mattis pulvinar nisl ac fringilla. Suspendisse mollis nunc non turpis scelerisque mattis. Nam et quam porta mauris mollis convallis. Fusce sed lacus ut nisl placerat finibus. Curabitur pharetra aliquet finibus. Nam varius leo sed volutpat tincidunt. 
+
+Row {data-height=500}
+-----------------------------------------------------------------------
+
+### Figure 5: {data-width=500}
+
+```{r heatmap, include= TRUE, echo=FALSE, fig.width=10, fig.height=6}
+c_all <- readRDS("plot_core.rds")
+c_all <- c_all + theme(axis.text.x= element_text(size=10, angle = 90),
+        axis.text.y= element_text(size=12),
+        axis.title = element_text(size=12),
+        legend.text = element_text(size=10),
+        legend.title = element_text(size=12))
+res_data <- c_all$data
+res_data <- as.data.frame(res_data %>%
+                            group_by(Taxa) %>%
+                            summarise(SUM = sum(Prevalence)))
+order_taxa <- res_data[order(res_data$SUM, decreasing = TRUE), ]$Taxa
+bacterias <- order_taxa
+
+ph_dog_rel <- microbiome::transform(ph_dog, "compositional")
+bacterias <- order_taxa
+df_rel_genus <- aggregate_taxa_siwa(ph_dog_rel, taxa_level="Genus")
+bacterias_in_exp <- rownames(df_rel_genus)[rownames(df_rel_genus) %in% bacterias]
+df_rel_genus$Genus <- rownames(df_rel_genus)
+df_rel_genus <- df_rel_genus[bacterias_in_exp, ]
+df_rel_genus$Genus <- NULL
+taxonomy <- as.data.frame(rownames(df_rel_genus))
+taxonomy$Genus <- taxonomy$`rownames(df_rel_genus)` 
+rownames(taxonomy) <- taxonomy$Genus
+features <- df_rel_genus
+featuresM <- as(features, "matrix")
+class(featuresM) <- "numeric"
+taxa_matrix<-as.matrix(taxonomy)
+phylo_dog_GEN = phyloseq(otu_table(featuresM, taxa_are_rows = TRUE), 
+                                     tax_table(taxa_matrix), 
+                                     sample_data(ph_dog_rel)) 
+det <- c(0, 0.1, 0.5, 2, 5)/100
+prevalences <- c(0,1)
+lab <- paste0(100 *
+                as.numeric(as.character(unique(
+                  det
+                ))), "%")
+c_mine <- microbiome::plot_core(phylo_dog_GEN, 
+                      plot.type = "heatmap",
+                      prevalences = prevalences,
+                      detections = det,
+                      colours = c("#fcf5cd",  "#03343a"),
+                      #min.prevalence = .9, 
+                      taxa.order = rev(bacterias),
+                      horizontal = FALSE) +
+  theme(axis.text.x= element_text(size=10, angle = 90),
+        axis.text.y= element_text(size=12),
+        axis.title = element_text(size=12),
+        legend.text = element_text(size=10),
+        legend.title = element_text(size=12))+
+  scale_x_discrete(labels = lab)
+
+gridExtra::grid.arrange(c_all, c_mine, ncol = 2)
+
+```
+
+
+Tiles {data-icon="fa-table"}
+===================================== 
+
+Row {data-height=30}
+-----------------------------------------------------------------------
+
+BACTERIAS APARECEN ACÁ PORQUE SON EL TOP 10 DE ABUNDANCIA O PORQUE ESTÁN ENTRE >90% DE PREVALENCIA 
+ 
+Row {data-height=400}
+-----------------------------------------------------------------------
+
+<div class="mytable">
+```{r table, echo=FALSE}
+## select bacterias to use
+all_physeq <- subset_samples(all_physeq, ProjectID!="603883")
+all_physeq_genus <- aggregate_taxa(all_physeq, "Genus")
+all_physeq_genus.rel <- microbiome::transform(all_physeq_genus, "compositional")
+taxonomy <- as.data.frame(tax_table(all_physeq_genus.rel))
+prevalences<- as.data.frame(round(microbiome::prevalence(all_physeq_genus.rel), 2))
+colnames(prevalences) <- c("Prevalence")
+prevalences$unique <- rownames(prevalences)
+prev_90_genus_df <- prevalences[prevalences$Prevalence > 0.9,]
+abundances <- as.data.frame(abundances(all_physeq_genus.rel))
+abundances$MeanAbundance <- round(rowSums(abundances) / dim(abundances)[2], 3)
+abundances <- abundances[order(-abundances$MeanAbundance),]
+abundances$unique <- rownames(abundances)
+abundances_top10 <- abundances[1:10, ]
+bacterias_top <- union(abundances_top10$unique, prev_90_genus_df$unique)
+TOPbacterias_df <- abundances[abundances$unique %in% bacterias_top, c("unique", "MeanAbundance")]
+TOPbacterias_df <- left_join(TOPbacterias_df,prevalences, by="unique")
+TOPbacterias_df <- left_join(TOPbacterias_df,taxonomy, by="unique")
+kable(TOPbacterias_df[, c("Phylum",
+                          "Class"   ,
+                          "Order"  ,
+                          "Family"  ,
+                          "Genus" , "Prevalence", "MeanAbundance")],
+      format = "html", caption = "Top bacterias in PETS datasets") %>%
+  kable_styling(full_width = FALSE,
+                bootstrap_options = c("striped", "hover"))
+
+```
+</div>
+
+```{r tableotus, echo=FALSE, include=TRUE, eval=TRUE}
+## select bacterias to use
+# prev_90_otus <- subset_taxa(all_physeq, microbiome::prevalence(all_physeq) > 0.9)
+# prevalences<- as.data.frame(microbiome::prevalence(prev_90_otus))
+# colnames(prevalences) <- c("Prev")
+# prev_90_otus_df <- as.data.frame(tax_table(prev_90_otus))
+# prev_90_otus_df <- merge(prev_90_otus_df, prevalences, by = "row.names", all.x = TRUE)
+# rownames(prev_90_otus_df) <- NULL
+# kable(prev_90_otus_df[, c(
+#                       "Phylum",
+#                       "Class"   ,
+#                       "Order"  ,
+#                       "Family"  ,
+#                       "Genus"   ,
+#                       "Species", "Prev")], 
+#       format = "html", caption = "Sample Table") %>%
+#   kable_styling(
+#     full_width = FALSE,
+#     bootstrap_options = c("striped", "hover")
+#   )
+melted_projs <- readRDS("melted_projs.rds")
+melted_projs$tag <- ifelse(melted_projs$SampleID == Sample, "MyDog", "OtherDogs")
+
+```
+
+
+Row {data-height=200}
+-----------------------------------------------------------------------
+
+### {data-width=400}
+
+**Blautia** Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec ac fringilla eros. Nulla eget pellentesque nunc, id finibus arcu. Nunc id est ac neque rhoncus viverra at vel metus. Ut rhoncus felis est, id bibendum ante imperdiet a. Ut sollicitudin nunc in massa tincidunt ultricies. Fusce porta enim id venenatis facilisis. 
+
+### {data-width=200}
+```{r tile1, echo=FALSE}
+bacteria = "Blautia"
+melt_bact <- melted_projs[melted_projs$label == bacteria,]
+melt_bact <- melt_bact[order(melt_bact$Project, melt_bact$SampleID), ]
+melt_bact$tag <- ifelse(melt_bact$SampleID == Sample, "MyDog", "OtherDogs")
+mean_values <- aggregate(Abundance ~ tag, melt_bact, mean)
+value_pop = round(mean_values[mean_values$tag == "MyDog",]$Abundance, 3)*100
+value_dog = round(mean_values[mean_values$tag == "OtherDogs",]$Abundance, 3)*100
+
+# plot_ly(
+#   domain = list(x = c(0.4, 0.6), y = c(0, 1)),
+#   value = value_dog,
+#   type = "indicator",
+#   mode = "gauge",
+#   gauge = list(
+#     axis = list(range = list(NULL, 100)),
+#     #bar = list(color = "#5cb08e"),
+#     steps = list(
+#       list(range = c(0, value_pop), color = "lightgray")
+#       #list(range = c(0, 10), color = "blue")
+#     )
+#   )
+# ) %>%
+# layout(
+#   margin = list(l = 5, r = 5, t = 5, b = 5) # Set margin to 0 on all sides
+# )
+
+plot_ly(
+  #domain = list(x = c(0.4, 0.6), y = c(0, 1)),
+  value = value_dog,
+  type = "indicator",
+  mode = "gauge",
+  gauge = list(
+    axis = list(range = list(NULL, 100)),
+    #bar = list(color = "#5cb08e"),
+    steps = list(
+      list(range = c(0, value_pop), color = "lightgray")
+      #list(range = c(0, 10), color = "blue")
+    )
+  )
+) %>%
+  layout(
+    grid = list(rows = 1, columns = 1, pattern = "independent"),
+    xaxis = list(domain = c(0.4, 0.6)),
+    yaxis = list(domain = c(0.4, 0.6)), 
+    margin = list(l = 20, r = 20, t = 20, b = 20)
+  ) 
+
+```
+
+Row {data-height=200}
+-----------------------------------------------------------------------
+
+### {data-width=400}
+
+**Peptoclostridium** Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec ac fringilla eros. Nulla eget pellentesque nunc, id finibus arcu. Nunc id est ac neque rhoncus viverra at vel metus. Ut rhoncus felis est, id bibendum ante imperdiet a. Ut sollicitudin nunc in massa tincidunt ultricies. Fusce porta enim id venenatis facilisis. 
+
+### {data-width=200}
+```{r tile2, echo=FALSE}
+bacteria = "Peptoclostridium"
+melt_bact <- melted_projs[melted_projs$label == bacteria,]
+melt_bact <- melt_bact[order(melt_bact$Project, melt_bact$SampleID), ]
+melt_bact$tag <- ifelse(melt_bact$SampleID == Sample, "MyDog", "OtherDogs")
+mean_values <- aggregate(Abundance ~ tag, melt_bact, mean)
+value_pop = round(mean_values[mean_values$tag == "MyDog",]$Abundance, 3)*100
+value_dog = round(mean_values[mean_values$tag == "OtherDogs",]$Abundance, 3)*100
+
+plot_ly(
+  #domain = list(x = c(0.4, 0.6), y = c(0, 1)),
+  value = value_dog,
+  type = "indicator",
+  mode = "gauge",
+  gauge = list(
+    axis = list(range = list(NULL, 100)),
+    #bar = list(color = "#5cb08e"),
+    steps = list(
+      list(range = c(0, value_pop), color = "lightgray")
+      #list(range = c(0, 10), color = "blue")
+    )
+  )
+) %>%
+  layout(
+    grid = list(rows = 1, columns = 1, pattern = "independent"),
+    xaxis = list(domain = c(0.4, 0.6)),
+    yaxis = list(domain = c(0.4, 0.6)), 
+    margin = list(l = 20, r = 20, t = 20, b = 20)
+  ) 
+
+```
+
+
+Row {data-height=200}
+-----------------------------------------------------------------------
+
+### {data-width=400}
+
+**Lactobacillus** Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec ac fringilla eros. Nulla eget pellentesque nunc, id finibus arcu. Nunc id est ac neque rhoncus viverra at vel metus. Ut rhoncus felis est, id bibendum ante imperdiet a. Ut sollicitudin nunc in massa tincidunt ultricies. Fusce porta enim id venenatis facilisis. 
+
+### {data-width=200}
+```{r tile3, echo=FALSE}
+bacteria = "Lactobacillus"
+melt_bact <- melted_projs[melted_projs$label == bacteria,]
+melt_bact <- melt_bact[order(melt_bact$Project, melt_bact$SampleID), ]
+melt_bact$tag <- ifelse(melt_bact$SampleID == Sample, "MyDog", "OtherDogs")
+mean_values <- aggregate(Abundance ~ tag, melt_bact, mean)
+value_pop = round(mean_values[mean_values$tag == "MyDog",]$Abundance, 3)*100
+value_dog = round(mean_values[mean_values$tag == "OtherDogs",]$Abundance, 3)*100
+
+
+plot_ly(
+  #domain = list(x = c(0.4, 0.6), y = c(0, 1)),
+  value = value_dog,
+  type = "indicator",
+  mode = "gauge",
+  gauge = list(
+    axis = list(range = list(NULL, 100)),
+    steps = list(
+      list(range = c(0, value_pop), color = "lightgray")
+    )
+  )
+) %>%
+  layout(
+    grid = list(rows = 1, columns = 1, pattern = "independent"),
+    xaxis = list(domain = c(0.4, 0.6)),
+    yaxis = list(domain = c(0.4, 0.6)), 
+    margin = list(l = 20, r = 20, t = 20, b = 20)
+  ) 
+
+
+```
+
+
+Row {data-height=200}
+-----------------------------------------------------------------------
+
+### {data-width=400}
+
+**Turicibacter** Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec ac fringilla eros. Nulla eget pellentesque nunc, id finibus arcu. Nunc id est ac neque rhoncus viverra at vel metus. Ut rhoncus felis est, id bibendum ante imperdiet a. Ut sollicitudin nunc in massa tincidunt ultricies. Fusce porta enim id venenatis facilisis. 
+
+### {data-width=200}
+```{r tile4, echo=FALSE}
+bacteria = "Turicibacter"
+melt_bact <- melted_projs[melted_projs$label == bacteria,]
+melt_bact <- melt_bact[order(melt_bact$Project, melt_bact$SampleID), ]
+melt_bact$tag <- ifelse(melt_bact$SampleID == Sample, "MyDog", "OtherDogs")
+mean_values <- aggregate(Abundance ~ tag, melt_bact, mean)
+value_pop = round(mean_values[mean_values$tag == "MyDog",]$Abundance, 3)*100
+value_dog = round(mean_values[mean_values$tag == "OtherDogs",]$Abundance, 3)*100
+
+plot_ly(
+  #domain = list(x = c(0.4, 0.6), y = c(0, 1)),
+  value = value_dog,
+  type = "indicator",
+  mode = "gauge",
+  gauge = list(
+    axis = list(range = list(NULL, 100)),
+    #bar = list(color = "#5cb08e"),
+    steps = list(
+      list(range = c(0, value_pop), color = "lightgray")
+      #list(range = c(0, 10), color = "blue")
+    )
+  )
+) %>%
+  layout(
+    grid = list(rows = 1, columns = 1, pattern = "independent"),
+    xaxis = list(domain = c(0.4, 0.6)),
+    yaxis = list(domain = c(0.4, 0.6)), 
+    margin = list(l = 20, r = 20, t = 20, b = 20)
+  ) 
+
+```
+```
+
+
