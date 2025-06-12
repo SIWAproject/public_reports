@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fractal-GutLab Decision Tree</title>
+  <style>
+    body {
+      font-family: 'Source Code Pro', monospace;
+      background: #D5D3D8;
+      padding: 20px;
+    }
+    .card {
+      background: #D5D3D8;
+      border-radius: 16px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+    .step {
+      font-size: 1.25rem;
+      font-weight: bold;
+      margin-top: 20px;
+    }
+    select {
+      width: 100%;
+      padding: 10px;
+      margin-top: 10px;
+      margin-bottom: 20px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+    }
+    .result {
+      background: #98B08B;
+      border-left: 5px solid #6B9C8C;
+      padding: 15px;
+      display: none;
+      margin-top: 20px;
+    }
+    .branding {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .branding img {
+      height: 60px;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="branding">
+      <img src="https://siwareports.s3.us-east-1.amazonaws.com/Siwa+_+Logotipos+_+Milk+n+Coke-05.png" alt="Sb Logo">
+    </div>
+    <h1>Interactive Decision Tree: Fractal+GutLab for Integrators</h1>
+
+    <div class="step">1. Select Integrator Mentality</div>
+    <select id="mentality">
+      <option value="">-- Choose --</option>
+      <option value="pragmatist">Skeptical Pragmatist</option>
+      <option value="believer">Selective Believer</option>
+      <option value="advocate">Science Advocate</option>
+    </select>
+
+    <div class="step">2. Select Key Operational Challenge</div>
+    <select id="challenge">
+      <option value="">-- Choose --</option>
+      <option value="mortality">Mortality / Enteritis</option>
+      <option value="fcr">Poor FCR</option>
+      <option value="abf">ABF Program</option>
+      <option value="validation">General Validation</option>
+    </select>
+
+    <div class="step">3. Customer Status</div>
+    <select id="status">
+      <option value="">-- Choose --</option>
+      <option value="new">New Customer</option>
+      <option value="repeat">Repeat Customer</option>
+    </select>
+
+    <div class="step">4. Monthly Sales</div>
+    <select id="scale">
+      <option value="">-- Choose --</option>
+      <option value="<$10k"><$10k</option>
+      <option value="$10-50k">$10–50k</option>
+      <option value="$50-100k">$50–100k</option>
+      <option value=">$100k">>$100k</option>
+    </select>
+
+    <div class="step">5. Alura's Goal</div>
+    <select id="goal">
+      <option value="">-- Choose --</option>
+      <option value="differentiate">Differentiate Fractal</option>
+      <option value="prove">Prove Field Performance</option>
+      <option value="trust">Build Trust</option>
+      <option value="rd">Seed Long-Term Collaboration</option>
+    </select>
+
+    <button onclick="generateResult()">Generate Recommendation</button>
+
+    <div class="result" id="output"></div>
+  </div>
+
+  <script>
+    function generateResult() {
+      const mentalitySelect = document.getElementById('mentality');
+      const challengeSelect = document.getElementById('challenge');
+      const statusSelect = document.getElementById('status');
+      const scaleSelect = document.getElementById('scale');
+      const goalSelect = document.getElementById('goal');
+
+      const mentality = mentalitySelect.value;
+      const challenge = challengeSelect.value;
+      const status = statusSelect.value;
+      const scale = scaleSelect.value;
+      const goal = goalSelect.value;
+
+      if (!(mentality && challenge && status && scale && goal)) {
+        alert('Please complete all selections.');
+        return;
+      }
+
+      let result = `<strong>Recommended Service Strategy:</strong><br><br>`;
+
+      result += `<u>Integrator Mentality:</u> ${mentalitySelect.options[mentalitySelect.selectedIndex].text}<br>`;
+      if (mentality === 'pragmatist') {
+        result += `• Minimalist bundle with ROI focus (Histopathology + FCR overlay, maybe targeted pathogen measures)<br>`;
+      } else if (mentality === 'believer') {
+        result += `• Mid-tier bundle (16S + Histopath); link to performance<br>`;
+      } else if (mentality === 'advocate') {
+        result += `• Full suite with meta-analysis and co-creation option<br>`;
+      }
+
+      result += `<br><u>Operational Challenge:</u> ${challengeSelect.options[challengeSelect.selectedIndex].text}<br>`;
+      if (challenge === 'mortality') {
+        result += `• Focus on pathogen control and inflammation: location-specific histopathology + microbiome + qPCR<br>`;
+      } else if (challenge === 'fcr') {
+        result += `• Focus on barrier function and gut architecture: Ileum histopathology + basic histomorphometrics + MUC2 + 16S<br>`;
+      } else if (challenge === 'abf') {
+        result += `• Highlight immune resilience: IL1B/IL10 + 16S + MoA summary<br>`;
+      } else if (challenge === 'validation') {
+        result += `• Basic validation snapshot: 16S + histopathology with comparison<br>`;
+      }
+
+      result += `<br><u>Customer Status:</u> ${statusSelect.options[statusSelect.selectedIndex].text}<br>`;
+      if (status === 'new') {
+        result += `• Use full 2–3 assay combo; emphasize comparison vs. control<br>`;
+      } else {
+        result += `• Targeted follow-up with historical comparison<br>`;
+      }
+
+      result += `<br><u>Monthly Sales:</u> ${scaleSelect.options[scaleSelect.selectedIndex].text}<br>`;
+      if (scale === '<$10k') {
+        result += `• Budget <$3k/year with pooled samples + limited follow-up:  Ex pooled 16S in ileum, 20 samples/yr.<br>`;
+      } else if (scale === '$10-50k') {
+        result += `• Budget $3.5-18k/year with 10-40 pooled animals, 2 sites, 2 assays.<br>`;
+      } else if (scale === '$50-100k') {
+        result += `• Budget $18-30k/year with 3 assays<br>`;
+      } else if (scale === '>$100k') {
+        result += `• $40k+/year with full panel, possibility of custom assays; includes ROI model and producer meeting<br>`;
+      }
+
+      result += `<br><u>Alura's Goal:</u> ${goalSelect.options[goalSelect.selectedIndex].text}<br>`;
+      if (goal === 'differentiate') {
+        result += `• Focus on mechanistic insights to stand out in crowded market + instill trust<br>`;
+      } else if (goal === 'prove') {
+        result += `• Provide benchmarked performance metrics<br>`;
+      } else if (goal === 'trust') {
+        result += `• Deliver easy-to-interpret, actionable summaries with follow-up from GutLab<br>`;
+      } else if (goal === 'rd') {
+        result += `• Emphasize long-term collaboration and data-sharing, foster regular contact + personalization<br>`;
+      }
+
+      const outputDiv = document.getElementById('output');
+      outputDiv.innerHTML = result;
+      outputDiv.style.display = 'block';
+    }
+  </script>
+</body>
+  <footer style="text-align:center; font-size:0.9rem; margin-top:40px; color:#444;">
+  © 2025 Siwa Bioworks | GutLab 
+</footer>
+</html>
